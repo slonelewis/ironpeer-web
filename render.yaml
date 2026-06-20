@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: ironpeer-web
+    runtime: node
+    region: oregon
+    plan: free
+    buildCommand: yarn install && yarn build
+    startCommand: node server/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: REACT_APP_ENV
+        value: production
+      - key: REACT_APP_MARKETPLACE_NAME
+        value: IronPeer
+      - key: REACT_APP_SHARETRIBE_SDK_CLIENT_ID
+        value: ff0ac494-35f8-49b7-8001-a0b5c2c6d252
+      - key: REACT_APP_MARKETPLACE_ROOT_URL
+        sync: false   # Set this in Render dashboard to your Render URL
+      - key: REACT_APP_CSP
+        value: report

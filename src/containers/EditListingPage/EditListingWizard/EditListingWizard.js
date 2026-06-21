@@ -260,6 +260,15 @@ const tabCompleted = (tab, listing, config) => {
         unitType &&
         hasValidListingFieldsInExtendedData(publicData, privateData, config)
       );
+    case PROTECTION: {
+      const isRoadLegal = privateData?.isRoadLegal;
+      const hasInsurance = privateData?.hasInsurance;
+      const disclaimerAccepted = privateData?.insuranceDisclaimerAccepted;
+      const roadLegalAnswered = isRoadLegal !== undefined && isRoadLegal !== null;
+      const insuranceAnswered = hasInsurance !== undefined && hasInsurance !== null;
+      const disclaimerOk = hasInsurance === true || disclaimerAccepted === true;
+      return !!(roadLegalAnswered && insuranceAnswered && disclaimerOk);
+    }
     case PRICING:
       return !!price;
     case PRICING_AND_STOCK:
@@ -290,13 +299,26 @@ const tabCompleted = (tab, listing, config) => {
  * @return object containing activity / editability of different tabs of this wizard
  */
 const tabsActive = (isNew, listing, tabs, config) => {
+  // IronPeer: find the furthest tab the owner has completed, then allow
+  // clicking any tab up to and including the one after it (free forward/back nav).
+  const completedUpTo = tabs.reduce((maxIdx, tab, idx) => {
+    return tabCompleted(tab, listing, config) ? idx : maxIdx;
+  }, -1);
+  const hasListingType = !!listing?.attributes?.publicData?.listingType;
+
   return tabs.reduce((acc, tab) => {
-    const previousTabIndex = tabs.findIndex(t => t === tab) - 1;
+    const tabIndex = tabs.findIndex(t => t === tab);
+    const previousTabIndex = tabIndex - 1;
     const validTab = previousTabIndex >= 0;
     const hasListingType = !!listing?.attributes?.publicData?.listingType;
-    const prevTabComletedInNewFlow = tabCompleted(tabs[previousTabIndex], listing, config);
-    const isActive =
-      validTab && !isNew ? hasListingType : validTab && isNew ? prevTabComletedInNewFlow : true;
+    // In edit mode all tabs are active. In new-listing flow: allow any tab
+    // up to one beyond the furthest completed tab (so owner can jump back or
+    // continue to the next unlocked step).
+    const isActive = validTab && !isNew
+      ? hasListingType
+      : validTab && isNew
+      ? tabIndex <= completedUpTo + 1
+      : true;
     return { ...acc, [tab]: isActive };
   }, {});
 };

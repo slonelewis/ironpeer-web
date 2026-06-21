@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
 
@@ -6,21 +6,22 @@ import { AspectRatioWrapper, Promised } from '../../components';
 
 import css from './ImageFromFile.module.css';
 
-// readImage returns a promise which is resolved
-// when FileReader has loaded given file as dataURL
+// readImage returns a promise which resolves to an object URL for the file.
+// Using URL.createObjectURL() is faster, memory-efficient, and works reliably
+// on iOS Safari where FileReader.readAsDataURL() can fail on large JPEGs.
 const readImage = file =>
   new Promise((resolve, reject) => {
-    if (!window?.FileReader) {
-      reject(new Error(`No FileReader found from window scope.`));
-      return;
+    try {
+      if (!file || !(file instanceof Blob)) {
+        reject(new Error(`Invalid file: ${file?.name}`));
+        return;
+      }
+      const objectURL = URL.createObjectURL(file);
+      resolve(objectURL);
+    } catch (e) {
+      console.error(`Error creating object URL for ${file?.name}:`, e);
+      reject(new Error(`Error reading ${file?.name}: ${e.message}`));
     }
-    const reader = new FileReader();
-    reader.onload = e => resolve(e.target.result);
-    reader.onerror = e => {
-      console.error('Error (', e, `) happened while reading ${file.name}: ${e.target.result}`);
-      reject(new Error(`Error reading ${file.name}: ${e.target.result}`));
-    };
-    reader.readAsDataURL(file);
   });
 
 /**
@@ -41,6 +42,15 @@ const readImage = file =>
 const ImageFromFile = props => {
   const [promisedImage, setPromisedImage] = useState(readImage(props.file));
   const { className, rootClassName, aspectWidth = 1, aspectHeight = 1, file, id, children } = props;
+
+  // Revoke the object URL when the component unmounts to free memory
+  useEffect(() => {
+    return () => {
+      promisedImage.then(url => {
+        if (url && url.startsWith('blob:')) URL.revokeObjectURL(url);
+      }).catch(() => {});
+    };
+  }, []);
   const classes = classNames(rootClassName || css.root, className);
 
   return (

@@ -1722,6 +1722,18 @@ const HITCH_TYPE_SUBCATEGORIES = [
 
 const applyLocalCategoryOverrides = (categories = []) => {
   return categories.map(cat => {
+    // Move 'Other' subcategory to the bottom for any category
+    if (cat.subcategories?.length > 0) {
+      const otherIdx = cat.subcategories.findIndex(
+        s => s.name?.toLowerCase() === 'other' || s.id?.toLowerCase() === 'other'
+      );
+      if (otherIdx > -1 && otherIdx !== cat.subcategories.length - 1) {
+        const subs = [...cat.subcategories];
+        const [other] = subs.splice(otherIdx, 1);
+        cat = { ...cat, subcategories: [...subs, other] };
+      }
+    }
+
     if (cat.id !== 'Haulers_and_trailers') return cat;
     return {
       ...cat,

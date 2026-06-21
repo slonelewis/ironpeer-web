@@ -224,6 +224,37 @@ if (!dev) {
 // a 3rd party identity provider (e.g. Facebook or Google)
 app.use(passport.initialize());
 
+// Coming Soon mode — intercepts all non-API routes
+if (process.env.COMING_SOON === 'true') {
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/.well-known') || req.path.startsWith('/static')) {
+      return next();
+    }
+    return res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IronPeer — Coming Soon</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f0f0f; color: #fff; min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2rem; }
+    .logo { font-size: 2.5rem; font-weight: 800; color: #E8450A; letter-spacing: -1px; margin-bottom: 1rem; }
+    h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.75rem; color: #fff; }
+    p { color: #999; font-size: 1rem; max-width: 400px; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="logo">IronPeer</div>
+    <h1>Coming Soon</h1>
+    <p>The marketplace for heavy equipment rentals is on its way. Check back soon.</p>
+  </div>
+</body>
+</html>`);
+  });
+}
+
 // Server-side routes that do not render the application
 app.use('/api', apiRouter);
 

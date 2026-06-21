@@ -180,7 +180,6 @@ const EditListingAvailabilityPanel = props => {
     intl,
   } = props;
   // Hooks
-  const [isEditPlanModalOpen, setIsEditPlanModalOpen] = useState(false);
   const [isEditExceptionsModalOpen, setIsEditExceptionsModalOpen] = useState(false);
   const [valuesFromLastSubmit, setValuesFromLastSubmit] = useState(null);
 
@@ -215,16 +214,9 @@ const EditListingAvailabilityPanel = props => {
 
   const handlePlanSubmit = values => {
     setValuesFromLastSubmit(values);
-
-    // Final Form can wait for Promises to return.
-    return onSubmit(createAvailabilityPlan(values))
-      .then(() => {
-        setIsEditPlanModalOpen(false);
-        document.getElementById(EDIT_AVAILABILITY_PLAN_BUTTON)?.focus();
-      })
-      .catch(e => {
-        // Don't close modal if there was an error
-      });
+    return onSubmit(createAvailabilityPlan(values)).catch(e => {
+      // Keep form open on error
+    });
   };
 
   const sortedAvailabilityExceptions = allExceptions;
@@ -286,25 +278,19 @@ const EditListingAvailabilityPanel = props => {
         <FormattedMessage id={panelHeadingProps.id} values={{ ...panelHeadingProps.values }} />
       </H3>
 
-      <div className={css.planInfo}>
-        {!hasAvailabilityPlan ? (
-          <p>
-            <FormattedMessage id="EditListingAvailabilityPanel.availabilityPlanInfo" />
-          </p>
-        ) : null}
-
-        <InlineTextButton
-          id={EDIT_AVAILABILITY_PLAN_BUTTON}
-          className={css.editPlanButton}
-          onClick={() => setIsEditPlanModalOpen(true)}
-        >
-          {hasAvailabilityPlan ? (
-            <FormattedMessage id="EditListingAvailabilityPanel.editAvailabilityPlan" />
-          ) : (
-            <FormattedMessage id="EditListingAvailabilityPanel.setAvailabilityPlan" />
-          )}
-        </InlineTextButton>
-      </div>
+      <EditListingAvailabilityPlanForm
+        formId="EditListingAvailabilityPlanForm"
+        listingTitle={listingAttributes?.title}
+        availabilityPlan={availabilityPlan}
+        weekdays={rotateDays(WEEKDAYS, firstDayOfWeek)}
+        onSubmit={handlePlanSubmit}
+        initialValues={initialPlanValues}
+        inProgress={updateInProgress}
+        fetchErrors={errors}
+        useFullDays={useFullDays}
+        useMultipleSeats={useMultipleSeats}
+        unitType={unitType}
+      />
 
       {hasAvailabilityPlan ? (
         <>
@@ -357,31 +343,7 @@ const EditListingAvailabilityPanel = props => {
         </Button>
       ) : null}
 
-      {onManageDisableScrolling && isEditPlanModalOpen ? (
-        <Modal
-          id="EditAvailabilityPlan"
-          isOpen={isEditPlanModalOpen}
-          onClose={() => setIsEditPlanModalOpen(false)}
-          onManageDisableScrolling={onManageDisableScrolling}
-          focusElementId={EDIT_AVAILABILITY_PLAN_BUTTON}
-          containerClassName={css.modalContainer}
-          usePortal
-        >
-          <EditListingAvailabilityPlanForm
-            formId="EditListingAvailabilityPlanForm"
-            listingTitle={listingAttributes?.title}
-            availabilityPlan={availabilityPlan}
-            weekdays={rotateDays(WEEKDAYS, firstDayOfWeek)}
-            onSubmit={handlePlanSubmit}
-            initialValues={initialPlanValues}
-            inProgress={updateInProgress}
-            fetchErrors={errors}
-            useFullDays={useFullDays}
-            useMultipleSeats={useMultipleSeats}
-            unitType={unitType}
-          />
-        </Modal>
-      ) : null}
+
 
       {onManageDisableScrolling && isEditExceptionsModalOpen ? (
         <Modal

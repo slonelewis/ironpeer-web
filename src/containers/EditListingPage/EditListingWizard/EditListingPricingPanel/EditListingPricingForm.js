@@ -168,10 +168,10 @@ export const EditListingPricingForm = props => (
               name="price"
               className={css.input}
               autoFocus={autoFocus}
-              label={intl.formatMessage(
+              label={<>{intl.formatMessage(
                 { id: 'EditListingPricingForm.pricePerProduct' },
                 { unitType }
-              )}
+              )} <span className={css.requiredStar}>*</span></>}
               placeholder={intl.formatMessage({
                 id: 'EditListingPricingForm.priceInputPlaceholder',
               })}
@@ -189,6 +189,7 @@ export const EditListingPricingForm = props => (
             />
           ) : null}
 
+          <p className={css.requiredLegend}>* Required</p>
           <Button
             className={css.submitButton}
             type="submit"

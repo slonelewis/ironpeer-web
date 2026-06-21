@@ -86,3 +86,34 @@
   color: var(--colorGrey500);
   margin: 0 0 0.5rem;
 }
+
+.currentLocationButton {
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: 1.5px solid #E8450A;
+  color: #E8450A;
+  border-radius: 6px;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 0.75rem;
+  transition: background 0.15s, color 0.15s;
+}
+
+.currentLocationButton:hover:not(:disabled) {
+  background: #E8450A;
+  color: #fff;
+}
+
+.currentLocationButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.locateError {
+  font-size: 0.85rem;
+  color: var(--colorFail);
+  margin: 0 0 0.5rem;
+}

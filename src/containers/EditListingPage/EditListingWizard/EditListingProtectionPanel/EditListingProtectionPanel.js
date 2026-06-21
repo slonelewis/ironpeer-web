@@ -274,6 +274,8 @@ const EditListingProtectionPanel = props => {
 
       {submitError && <p className={css.errorMessage}>{submitError}</p>}
 
+      <p className={css.requiredLegend}>* Selection required to proceed</p>
+
       <div className={css.submitButton}>
         <PrimaryButton
           onClick={handleSubmit}

@@ -173,6 +173,12 @@
   margin-bottom: 1rem;
 }
 
+.requiredLegend {
+  font-size: 0.8rem;
+  color: var(--colorGrey500);
+  margin-bottom: 0.5rem;
+}
+
 .submitButton {
   margin-top: 2rem;
 }

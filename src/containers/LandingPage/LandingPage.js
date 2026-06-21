@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { bool, object } from 'prop-types';
+import { bool, object, arrayOf } from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 
@@ -8,7 +8,6 @@ import TopbarContainer from '../../containers/TopbarContainer/TopbarContainer';
 import FooterContainer from '../../containers/FooterContainer/FooterContainer';
 
 import { getListingsById } from '../../ducks/marketplaceData.duck';
-import { fetchFeaturedListings } from '../../ducks/featuredListings.duck';
 
 import css from './LandingPage.module.css';
 
@@ -207,7 +206,61 @@ const CATEGORIES = [
 
 // ─── LISTING CARD ─────────────────────────────────────────────────────────────
 
-const ListingCard = ({ listing }) => (
+const PLACEHOLDER_BG = [
+  'linear-gradient(135deg, #D4E4C2, #A8C285)',
+  'linear-gradient(135deg, #C4D4E8, #85A8CB)',
+  'linear-gradient(135deg, #E8D4C0, #CBB085)',
+  'linear-gradient(135deg, #E8E4C0, #CBCA85)',
+  'linear-gradient(135deg, #D4C2E8, #A885CB)',
+  'linear-gradient(135deg, #C2E4D4, #85CBA8)',
+];
+
+const RealListingCard = ({ listing, index }) => {
+  const { title, price, geolocation } = listing.attributes || {};
+  const images = listing.images || [];
+  const firstImage = images[0];
+  const imageUrl =
+    firstImage?.attributes?.variants?.['landscape-crop']?.url ||
+    firstImage?.attributes?.variants?.['landscape-crop2x']?.url ||
+    null;
+  const bg = PLACEHOLDER_BG[index % PLACEHOLDER_BG.length];
+  const formattedPrice = price
+    ? `$${Math.round(price.amount / 100)}`
+    : null;
+
+  return (
+    <NamedLink
+      name="ListingPage"
+      params={{ id: listing.id.uuid, slug: title ? title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'listing' }}
+      className={css.listingCard}
+    >
+      <div
+        className={css.listingImg}
+        style={imageUrl ? { backgroundImage: `url(${imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : { background: bg }}
+      >
+        {!imageUrl && <span className={css.listingEmoji}>🚜</span>}
+      </div>
+      <div className={css.listingMeta}>
+        <div>
+          <div className={css.listingName}>{title}</div>
+          {geolocation && (
+            <div className={css.listingLocation}>
+              {listing.attributes?.publicData?.locationAddress || 'Location not specified'}
+            </div>
+          )}
+          {formattedPrice && (
+            <div className={css.listingPrice}>
+              <strong>{formattedPrice}</strong> / day
+            </div>
+          )}
+        </div>
+      </div>
+    </NamedLink>
+  );
+};
+
+// Fallback mock card (used when no real listings yet)
+const MockListingCard = ({ listing }) => (
   <NamedLink name="SearchPage" className={css.listingCard}>
     <div className={css.listingImg} style={{ background: listing.bg }}>
       <span className={css.listingEmoji}>{listing.emoji}</span>
@@ -229,9 +282,11 @@ const ListingCard = ({ listing }) => (
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 
 export const LandingPageComponent = props => {
-  // eslint-disable-next-line no-unused-vars
-  const { featuredListings } = props;
+  const { realListings = [] } = props;
   const [activeTab, setActiveTab] = useState('rent');
+  const hasRealListings = realListings.length > 0;
+  const featuredReal = realListings.slice(0, 6);
+  const recentReal = realListings.slice(6, 12);
 
   return (
     <Page
@@ -327,9 +382,13 @@ export const LandingPageComponent = props => {
         <div className={css.sectionLabel}>Available near you</div>
         <div className={css.sectionTitle}>Featured equipment</div>
         <div className={css.listingsGrid}>
-          {FEATURED_LISTINGS.map((listing, i) => (
-            <ListingCard key={i} listing={listing} />
-          ))}
+          {hasRealListings
+            ? featuredReal.map((listing, i) => (
+                <RealListingCard key={listing.id.uuid} listing={listing} index={i} />
+              ))
+            : FEATURED_LISTINGS.map((listing, i) => (
+                <MockListingCard key={i} listing={listing} />
+              ))}
         </div>
       </section>
 
@@ -350,15 +409,21 @@ export const LandingPageComponent = props => {
       </section>
 
       {/* ── MORE LISTINGS ── */}
-      <section className={css.listingsMore}>
-        <div className={css.sectionLabel}>More near you</div>
-        <div className={css.sectionTitle}>Recently listed</div>
-        <div className={css.listingsGrid}>
-          {RECENT_LISTINGS.map((listing, i) => (
-            <ListingCard key={i} listing={listing} />
-          ))}
-        </div>
-      </section>
+      {(hasRealListings ? recentReal.length > 0 : true) && (
+        <section className={css.listingsMore}>
+          <div className={css.sectionLabel}>More near you</div>
+          <div className={css.sectionTitle}>Recently listed</div>
+          <div className={css.listingsGrid}>
+            {hasRealListings
+              ? recentReal.map((listing, i) => (
+                  <RealListingCard key={listing.id.uuid} listing={listing} index={i + 6} />
+                ))
+              : RECENT_LISTINGS.map((listing, i) => (
+                  <MockListingCard key={i} listing={listing} />
+                ))}
+          </div>
+        </section>
+      )}
 
       {/* ── HOW IT WORKS ── */}
       <section className={css.howItWorks}>
@@ -460,28 +525,25 @@ export const LandingPageComponent = props => {
 LandingPageComponent.propTypes = {
   pageAssetsData: object,
   inProgress: bool,
-  featuredListings: object,
+  realListings: arrayOf(object),
 };
 
 LandingPageComponent.defaultProps = {
   pageAssetsData: null,
   inProgress: false,
-  featuredListings: null,
+  realListings: [],
 };
 
 const mapStateToProps = state => {
   const { pageAssetsData, inProgress, error } = state.hostedAssets || {};
-  const featuredListingData = state.featuredListings || {};
+  const landingState = state.LandingPage || {};
+  const listingIds = (landingState.listingIds || []).map(uuid => ({ uuid, type: 'UUID' }));
+  const realListings = getListingsById(state, listingIds);
 
-  const getListingEntitiesById = listingIds => getListingsById(state, listingIds);
-
-  return { pageAssetsData, featuredListingData, getListingEntitiesById, inProgress, error };
+  return { pageAssetsData, inProgress, error, realListings };
 };
 
-const mapDispatchToProps = dispatch => ({
-  onFetchFeaturedListings: (sectionId, parentPage, listingImageConfig, allSections) =>
-    dispatch(fetchFeaturedListings({ sectionId, parentPage, listingImageConfig, allSections })),
-});
+const mapDispatchToProps = () => ({});
 
 const LandingPage = compose(
   connect(

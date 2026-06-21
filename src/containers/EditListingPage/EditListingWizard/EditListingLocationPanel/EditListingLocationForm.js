@@ -10,6 +10,8 @@ import {
   autocompletePlaceSelected,
   composeValidators,
 } from '../../../../util/validators';
+import { useConfiguration } from '../../../../context/configurationContext';
+import { Map } from '../../../../components/Map/Map';
 
 // Import shared components
 import {
@@ -66,6 +68,13 @@ export const EditListingLocationForm = props => (
         values,
       } = formRenderProps;
 
+      // Extract coordinates from the selected location for map display
+      const selectedLocation = values?.location?.selectedPlace;
+      const mapCenter = selectedLocation?.origin
+        ? { lat: selectedLocation.origin.lat, lng: selectedLocation.origin.lng }
+        : null;
+      const mapAddress = selectedLocation?.address || '';
+
       const intl = useIntl();
       const addressRequiredMessage = intl.formatMessage({
         id: 'EditListingLocationForm.addressRequired',
@@ -108,7 +117,7 @@ export const EditListingLocationForm = props => (
             autoFocus={autoFocus}
             name="location"
             id={`${formId}.location`}
-            label={intl.formatMessage({ id: 'EditListingLocationForm.address' })}
+            label={<>{intl.formatMessage({ id: 'EditListingLocationForm.address' })} <span className={css.requiredStar}>*</span></>}
             placeholder={intl.formatMessage({
               id: 'EditListingLocationForm.addressPlaceholder',
             })}
@@ -121,6 +130,18 @@ export const EditListingLocationForm = props => (
             )}
           />
 
+          {mapCenter ? (
+            <div className={css.mapContainer}>
+              <Map
+                center={mapCenter}
+                obfuscatedCenter={mapCenter}
+                address={mapAddress}
+                zoom={15}
+                useStaticMap={false}
+              />
+            </div>
+          ) : null}
+
           <FieldTextInput
             className={css.building}
             type="text"
@@ -131,6 +152,8 @@ export const EditListingLocationForm = props => (
               id: 'EditListingLocationForm.buildingPlaceholder',
             })}
           />
+
+          <p className={css.requiredLegend}>* Required</p>
 
           <Button
             className={css.submitButton}

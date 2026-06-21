@@ -64,6 +64,17 @@
   display: none;
 }
 
+.requiredStar {
+  color: #E8450A;
+  margin-left: 2px;
+}
+
+.requiredLegend {
+  font-size: 0.8rem;
+  color: var(--colorGrey500);
+  margin-bottom: 0.5rem;
+}
+
 .submitButton {
   margin-top: auto;
   margin-bottom: 24px;

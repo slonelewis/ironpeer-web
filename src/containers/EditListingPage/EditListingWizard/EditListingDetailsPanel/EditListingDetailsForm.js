@@ -161,10 +161,10 @@ const CategoryField = props => {
           name={currentCategoryKey}
           className={css.listingTypeSelect}
           onChange={event => handleCategoryChange(event, level, currentCategoryOptions)}
-          label={intl.formatMessage(
+          label={<>{intl.formatMessage(
             { id: 'EditListingDetailsForm.categoryLabel' },
             { categoryLevel: currentCategoryKey }
-          )}
+          )} <span className={css.requiredStar}>*</span></>}
           validate={required(
             intl.formatMessage(
               { id: 'EditListingDetailsForm.categoryRequired' },
@@ -427,7 +427,7 @@ const EditListingDetailsForm = props => (
               name="title"
               className={css.title}
               type="text"
-              label={intl.formatMessage({ id: 'EditListingDetailsForm.title' })}
+              label={<>{intl.formatMessage({ id: 'EditListingDetailsForm.title' })} <span className={css.requiredStar}>*</span></>}
               placeholder={intl.formatMessage({
                 id: 'EditListingDetailsForm.titlePlaceholder',
               })}
@@ -443,7 +443,7 @@ const EditListingDetailsForm = props => (
               name="description"
               className={css.description}
               type="textarea"
-              label={intl.formatMessage({ id: 'EditListingDetailsForm.description' })}
+              label={<>{intl.formatMessage({ id: 'EditListingDetailsForm.description' })} <span className={css.requiredStar}>*</span></>}
               placeholder={intl.formatMessage({
                 id: 'EditListingDetailsForm.descriptionPlaceholder',
               })}
@@ -474,6 +474,7 @@ const EditListingDetailsForm = props => (
             </p>
           )}
 
+          <p className={css.requiredLegend}>* Required</p>
           <Button
             className={css.submitButton}
             type="submit"

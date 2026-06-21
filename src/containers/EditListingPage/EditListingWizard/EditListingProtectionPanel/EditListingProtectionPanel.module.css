@@ -1,0 +1,151 @@
+@import '../../../../styles/customMediaQueries.css';
+
+.root {
+  flex-grow: 1;
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.form {
+  flex-grow: 1;
+}
+
+.sectionTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  margin-top: 1.5rem;
+  color: var(--colorGrey700);
+}
+
+.radioGroup {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.radioLabel input {
+  cursor: pointer;
+}
+
+.subSection {
+  background: var(--colorGrey50);
+  border: 1px solid var(--colorGrey100);
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.disclaimer {
+  background: #fff8e7;
+  border: 1px solid #f5c842;
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.disclaimerText {
+  font-size: 0.875rem;
+  color: var(--colorGrey700);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.checkboxLabel input {
+  margin-top: 2px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #e8f5e9;
+  border: 1px solid #81c784;
+  color: #2e7d32;
+  border-radius: 20px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 0.75rem;
+}
+
+.uploadField {
+  margin-top: 0.75rem;
+}
+
+.uploadLabel {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+  color: var(--colorGrey700);
+}
+
+.fileInput {
+  display: block;
+  width: 100%;
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+}
+
+.dateInput {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--colorGrey300);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.fieldError {
+  color: var(--colorFail);
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+.protectedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #e3f2fd;
+  border: 1px solid #64b5f6;
+  color: #1565c0;
+  border-radius: 20px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.submitButton {
+  margin-top: 2rem;
+}
+
+.errorMessage {
+  color: var(--colorFail);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}

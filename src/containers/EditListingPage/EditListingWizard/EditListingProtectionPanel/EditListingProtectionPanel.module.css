@@ -86,17 +86,28 @@
 
 .checkboxLabel {
   display: flex;
+  flex-direction: row;
   align-items: flex-start;
   gap: 0.75rem;
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 500;
+  width: 100%;
 }
 
-.checkboxLabel input {
-  margin-top: 2px;
-  cursor: pointer;
+.checkboxLabel input[type='checkbox'] {
+  position: relative;
   flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0 0;
+  cursor: pointer;
+  accent-color: #E8450A;
+}
+
+.checkboxText {
+  flex: 1;
+  line-height: 1.5;
 }
 
 .badge {

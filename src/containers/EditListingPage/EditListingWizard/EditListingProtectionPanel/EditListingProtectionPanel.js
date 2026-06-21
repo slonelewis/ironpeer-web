@@ -264,8 +264,10 @@ const EditListingProtectionPanel = props => {
               checked={disclaimerAccepted}
               onChange={e => setDisclaimerAccepted(e.target.checked)}
             />
-            I understand and agree that IronPeer Rental Protection covers this equipment during
-            all rental periods.
+            <span className={css.checkboxText}>
+              I understand and agree that IronPeer Rental Protection covers this equipment during
+              all rental periods.
+            </span>
           </label>
         </div>
       )}

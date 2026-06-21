@@ -1716,7 +1716,6 @@ const HITCH_TYPE_SUBCATEGORIES = [
   { name: 'Bumper pull', id: 'Bumper-pull' },
   { name: 'Gooseneck', id: 'Gooseneck' },
   { name: 'Fifth wheel', id: 'Fifth-wheel' },
-  { name: 'Pole', id: 'Pole' },
   { name: 'Panel hitch', id: 'Panel-hitch' },
 ];
 

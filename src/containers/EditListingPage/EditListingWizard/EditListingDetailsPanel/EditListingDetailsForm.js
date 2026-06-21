@@ -162,8 +162,10 @@ const CategoryField = props => {
           className={css.listingTypeSelect}
           onChange={event => handleCategoryChange(event, level, currentCategoryOptions)}
           label={<>{
-            // Use 'Hitch type' label for subcategory level when parent is Haulers and trailers
-            level > 1 && values[`${prefix}1`] === 'Haulers_and_trailers'
+            // Level 2 = Trailer type, Level 3+ = Hitch type for Haulers and trailers
+            level === 2 && values[`${prefix}1`] === 'Haulers_and_trailers'
+              ? 'Trailer type'
+              : level > 2 && values[`${prefix}1`] === 'Haulers_and_trailers'
               ? 'Hitch type'
               : intl.formatMessage(
                   { id: 'EditListingDetailsForm.categoryLabel' },
@@ -171,7 +173,9 @@ const CategoryField = props => {
                 )
           } <span className={css.requiredStar}>*</span></>}
           validate={required(
-            level > 1 && values[`${prefix}1`] === 'Haulers_and_trailers'
+            level === 2 && values[`${prefix}1`] === 'Haulers_and_trailers'
+              ? 'Please select a trailer type.'
+              : level > 2 && values[`${prefix}1`] === 'Haulers_and_trailers'
               ? 'Please select a hitch type.'
               : intl.formatMessage(
                   { id: 'EditListingDetailsForm.categoryRequired' },
@@ -180,7 +184,9 @@ const CategoryField = props => {
           )}
         >
           <option disabled value="">
-            {level > 1 && values[`${prefix}1`] === 'Haulers_and_trailers'
+            {level === 2 && values[`${prefix}1`] === 'Haulers_and_trailers'
+              ? 'Select trailer type'
+              : level > 2 && values[`${prefix}1`] === 'Haulers_and_trailers'
               ? 'Select hitch type'
               : intl.formatMessage(
                   { id: 'EditListingDetailsForm.categoryPlaceholder' },

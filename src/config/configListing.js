@@ -55,6 +55,23 @@
 export const listingFields = [
   // ─── IronPeer Equipment Fields ───────────────────────────────────────────────
   {
+    key: 'rentalPeriods',
+    scope: 'public',
+    schemaType: 'multi-enum',
+    enumOptions: [
+      { option: 'hourly', label: 'Hourly' },
+      { option: 'daily', label: 'Daily' },
+      { option: 'weekly', label: 'Weekly' },
+      { option: 'monthly', label: 'Monthly' },
+    ],
+    showConfig: { label: 'Rental periods', isDetail: true },
+    saveConfig: {
+      label: 'Rental periods available',
+      isRequired: true,
+      requiredMessage: 'Select at least one rental period.',
+    },
+  },
+  {
     key: 'equipmentMake',
     scope: 'public',
     schemaType: 'text',

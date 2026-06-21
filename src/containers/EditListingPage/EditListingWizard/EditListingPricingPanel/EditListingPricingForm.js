@@ -15,6 +15,7 @@ import { FIXED, isBookingProcess } from '../../../../transactions/transaction';
 import { Button, Form, FieldCurrencyInput } from '../../../../components';
 
 import BookingPriceVariants from './BookingPriceVariants';
+import RentalPeriodPrices from './RentalPeriodPrices';
 import StartTimeInterval from './StartTimeInverval';
 
 // Import modules from this directory
@@ -116,6 +117,7 @@ export const EditListingPricingForm = props => (
         fetchErrors,
         initialValues: formInitialValues,
         values: formValues,
+        rentalPeriods,
       } = formRenderProps;
 
       const intl = useIntl();
@@ -141,7 +143,14 @@ export const EditListingPricingForm = props => (
         <Form onSubmit={handleSubmit} className={classes}>
           <ErrorMessages fetchErrors={fetchErrors} />
 
-          {isUsingPriceVariants ? (
+          {rentalPeriods?.length > 0 ? (
+            <RentalPeriodPrices
+              formId={formId}
+              rentalPeriods={rentalPeriods}
+              marketplaceCurrency={marketplaceCurrency}
+              listingMinimumPriceSubUnits={listingMinimumPriceSubUnits}
+            />
+          ) : isUsingPriceVariants ? (
             <BookingPriceVariants
               formId={formId}
               formApi={formApi}

@@ -36,18 +36,31 @@ const getListingTypeConfig = (publicData, listingTypes) => {
 // This is a tentative approach to contain logic in one place.
 const getInitialValues = props => {
   const { listing, listingTypes } = props;
-  const { publicData } = listing?.attributes || {};
-  const { unitType } = publicData || {};
+  const { publicData, price } = listing?.attributes || {};
+  const { unitType, rentalPeriods = [], rentalPrices = {} } = publicData || {};
   const listingTypeConfig = getListingTypeConfig(publicData, listingTypes);
-  // Note: publicData contains priceVariationsEnabled if listing is created with priceVariations enabled.
   const isPriceVariationsInUse = isPriceVariationsEnabled(publicData, listingTypeConfig);
+
+  // IronPeer: pre-populate per-period price fields from saved rentalPrices
+  if (rentalPeriods.length > 0) {
+    const { types: sdkTypes } = require('../../../../util/sdkLoader');
+    const { Money } = sdkTypes;
+    const periodPriceFields = {};
+    rentalPeriods.forEach(period => {
+      const saved = rentalPrices[`price_${period}`];
+      if (saved) {
+        periodPriceFields[`rentalPrice_${period}`] = new Money(saved.amount, saved.currency);
+      }
+    });
+    return { price, ...periodPriceFields };
+  }
 
   return unitType === FIXED || isPriceVariationsInUse
     ? {
         ...getInitialValuesForPriceVariants(props, isPriceVariationsInUse),
         ...getInitialValuesForStartTimeInterval(props),
       }
-    : { price: listing?.attributes?.price };
+    : { price };
 };
 
 // This is needed to show the listing's price consistently over XHR calls.
@@ -114,6 +127,7 @@ const EditListingPricingPanel = props => {
   const isPublished = listing?.id && listing?.attributes?.state !== LISTING_STATE_DRAFT;
 
   const publicData = listing?.attributes?.publicData;
+  const rentalPeriods = publicData?.rentalPeriods || [];
   const listingTypeConfig = getListingTypeConfig(publicData, listingTypes);
   const transactionProcessAlias = listingTypeConfig?.transactionType?.alias;
   const process = listingTypeConfig?.transactionType?.process;
@@ -167,6 +181,39 @@ const EditListingPricingPanel = props => {
             // New values for listing attributes
             let updateValues = {};
 
+            // IronPeer: save per-period prices from rentalPeriods selection
+            if (rentalPeriods.length > 0) {
+              const { types: sdkTypes } = require('../../../../util/sdkLoader');
+              const { Money } = sdkTypes;
+              const rentalPricePublicData = {};
+              let basePrice = null;
+              rentalPeriods.forEach(period => {
+                const fieldValue = values[`rentalPrice_${period}`];
+                if (fieldValue) {
+                  rentalPricePublicData[`price_${period}`] = {
+                    amount: fieldValue.amount,
+                    currency: fieldValue.currency,
+                  };
+                  // Use daily as the listing base price; fall back to first selected period
+                  if (period === 'daily' || !basePrice) {
+                    basePrice = fieldValue;
+                  }
+                }
+              });
+              updateValues = {
+                price: basePrice || price,
+                publicData: { rentalPrices: rentalPricePublicData },
+              };
+              setState({
+                initialValues: getInitialValues({
+                  listing: getOptimisticListing(listing, updateValues),
+                  listingTypes,
+                }),
+              });
+              onSubmit(updateValues);
+              return;
+            }
+
             if (unitType === FIXED || isPriceVariationsInUse) {
               let publicDataUpdates = { priceVariationsEnabled: isPriceVariationsInUse };
               // NOTE: components that handle price variants and start time interval are currently
@@ -216,6 +263,7 @@ const EditListingPricingPanel = props => {
             });
             onSubmit(updateValues);
           }}
+          rentalPeriods={rentalPeriods}
           marketplaceCurrency={marketplaceCurrency}
           unitType={unitType}
           listingTypeConfig={listingTypeConfig}

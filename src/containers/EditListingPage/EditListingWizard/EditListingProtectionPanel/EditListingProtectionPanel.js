@@ -142,25 +142,21 @@ const EditListingProtectionPanel = props => {
       <p style={{ fontSize: '0.875rem', color: '#666', marginBottom: '0.75rem' }}>
         Examples: trailers, tow vehicles, equipment that travels on public roads.
       </p>
-      <div className={css.radioGroup}>
-        <label className={css.radioLabel}>
-          <input
-            type="radio"
-            name="roadLegal"
-            checked={isRoadLegal === true}
-            onChange={() => setIsRoadLegal(true)}
-          />
+      <div className={css.buttonGroup}>
+        <button
+          type="button"
+          className={isRoadLegal === true ? css.optionButtonActive : css.optionButton}
+          onClick={() => setIsRoadLegal(true)}
+        >
           Yes — it&apos;s road-legal
-        </label>
-        <label className={css.radioLabel}>
-          <input
-            type="radio"
-            name="roadLegal"
-            checked={isRoadLegal === false}
-            onChange={() => setIsRoadLegal(false)}
-          />
+        </button>
+        <button
+          type="button"
+          className={isRoadLegal === false ? css.optionButtonActive : css.optionButton}
+          onClick={() => setIsRoadLegal(false)}
+        >
           No — off-road / yard equipment only
-        </label>
+        </button>
       </div>
 
       {isRoadLegal === true && (
@@ -206,25 +202,21 @@ const EditListingProtectionPanel = props => {
         equipment during all rentals. If you do carry your own policy, you can submit it here
         to display an &ldquo;Owner-insured&rdquo; badge on your listing.
       </p>
-      <div className={css.radioGroup}>
-        <label className={css.radioLabel}>
-          <input
-            type="radio"
-            name="hasInsurance"
-            checked={hasInsurance === true}
-            onChange={() => setHasInsurance(true)}
-          />
+      <div className={css.buttonGroup}>
+        <button
+          type="button"
+          className={hasInsurance === true ? css.optionButtonActive : css.optionButton}
+          onClick={() => setHasInsurance(true)}
+        >
           Yes — I carry my own policy
-        </label>
-        <label className={css.radioLabel}>
-          <input
-            type="radio"
-            name="hasInsurance"
-            checked={hasInsurance === false}
-            onChange={() => setHasInsurance(false)}
-          />
+        </button>
+        <button
+          type="button"
+          className={hasInsurance === false ? css.optionButtonActive : css.optionButton}
+          onClick={() => setHasInsurance(false)}
+        >
           No — use IronPeer protection only
-        </label>
+        </button>
       </div>
 
       {hasInsurance === true && (
@@ -258,7 +250,7 @@ const EditListingProtectionPanel = props => {
       )}
 
       {hasInsurance === false && (
-        <div className={css.disclaimer}>
+        <div className={css.disclaimer} style={{ boxSizing: 'border-box', width: '100%', overflowWrap: 'break-word' }}>
           <p className={css.disclaimerText}>
             <strong>IronPeer Rental Protection</strong> covers your equipment during every rental
             period — from the moment a rental starts until the equipment is returned. You are not

@@ -37,12 +37,12 @@ export const SUPPORTED_TABS = [
   DETAILS,
   PRICING,
   PRICING_AND_STOCK,
+  PROTECTION,
   DELIVERY,
   LOCATION,
   AVAILABILITY,
   PHOTOS,
   STYLE,
-  PROTECTION,
 ];
 
 const pathParamsToNextTab = (params, tab, marketplaceTabs) => {

@@ -1,0 +1,19 @@
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+startCommand = "node scripts/start.js"
+healthcheckPath = "/"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+
+# ── IronPeer Cron Jobs ─────────────────────────────────────────────────────────
+# These run as separate Railway services (add them in Railway dashboard > New Service > Cron)
+#
+# Doc Expiry Check — runs daily at 8am Pacific (15:00 UTC)
+# Schedule: 0 15 * * *
+# Command:  node scripts/checkDocExpiry.js
+# Env vars needed:
+#   SHARETRIBE_INTEGRATION_CLIENT_ID     (already in Railway)
+#   SHARETRIBE_INTEGRATION_CLIENT_SECRET (get from Sharetribe Console > Build > Applications > Integration API)

@@ -14,8 +14,6 @@ export const fetchLandingListings = createAsyncThunk(
       const response = await sdk.listings.query({
         perPage: 12,
         page: 1,
-        minStock: 1,
-        stockMode: 'match-undefined',
         include: ['images', 'author'],
         'fields.listing': ['title', 'geolocation', 'price', 'deleted', 'state', 'publicData'],
         'fields.image': ['variants.landscape-crop', 'variants.landscape-crop2x'],

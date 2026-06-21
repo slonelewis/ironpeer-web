@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form as FinalForm } from 'react-final-form';
 import classNames from 'classnames';
 
@@ -8,9 +8,34 @@ import { Form, PrimaryButton, FieldTextInput, NamedLink } from '../../../compone
 
 import css from './LoginForm.module.css';
 
-const LoginFormComponent = props => (
+const REMEMBER_ME_KEY = 'ironpeer_remember_email';
+
+const LoginFormComponent = props => {
+  const [rememberMe, setRememberMe] = useState(false);
+  const [savedEmail, setSavedEmail] = useState('');
+
+  useEffect(() => {
+    const stored = localStorage.getItem(REMEMBER_ME_KEY);
+    if (stored) {
+      setSavedEmail(stored);
+      setRememberMe(true);
+    }
+  }, []);
+
+  const handleRememberSubmit = (values, form) => {
+    if (rememberMe && values.email) {
+      localStorage.setItem(REMEMBER_ME_KEY, values.email);
+    } else {
+      localStorage.removeItem(REMEMBER_ME_KEY);
+    }
+    if (props.onSubmit) props.onSubmit(values, form);
+  };
+
+  return (
   <FinalForm
     {...props}
+    initialValues={savedEmail ? { email: savedEmail } : props.initialValues}
+    onSubmit={handleRememberSubmit}
     render={fieldRenderProps => {
       const {
         rootClassName,
@@ -92,6 +117,17 @@ const LoginFormComponent = props => (
               validate={passwordRequired}
             />
           </div>
+          <div className={css.rememberMeRow}>
+            <label className={css.rememberMeLabel}>
+              <input
+                type="checkbox"
+                className={css.rememberMeCheckbox}
+                checked={rememberMe}
+                onChange={e => setRememberMe(e.target.checked)}
+              />
+              <span>Remember me</span>
+            </label>
+          </div>
           <div className={css.bottomWrapper}>
             <p className={css.bottomWrapperText}>
               <span className={css.recoveryLinkInfo}>
@@ -109,7 +145,8 @@ const LoginFormComponent = props => (
       );
     }}
   />
-);
+  );
+};
 
 /**
  * A component that renders the login form.

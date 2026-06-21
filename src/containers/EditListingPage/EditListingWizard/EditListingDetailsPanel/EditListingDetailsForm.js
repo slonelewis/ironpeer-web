@@ -161,22 +161,31 @@ const CategoryField = props => {
           name={currentCategoryKey}
           className={css.listingTypeSelect}
           onChange={event => handleCategoryChange(event, level, currentCategoryOptions)}
-          label={<>{intl.formatMessage(
-            { id: 'EditListingDetailsForm.categoryLabel' },
-            { categoryLevel: currentCategoryKey }
-          )} <span className={css.requiredStar}>*</span></>}
+          label={<>{
+            // Use 'Hitch type' label for subcategory level when parent is Haulers and trailers
+            level > 1 && values[`${prefix}1`] === 'Haulers_and_trailers'
+              ? 'Hitch type'
+              : intl.formatMessage(
+                  { id: 'EditListingDetailsForm.categoryLabel' },
+                  { categoryLevel: currentCategoryKey }
+                )
+          } <span className={css.requiredStar}>*</span></>}
           validate={required(
-            intl.formatMessage(
-              { id: 'EditListingDetailsForm.categoryRequired' },
-              { categoryLevel: currentCategoryKey }
-            )
+            level > 1 && values[`${prefix}1`] === 'Haulers_and_trailers'
+              ? 'Please select a hitch type.'
+              : intl.formatMessage(
+                  { id: 'EditListingDetailsForm.categoryRequired' },
+                  { categoryLevel: currentCategoryKey }
+                )
           )}
         >
           <option disabled value="">
-            {intl.formatMessage(
-              { id: 'EditListingDetailsForm.categoryPlaceholder' },
-              { categoryLevel: currentCategoryKey }
-            )}
+            {level > 1 && values[`${prefix}1`] === 'Haulers_and_trailers'
+              ? 'Select hitch type'
+              : intl.formatMessage(
+                  { id: 'EditListingDetailsForm.categoryPlaceholder' },
+                  { categoryLevel: currentCategoryKey }
+                )}
           </option>
 
           {currentCategoryOptions.map(option => (

@@ -1710,6 +1710,37 @@ const hasMandatoryConfigs = hostedConfig => {
   );
 };
 
+// Patch hosted categories with local overrides.
+// Used to add missing subcategories (e.g. hitch types for Enclosed/Other hauler trailers)
+// without requiring a Sharetribe Console update.
+const HITCH_TYPE_SUBCATEGORIES = [
+  { name: 'Bumper pull', id: 'Bumper-pull' },
+  { name: 'Gooseneck', id: 'Gooseneck' },
+  { name: 'Fifth wheel', id: 'Fifth-wheel' },
+  { name: 'Pole', id: 'Pole' },
+  { name: 'Panel hitch', id: 'Panel-hitch' },
+];
+
+const applyLocalCategoryOverrides = (categories = []) => {
+  return categories.map(cat => {
+    if (cat.id !== 'Haulers_and_trailers') return cat;
+    return {
+      ...cat,
+      subcategories: (cat.subcategories || []).map(sub => {
+        // Add hitch type subcategories to any hauler sub that lacks them
+        if (!sub.subcategories || sub.subcategories.length === 0) {
+          return { ...sub, subcategories: HITCH_TYPE_SUBCATEGORIES };
+        }
+        // For existing ones (Dump trailers, Tilt deck, etc.), expand their options
+        return {
+          ...sub,
+          subcategories: HITCH_TYPE_SUBCATEGORIES,
+        };
+      }),
+    };
+  });
+};
+
 export const mergeConfig = (configAsset = {}, defaultConfigs = {}) => {
   // Remove trailing slash from marketplaceRootURL if any
   const marketplaceRootURL = defaultConfigs.marketplaceRootURL;
@@ -1726,7 +1757,7 @@ export const mergeConfig = (configAsset = {}, defaultConfigs = {}) => {
     getListingMinimumPrice(configAsset.transactionSize) ||
     defaultConfigs.listingMinimumPriceSubUnits;
 
-  const validHostedCategories = validateCategoryConfig(configAsset.categories);
+  const validHostedCategories = applyLocalCategoryOverrides(validateCategoryConfig(configAsset.categories));
   const categoryConfiguration = getBuiltInCategorySpecs(validHostedCategories);
   const listingConfiguration = mergeListingConfig(
     configAsset,

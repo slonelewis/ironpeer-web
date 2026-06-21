@@ -73,7 +73,7 @@ const CustomFieldEnum = props => {
 };
 
 const CustomFieldMultiEnum = props => {
-  const { name, fieldConfig, defaultRequiredMessage, formId } = props;
+  const { name, fieldConfig, defaultRequiredMessage, formId, disabled } = props;
   const { enumOptions = [], saveConfig } = fieldConfig || {};
   const { isRequired, requiredMessage } = saveConfig || {};
   const label = getLabelWithRequired(fieldConfig);
@@ -89,13 +89,14 @@ const CustomFieldMultiEnum = props => {
       label={label}
       helpText={fieldConfig?.helpText}
       options={createFilterOptions(enumOptions)}
+      disabled={disabled}
       {...validateMaybe}
     />
   ) : null;
 };
 
 const CustomFieldShortText = props => {
-  const { name, fieldConfig, defaultRequiredMessage, formId, intl } = props;
+  const { name, fieldConfig, defaultRequiredMessage, formId, intl, disabled } = props;
   const { placeholderMessage, isRequired, requiredMessage } = fieldConfig?.saveConfig || {};
   const label = getLabelWithRequired(fieldConfig);
   const validateMaybe = isRequired
@@ -114,13 +115,14 @@ const CustomFieldShortText = props => {
       label={label}
       helpText={fieldConfig?.helpText}
       placeholder={placeholder}
+      disabled={disabled}
       {...validateMaybe}
     />
   );
 };
 
 const CustomFieldText = props => {
-  const { name, fieldConfig, defaultRequiredMessage, formId, intl } = props;
+  const { name, fieldConfig, defaultRequiredMessage, formId, intl, disabled } = props;
   const { placeholderMessage, isRequired, requiredMessage } = fieldConfig?.saveConfig || {};
   const label = getLabelWithRequired(fieldConfig);
   const validateMaybe = isRequired
@@ -138,13 +140,14 @@ const CustomFieldText = props => {
       label={label}
       helpText={fieldConfig?.helpText}
       placeholder={placeholder}
+      disabled={disabled}
       {...validateMaybe}
     />
   );
 };
 
 const CustomFieldLong = props => {
-  const { name, fieldConfig, defaultRequiredMessage, formId, intl } = props;
+  const { name, fieldConfig, defaultRequiredMessage, formId, intl, disabled } = props;
   const { minimum, maximum, saveConfig } = fieldConfig;
   const { placeholderMessage, isRequired, requiredMessage } = saveConfig || {};
   const label = getLabelWithRequired(fieldConfig);
@@ -181,7 +184,8 @@ const CustomFieldLong = props => {
       }}
       label={label}
       placeholder={placeholder}
-      validate={value => validate(value, minimum, maximum)}
+      disabled={disabled}
+      validate={disabled ? undefined : value => validate(value, minimum, maximum)}
       onWheel={e => {
         // fix: number input should not change value on scroll
         if (e.target === document.activeElement) {

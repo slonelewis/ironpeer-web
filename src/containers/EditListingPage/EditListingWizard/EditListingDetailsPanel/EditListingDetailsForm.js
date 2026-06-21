@@ -261,15 +261,20 @@ const AddListingFields = props => {
     const isTargetListingType = isFieldForListingType(listingType, fieldConfig);
     const isTargetCategory = isFieldForCategory(targetCategoryIds, fieldConfig);
 
-    // Build a potentially-overridden fieldConfig for conditional fields
+    // Delivery radius and fee: required + enabled only when deliveryAvailable === true
+    const isDeliveryConditional = key === 'deliveryRadius' || key === 'deliveryFee';
+    const deliveryDisabled = isDeliveryConditional && deliveryAvailable !== true;
     let resolvedFieldConfig = fieldConfig;
-    if (key === 'deliveryRadius') {
+    if (isDeliveryConditional) {
       resolvedFieldConfig = {
         ...fieldConfig,
         saveConfig: {
           ...fieldConfig.saveConfig,
           isRequired: deliveryAvailable === true,
-          requiredMessage: 'Delivery radius is required when delivery is available.',
+          requiredMessage:
+            key === 'deliveryRadius'
+              ? 'Delivery radius is required when delivery is available.'
+              : 'Delivery fee is required when delivery is available.',
         },
       };
     }
@@ -285,6 +290,7 @@ const AddListingFields = props => {
               id: 'EditListingDetailsForm.defaultRequiredMessage',
             })}
             formId={formId}
+            disabled={deliveryDisabled}
           />,
         ]
       : pickedFields;

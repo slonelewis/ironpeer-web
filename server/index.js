@@ -82,10 +82,10 @@ const app = express();
 // Coming Soon mode — blocks public routes but allows auth/account/listing routes
 if (process.env.COMING_SOON === 'true') {
   const ALLOWED_PREFIXES = [
-    '/login', '/signup', '/account', '/profile-settings',
+    '/login', '/account', '/profile-settings',
     '/l/', '/s/', '/inbox', '/order', '/sale',
     '/api', '/static', '/.well-known',
-  ];
+  ];  // Note: /signup intentionally excluded — new registrations disabled in coming soon mode
   const comingSoonHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -105,6 +105,7 @@ if (process.env.COMING_SOON === 'true') {
     <div class="logo">IronPeer</div>
     <h1>Coming Soon</h1>
     <p>The marketplace for heavy equipment rentals is on its way. Check back soon.</p>
+    <a href="/login" style="display:inline-block;margin-top:1.5rem;padding:0.6rem 1.5rem;background:#E8450A;color:#fff;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.95rem;">Log in</a>
   </div>
 </body>
 </html>`;

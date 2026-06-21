@@ -470,3 +470,28 @@
 .spinner {
   margin: auto;
 }
+
+/* IronPeer ID verify notice */
+.idVerifyNotice {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1px solid #d4edff;
+  border-radius: 8px;
+  background-color: #f0f8ff;
+  padding: 14px 16px;
+  margin: 16px 0;
+}
+
+.idVerifyIcon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.idVerifyText {
+  font-size: 13px;
+  color: var(--colorGrey700);
+  margin: 0;
+  line-height: 1.5;
+}

@@ -668,6 +668,7 @@ export const CheckoutPageWithPayment = props => {
           processName={processName}
           breakdown={breakdown}
           showListingImage={showListingImage}
+          currentUser={currentUser}
           intl={intl}
         />
       </div>

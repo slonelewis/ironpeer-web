@@ -1,0 +1,25 @@
+/* ProtectionBadge */
+
+.badge {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  background-color: #fdf1ec;
+  border: 1px solid #f5c5ae;
+  border-radius: 20px;
+  padding: 5px 12px;
+  margin: 8px 0;
+}
+
+.shieldIcon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.badgeText {
+  font-size: 13px;
+  font-weight: var(--fontWeightMedium);
+  color: #E8450A;
+  white-space: nowrap;
+}

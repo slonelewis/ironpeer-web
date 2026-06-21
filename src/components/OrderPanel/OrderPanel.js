@@ -37,6 +37,12 @@ import {
 } from '../../transactions/transaction';
 
 import { ModalInMobile, PrimaryButton, AvatarSmall, H1, H2 } from '../../components';
+import {
+  CancellationPolicyBox,
+  DeliveryPickupSelector,
+  ProtectionBadge,
+  SecurityDepositNotice,
+} from '../IronPeerCheckout';
 import PriceVariantPicker from './PriceVariantPicker/PriceVariantPicker';
 import SubmitFinePrint from './SubmitFinePrint/SubmitFinePrint';
 
@@ -271,6 +277,7 @@ const hasValidPriceVariants = priceVariants => {
  */
 const OrderPanel = props => {
   const [mounted, setMounted] = useState(false);
+  const [deliveryMethod, setDeliveryMethod] = useState('pickup');
   const intl = useIntl();
   const location = useLocation();
   const history = useHistory();
@@ -310,6 +317,12 @@ const OrderPanel = props => {
   const publicData = listing?.attributes?.publicData || {};
   const { listingType, unitType, transactionProcessAlias = '', priceVariants, startTimeInterval } =
     publicData || {};
+
+  const {
+    deliveryAvailable: listingDeliveryAvailable,
+    deliveryFee: listingDeliveryFee,
+    deliveryRadius: listingDeliveryRadius,
+  } = publicData;
 
   const processName = resolveLatestProcessName(transactionProcessAlias.split('/')[0]);
   const lineItemUnitType = lineItemUnitTypeMaybe || `line-item/${unitType}`;
@@ -400,9 +413,15 @@ const OrderPanel = props => {
   const showInvalidPriceVariantsMessage =
     isPriceVariationsInUse && !hasValidPriceVariants(priceVariants);
 
+  // Wrap onSubmit to inject the renter's delivery method choice
+  const onSubmitWithDelivery = orderData => {
+    const deliveryMethodData = listingDeliveryAvailable ? { deliveryMethod } : {};
+    return onSubmit({ ...orderData, ...deliveryMethodData });
+  };
+
   const sharedProps = {
     lineItemUnitType,
-    onSubmit,
+    onSubmit: onSubmitWithDelivery,
     price,
     marketplaceCurrency,
     listingId: listing.id,
@@ -451,6 +470,16 @@ const OrderPanel = props => {
           </div>
         )}
 
+        {listingDeliveryAvailable ? (
+          <DeliveryPickupSelector
+            deliveryAvailable={listingDeliveryAvailable}
+            deliveryFee={listingDeliveryFee}
+            deliveryRadius={listingDeliveryRadius}
+            value={deliveryMethod}
+            onChange={setDeliveryMethod}
+          />
+        ) : null}
+
         <PriceMaybe
           price={price}
           publicData={publicData}
@@ -468,6 +497,14 @@ const OrderPanel = props => {
             <FormattedMessage id="OrderPanel.author" values={{ name: authorDisplayName }} />
           </span>
         </div>
+
+        {isBooking ? (
+          <>
+            <ProtectionBadge />
+            <SecurityDepositNotice listingPrice={price} compact />
+            <CancellationPolicyBox compact />
+          </>
+        ) : null}
 
         {showPriceMissing ? (
           <PriceMissing />

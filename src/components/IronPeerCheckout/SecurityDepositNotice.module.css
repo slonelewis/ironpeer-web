@@ -1,0 +1,50 @@
+/* SecurityDepositNotice */
+
+.compactText {
+  font-size: 12px;
+  color: var(--colorGrey500);
+  margin: 4px 0 0 0;
+  line-height: 1.4;
+}
+
+.card {
+  border: 1px solid var(--colorGrey100);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 16px 0;
+  background-color: var(--colorWhite);
+}
+
+.cardHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.shieldIcon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: var(--fontWeightSemiBold);
+  color: var(--colorGrey700);
+  margin: 0;
+}
+
+.cardBody {
+  font-size: 14px;
+  color: var(--colorGrey700);
+  margin: 0 0 8px 0;
+  line-height: 1.5;
+}
+
+.cardNote {
+  font-size: 12px;
+  color: var(--colorGrey500);
+  margin: 0;
+  line-height: 1.4;
+}

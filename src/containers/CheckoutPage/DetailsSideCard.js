@@ -14,6 +14,10 @@ import {
   NamedLink,
   ResponsiveImage,
 } from '../../components';
+import {
+  CancellationPolicyBox,
+  SecurityDepositNotice,
+} from '../../components/IronPeerCheckout';
 
 import css from './CheckoutPage.module.css';
 
@@ -46,6 +50,7 @@ const DetailsSideCard = props => {
     processName,
     breakdown,
     showListingImage,
+    currentUser,
     intl,
   } = props;
 
@@ -119,6 +124,19 @@ const DetailsSideCard = props => {
         </div>
       ) : null}
       {breakdown}
+
+      <CancellationPolicyBox />
+      <SecurityDepositNotice listingPrice={price} />
+
+      {currentUser?.attributes?.profile?.publicData?.idVerified !== true ? (
+        <div className={css.idVerifyNotice}>
+          <span className={css.idVerifyIcon} aria-hidden="true">🪪</span>
+          <p className={css.idVerifyText}>
+            <strong>First-time renters:</strong> You'll be asked to verify your identity before
+            your booking is confirmed. This takes about 2 minutes.
+          </p>
+        </div>
+      ) : null}
     </div>
   );
 };

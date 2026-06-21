@@ -357,7 +357,7 @@ export const LandingPageComponent = props => {
           <div className={css.tabContent}>
             <div className={css.tabCta}>
               <p>List your equipment, trailers or attachments today and start earning money!</p>
-              <NamedLink name="SignupPage" className={css.ctaBtn}>
+              <NamedLink name="NewListingPage" className={css.ctaBtn}>
                 Get started — it&apos;s free
               </NamedLink>
             </div>

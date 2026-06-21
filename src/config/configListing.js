@@ -401,6 +401,9 @@ export const listingTypes = [
       alias: 'default-booking/release-1',
       unitType: 'day',
     },
+    priceVariations: {
+      enabled: true,
+    },
     availabilityType: 'oneSeat',
     defaultListingFields: {
       location: true,

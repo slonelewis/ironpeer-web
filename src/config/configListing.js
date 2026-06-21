@@ -138,6 +138,28 @@ export const listingFields = [
     },
   },
   {
+    key: 'hitchType',
+    scope: 'public',
+    schemaType: 'enum',
+    enumOptions: [
+      { option: 'bumper-pull', label: 'Bumper pull' },
+      { option: 'gooseneck', label: 'Gooseneck' },
+      { option: 'fifth-wheel', label: 'Fifth wheel' },
+      { option: 'pole', label: 'Pole' },
+      { option: 'panel-hitch', label: 'Panel hitch' },
+    ],
+    categoryConfig: {
+      limitToCategoryIds: true,
+      categoryIds: ['Haulers_and_trailers'],
+    },
+    showConfig: { label: 'Hitch type', isDetail: true },
+    saveConfig: {
+      label: 'Hitch type',
+      isRequired: true,
+      requiredMessage: 'Please select a hitch type.',
+    },
+  },
+  {
     key: 'deliveryAvailable',
     scope: 'public',
     schemaType: 'boolean',

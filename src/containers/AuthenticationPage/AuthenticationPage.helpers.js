@@ -81,7 +81,12 @@ export const getExtendedDataMaybe = (submitValues, userType, userFields, extraDa
  * @returns {(values: Object) => void}
  */
 export const getHandleSubmitSignup = ({ submitSignup, userFields, userTypes }) => values => {
-  const { userType, email, password, fname, lname, displayName, ...rest } = values;
+  const { userRoles = [], userType: userTypeDirect, email, password, fname, lname, displayName, ...rest } = values;
+
+  // Derive primary userType: owner > hauler > renter
+  const ROLE_PRIORITY = ['owner', 'hauler', 'renter'];
+  const userType = ROLE_PRIORITY.find(r => userRoles.includes(r)) || userRoles[0] || userTypeDirect || null;
+
   const displayNameMaybe = displayName ? { displayName: displayName.trim() } : {};
 
   // Set referral to user private data if it exists and is valid
@@ -95,6 +100,10 @@ export const getHandleSubmitSignup = ({ submitSignup, userFields, userTypes }) =
     lastName: lname.trim(),
     ...displayNameMaybe,
     ...getExtendedDataMaybe(rest, userType, userFields, {
+      publicData: {
+        // Store all selected roles for multi-role support
+        userRoles: userRoles.length > 0 ? userRoles : userType ? [userType] : [],
+      },
       privateData: extraPrivateData,
     }),
   };

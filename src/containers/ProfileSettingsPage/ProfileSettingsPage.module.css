@@ -31,3 +31,116 @@
   float: right;
   flex-shrink: 0;
 }
+
+/* My Roles section */
+.rolesSection {
+  margin-bottom: 32px;
+  padding: 20px 24px;
+  border: 1.5px solid var(--colorGrey200);
+  border-radius: 10px;
+  background: #fafafa;
+}
+
+.rolesSectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.rolesHeading {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.rolesEditButton {
+  background: none;
+  border: 1.5px solid #E8450A;
+  color: #E8450A;
+  border-radius: 6px;
+  padding: 5px 14px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.rolesEditButton:hover {
+  background: #E8450A;
+  color: #fff;
+}
+
+.rolesBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.roleBadge {
+  background: #E8450A;
+  color: #fff;
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.rolesEditor {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rolesCheckboxOption {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1.5px solid var(--colorGrey200);
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.rolesCheckboxOption:has(.rolesCheckboxInput:checked) {
+  border-color: #E8450A;
+  background: #fdf2ee;
+}
+
+.rolesCheckboxInput {
+  accent-color: #E8450A;
+  width: 16px;
+  height: 16px;
+}
+
+.rolesActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.rolesSaveButton {
+  background: #E8450A;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rolesSaveButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.rolesCancelButton {
+  background: none;
+  border: 1.5px solid var(--colorGrey300);
+  color: var(--colorGrey600);
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}

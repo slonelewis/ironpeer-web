@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 
@@ -123,6 +123,28 @@ export const ProfileSettingsPageComponent = props => {
   const isUnauthorizedUser = currentUser && !isUserAuthorized(currentUser);
 
   const { userType } = publicData || {};
+  const userRoles = publicData?.userRoles || (userType ? [userType] : []);
+
+  // Roles management
+  const [editingRoles, setEditingRoles] = useState(false);
+  const [pendingRoles, setPendingRoles] = useState(userRoles);
+
+  const ROLE_PRIORITY = ['owner', 'hauler', 'renter'];
+
+  const handleRoleToggle = role => {
+    setPendingRoles(prev =>
+      prev.includes(role) ? prev.filter(r => r !== role) : [...prev, role]
+    );
+  };
+
+  const handleRolesSave = () => {
+    if (pendingRoles.length === 0) return;
+    const newPrimaryType = ROLE_PRIORITY.find(r => pendingRoles.includes(r)) || pendingRoles[0];
+    onUpdateProfile({
+      publicData: { userType: newPrimaryType, userRoles: pendingRoles },
+    });
+    setEditingRoles(false);
+  };
   const profileImageId = user.profileImage ? user.profileImage.id : null;
   const profileImage = image || { imageId: profileImageId };
   const userTypeConfig = userTypes.find(config => config.userType === userType);
@@ -181,6 +203,67 @@ export const ProfileSettingsPageComponent = props => {
 
             <ViewProfileLink userUUID={user?.id?.uuid} isUnauthorizedUser={isUnauthorizedUser} />
           </div>
+          {/* My Roles section */}
+          {userTypes.length > 1 ? (
+            <div className={css.rolesSection}>
+              <div className={css.rolesSectionHeader}>
+                <H3 as="h2" className={css.rolesHeading}>
+                  My Roles
+                </H3>
+                {!editingRoles ? (
+                  <button
+                    type="button"
+                    className={css.rolesEditButton}
+                    onClick={() => { setPendingRoles(userRoles); setEditingRoles(true); }}
+                  >
+                    Edit roles
+                  </button>
+                ) : null}
+              </div>
+              {!editingRoles ? (
+                <div className={css.rolesBadges}>
+                  {userRoles.map(role => {
+                    const cfg = userTypes.find(t => t.userType === role);
+                    return cfg ? (
+                      <span key={role} className={css.roleBadge}>{cfg.label}</span>
+                    ) : null;
+                  })}
+                </div>
+              ) : (
+                <div className={css.rolesEditor}>
+                  {userTypes.map(config => (
+                    <label key={config.userType} className={css.rolesCheckboxOption}>
+                      <input
+                        type="checkbox"
+                        checked={pendingRoles.includes(config.userType)}
+                        onChange={() => handleRoleToggle(config.userType)}
+                        className={css.rolesCheckboxInput}
+                      />
+                      <span>{config.label}</span>
+                    </label>
+                  ))}
+                  <div className={css.rolesActions}>
+                    <button
+                      type="button"
+                      className={css.rolesSaveButton}
+                      onClick={handleRolesSave}
+                      disabled={pendingRoles.length === 0 || updateInProgress}
+                    >
+                      {updateInProgress ? 'Saving…' : 'Save roles'}
+                    </button>
+                    <button
+                      type="button"
+                      className={css.rolesCancelButton}
+                      onClick={() => setEditingRoles(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : null}
+
           {profileSettingsForm}
         </div>
       </LayoutSingleColumn>

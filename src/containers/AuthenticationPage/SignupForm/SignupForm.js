@@ -10,7 +10,7 @@ import { getPropsForCustomUserFieldInputs } from '../../../util/userHelpers';
 
 import { Form, PrimaryButton, FieldTextInput, CustomExtendedDataField } from '../../../components';
 
-import FieldSelectUserType from '../FieldSelectUserType';
+import FieldCheckboxUserType from '../FieldCheckboxUserType';
 import UserFieldDisplayName from '../UserFieldDisplayName';
 import UserFieldPhoneNumber from '../UserFieldPhoneNumber';
 
@@ -34,7 +34,7 @@ const SignupFormComponent = props => (
   <FinalForm
     {...props}
     mutators={{ ...arrayMutators }}
-    initialValues={{ userType: props.preselectedUserType || getSoleUserTypeMaybe(props.userTypes) }}
+    initialValues={{ userRoles: props.preselectedUserType ? [props.preselectedUserType] : getSoleUserTypeMaybe(props.userTypes) ? [getSoleUserTypeMaybe(props.userTypes)] : [] }}
     render={formRenderProps => {
       const {
         rootClassName,
@@ -51,7 +51,11 @@ const SignupFormComponent = props => (
         values,
       } = formRenderProps;
 
-      const { userType } = values || {};
+      const { userRoles = [] } = values || {};
+      // Derive primary userType: owner > hauler > renter
+      const ROLE_PRIORITY = ['owner', 'hauler', 'renter'];
+      const userType = ROLE_PRIORITY.find(r => userRoles.includes(r)) || userRoles[0] || null;
+      const hasRoles = userRoles.length > 0;
 
       // email
       const emailRequired = validators.required(
@@ -104,19 +108,19 @@ const SignupFormComponent = props => (
       // only fields with no user type id limitation are selected.
       const userFieldProps = getPropsForCustomUserFieldInputs(userFields, userType);
 
-      const noUserTypes = !userType && !(userTypes?.length > 0);
+      const noUserTypes = !(userTypes?.length > 0);
       const userTypeConfig = userTypes.find(config => config.userType === userType);
-      const showDefaultUserFields = userType || noUserTypes;
-      const showCustomUserFields = (userType || noUserTypes) && userFieldProps?.length > 0;
+      const showDefaultUserFields = hasRoles || noUserTypes;
+      const showCustomUserFields = showDefaultUserFields && userFieldProps?.length > 0;
 
       const classes = classNames(rootClassName || css.root, className);
       const submitInProgress = inProgress;
-      const submitDisabled = invalid || submitInProgress || isPasswordUsedMoreThanOnce(values);
+      const submitDisabled = invalid || submitInProgress || isPasswordUsedMoreThanOnce(values) || (!noUserTypes && !hasRoles);
 
       return (
         <Form className={classes} onSubmit={handleSubmit}>
-          <FieldSelectUserType
-            name="userType"
+          <FieldCheckboxUserType
+            name="userRoles"
             userTypes={userTypes}
             hasExistingUserType={!!preselectedUserType}
             intl={intl}

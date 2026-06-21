@@ -79,8 +79,13 @@ checkEnvVariables(MANDATORY_ENV_VARIABLES);
 
 const app = express();
 
-// Coming Soon mode — must be first middleware so nothing else intercepts
+// Coming Soon mode — blocks public routes but allows auth/account/listing routes
 if (process.env.COMING_SOON === 'true') {
+  const ALLOWED_PREFIXES = [
+    '/login', '/signup', '/account', '/profile-settings',
+    '/l/', '/s/', '/inbox', '/order', '/sale',
+    '/api', '/static', '/.well-known',
+  ];
   const comingSoonHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -103,7 +108,11 @@ if (process.env.COMING_SOON === 'true') {
   </div>
 </body>
 </html>`;
-  app.use((req, res) => res.send(comingSoonHtml));
+  app.use((req, res, next) => {
+    const allowed = ALLOWED_PREFIXES.some(prefix => req.path.startsWith(prefix));
+    if (allowed) return next();
+    return res.send(comingSoonHtml);
+  });
 }
 
 const errorPage500 = fs.readFileSync(path.join(buildPath, '500.html'), 'utf-8');

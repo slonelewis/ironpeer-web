@@ -1394,11 +1394,10 @@ const mergeUserConfig = (hostedConfig, defaultConfigs) => {
 
   const { userFields: defaultUserFields, userTypes: defaultUserTypes } = defaultConfigs.user;
 
-  // IronPeer: merge local user config so we can define roles in code.
+  // IronPeer: always use local user types as the source of truth.
+  // Console may have stale or extra user types that cause duplicates.
+  const userTypes = defaultUserTypes;
   const shouldMerge = mergeDefaultTypesAndFieldsForDebugging(true);
-  const userTypes = shouldMerge
-    ? union(hostedUserTypes, defaultUserTypes, 'userType')
-    : hostedUserTypes;
   const userFields = shouldMerge
     ? union(hostedUserFields, defaultUserFields, 'key')
     : hostedUserFields;

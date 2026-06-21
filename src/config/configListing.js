@@ -153,16 +153,6 @@ export const listingFields = [
     },
   },
   {
-    key: 'operatorRequired',
-    scope: 'public',
-    schemaType: 'boolean',
-    showConfig: { label: 'Operator included', isDetail: true },
-    saveConfig: {
-      label: 'Operator included with rental',
-      isRequired: false,
-    },
-  },
-  {
     key: 'dailyHoursLimit',
     scope: 'public',
     schemaType: 'long',

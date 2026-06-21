@@ -1,193 +1,183 @@
 /////////////////////////////////////////////////////////
-// Configurations related to user.                     //
+// IronPeer user configuration                         //
 /////////////////////////////////////////////////////////
 
-// Note: The userFields come from userFields asset nowadays by default.
-//       To use this built-in configuration, you need to change the overwrite from configHelper.js
-//       (E.g. use mergeDefaultTypesAndFieldsForDebugging func)
-
 /**
- * Configuration options for user fields (custom extended data fields):
- * - key:                           Unique key for the extended data field.
- * - scope (optional):              Scope of the extended data can be either 'public', 'protected', or 'private'.
- *                                  Default value: 'public'.
- * - schemaType (optional):         Schema for this extended data field.
- *                                  This is relevant when rendering components.
- *                                  Possible values: 'enum', 'multi-enum', 'text', 'long', 'boolean'.
- * - enumOptions (optional):        Options shown for 'enum' and 'multi-enum' extended data.
- *                                  These are used to render options for inputs on
- *                                  ProfileSettingsPage and AuthenticationPage.
- * - showConfig:                    Configuration for rendering user information. (How the field should be shown.)
- *   - label:                         Label for the saved data.
- *   - displayInProfile (optional):   Can be used to hide field content from profile page.
- *                                    Default value: true.
- * - saveConfig:                    Configuration for adding and modifying extended data fields.
- *   - label:                         Label for the input field.
- *   - placeholderMessage (optional): Default message for user input.
- *   - isRequired (optional):         Is the field required for users to fill
- *   - requiredMessage (optional):    Message for mandatory fields.
- *   - displayInSignUp (optional):    Can be used to show field input on sign up page.
- *                                    Default value: true.
- * - userTypeConfig:                Configuration for limiting user field to specific user types.
- *   - limitToUserTypeIds:            Can be used to determine whether to limit the field to certain user types. The
- *                                    Console based asset configurations do not yet support user types, so in hosted configurations
- *                                    the default value for this is 'false'.
- *   - userTypeIds:                   An array of user types for which the extended
- *   (optional)                       data is relevant and should be added.
- */
-export const userFields = [
-  {
-    key: 'cuisine',
-    scope: 'public',
-    schemaType: 'enum',
-    enumOptions: [
-      { option: 'italian', label: 'Italian' },
-      { option: 'chinese', label: 'Chinese' },
-      { option: 'thai', label: 'Thai' },
-    ],
-    showConfig: {
-      label: 'Favorite cuisine',
-    },
-    saveConfig: {
-      label: 'Favorite cuisine',
-      displayInSignUp: true,
-      isRequired: true,
-    },
-    userTypeConfig: {
-      limitToUserTypeIds: true,
-      userTypeIds: ['a', 'b', 'c'],
-    },
-  },
-  {
-    key: 'canCook',
-    scope: 'public',
-    schemaType: 'boolean',
-    showConfig: {
-      label: 'Can you cook?',
-    },
-    saveConfig: {
-      label: 'Can you cook?',
-      displayInSignUp: true,
-      isRequired: true,
-      placeholderMessage: 'Select...',
-    },
-    userTypeConfig: {
-      limitToUserTypeIds: true,
-      userTypeIds: ['a', 'b', 'c'],
-    },
-  },
-  {
-    key: 'numberOfCookbooks',
-    scope: 'public',
-    schemaType: 'long',
-    showConfig: {
-      label: 'How many cookbooks do you have',
-    },
-    saveConfig: {
-      label: 'How many cookbooks do you have',
-      displayInSignUp: true,
-      isRequired: true,
-    },
-    userTypeConfig: {
-      limitToUserTypeIds: true,
-      userTypeIds: ['a', 'b', 'c'],
-    },
-  },
-  {
-    key: 'kitchenDescription',
-    scope: 'public',
-    schemaType: 'text',
-    showConfig: {
-      label: 'Description of your kitchen',
-    },
-    saveConfig: {
-      label: 'Description of your kitchen',
-      displayInSignUp: true,
-      isRequired: true,
-      placeholderMessage: 'Describe your kitchen...',
-    },
-    userTypeConfig: {
-      label: 'Description of your kitchen',
-      limitToUserTypeIds: true,
-      userTypeIds: ['a', 'b', 'c'],
-    },
-  },
-  {
-    key: 'arrivalInstructions',
-    scope: 'protected',
-    schemaType: 'text',
-    showConfig: {
-      label: 'How do people arrive at your kitchen?',
-    },
-    saveConfig: {
-      label: 'How do people arrive at your kitchen?',
-      displayInSignUp: true,
-      isRequired: true,
-    },
-    userTypeConfig: {
-      limitToUserTypeIds: false,
-      userTypeIds: ['a', 'b', 'c'],
-    },
-  },
-  {
-    key: 'dietaryPreferences',
-    scope: 'public',
-    schemaType: 'multi-enum',
-    enumOptions: [
-      { option: 'vegan', label: 'Vegan' },
-      { option: 'vegetarian', label: 'Vegetarian' },
-      { option: 'gluten-free', label: 'Gluten free' },
-      { option: 'dairy-free', label: 'Dairy free' },
-      { option: 'nut-free', label: 'Nut free' },
-      { option: 'egg-free', label: 'Egg free' },
-      { option: 'low-carb', label: 'Low carb' },
-      { option: 'low-fat', label: 'Low fat' },
-    ],
-    showConfig: {
-      label: 'Dietary preferences',
-    },
-    saveConfig: {
-      displayInSignUp: true,
-      label: 'Dietary preferences',
-      isRequired: true,
-    },
-    userTypeConfig: {
-      limitToUserTypeIds: true,
-      userTypeIds: ['a', 'b', 'c'],
-    },
-  },
-];
-
-/////////////////////////////////////
-// Example user type configuration //
-/////////////////////////////////////
-/**
- * User types are not supported in hosted configuration yet.
+ * User types for IronPeer:
+ *   renter  — Someone who rents equipment
+ *   owner   — Someone who lists equipment for rent
+ *   hauler  — Someone who provides haul/transport services
  *
- * To take user types into use in your
- * custom code, you can do the following things:
- * - Add a new user field with key 'userType', scope 'publicData', and schemaType enum
- *  - Consider whether or not you want to allow your users to change their user type after first creating it
- * - Set your user types as the available options for the userType field
- * - Add your user types in the array below
- * - Update configHelpers.js mergeUserConfig to pass user types to the validUserFields function
+ * User fields define what's collected at signup and on the profile.
  */
 
 export const userTypes = [
   {
-    userType: 'a',
-    label: 'Seller',
+    userType: 'renter',
+    label: 'Renter — I want to rent equipment',
   },
   {
-    userType: 'b',
-    label: 'Buyer',
+    userType: 'owner',
+    label: 'Owner — I want to list my equipment',
   },
   {
-    userType: 'c',
-    label: 'Guest',
+    userType: 'hauler',
+    label: 'Hauler — I provide haul & transport services',
   },
+];
+
+export const userFields = [
+  // ── Shared: phone number (all user types) ────────────────────────────────────
   {
-    userType: 'd',
-    label: 'Host',
+    key: 'phoneNumber',
+    scope: 'protected',
+    schemaType: 'text',
+    showConfig: {
+      label: 'Phone number',
+      displayInProfile: false, // keep private
+    },
+    saveConfig: {
+      label: 'Phone number',
+      placeholderMessage: 'e.g. (360) 555-1234',
+      isRequired: false,
+      displayInSignUp: true,
+    },
+    userTypeConfig: {
+      limitToUserTypeIds: false,
+    },
+  },
+
+  // ── Owner + Hauler: account type (individual vs business) ───────────────────
+  {
+    key: 'accountType',
+    scope: 'protected',
+    schemaType: 'enum',
+    enumOptions: [
+      { option: 'individual', label: 'Individual' },
+      { option: 'business', label: 'Business / LLC' },
+    ],
+    showConfig: {
+      label: 'Account type',
+      displayInProfile: false,
+    },
+    saveConfig: {
+      label: 'Are you listing as an individual or a business?',
+      placeholderMessage: 'Select one',
+      isRequired: true,
+      displayInSignUp: true,
+    },
+    userTypeConfig: {
+      limitToUserTypeIds: true,
+      userTypeIds: ['owner', 'hauler'],
+    },
+  },
+
+  // ── Owner + Hauler (business only): business name ───────────────────────────
+  {
+    key: 'businessName',
+    scope: 'protected',
+    schemaType: 'text',
+    showConfig: {
+      label: 'Business name',
+      displayInProfile: false,
+    },
+    saveConfig: {
+      label: 'Business name',
+      placeholderMessage: 'e.g. Lewis Equipment LLC',
+      isRequired: false,
+      displayInSignUp: true,
+    },
+    userTypeConfig: {
+      limitToUserTypeIds: true,
+      userTypeIds: ['owner', 'hauler'],
+    },
+  },
+
+  // ── Owner + Hauler (business only): EIN ─────────────────────────────────────
+  {
+    key: 'ein',
+    scope: 'protected',
+    schemaType: 'text',
+    showConfig: {
+      label: 'EIN',
+      displayInProfile: false,
+    },
+    saveConfig: {
+      label: 'Employer Identification Number (EIN)',
+      placeholderMessage: 'e.g. 12-3456789',
+      isRequired: false,
+      displayInSignUp: false, // collected at payout setup, not signup
+    },
+    userTypeConfig: {
+      limitToUserTypeIds: true,
+      userTypeIds: ['owner', 'hauler'],
+    },
+  },
+
+  // ── Hauler: driver's license number ─────────────────────────────────────────
+  {
+    key: 'driversLicenseState',
+    scope: 'protected',
+    schemaType: 'text',
+    showConfig: {
+      label: "Driver's license state",
+      displayInProfile: false,
+    },
+    saveConfig: {
+      label: "Driver's license state (2-letter, e.g. WA)",
+      placeholderMessage: 'WA',
+      isRequired: true,
+      displayInSignUp: true,
+    },
+    userTypeConfig: {
+      limitToUserTypeIds: true,
+      userTypeIds: ['hauler'],
+    },
+  },
+
+  // ── Hauler: vehicle type ─────────────────────────────────────────────────────
+  {
+    key: 'vehicleType',
+    scope: 'public',
+    schemaType: 'enum',
+    enumOptions: [
+      { option: 'pickup-gooseneck', label: 'Pickup + gooseneck trailer' },
+      { option: 'pickup-bumper', label: 'Pickup + bumper pull trailer' },
+      { option: 'semi-lowboy', label: 'Semi + lowboy trailer' },
+      { option: 'semi-flatbed', label: 'Semi + flatbed trailer' },
+      { option: 'other', label: 'Other' },
+    ],
+    showConfig: {
+      label: 'Vehicle / trailer type',
+    },
+    saveConfig: {
+      label: 'What do you haul with?',
+      isRequired: true,
+      displayInSignUp: true,
+    },
+    userTypeConfig: {
+      limitToUserTypeIds: true,
+      userTypeIds: ['hauler'],
+    },
+  },
+
+  // ── Hauler: max haul weight ──────────────────────────────────────────────────
+  {
+    key: 'maxHaulWeightLbs',
+    scope: 'public',
+    schemaType: 'long',
+    showConfig: {
+      label: 'Max haul weight (lbs)',
+    },
+    saveConfig: {
+      label: 'Max haul weight (lbs)',
+      placeholderMessage: 'e.g. 20000',
+      isRequired: false,
+      displayInSignUp: true,
+    },
+    userTypeConfig: {
+      limitToUserTypeIds: true,
+      userTypeIds: ['hauler'],
+    },
   },
 ];

@@ -1398,9 +1398,8 @@ const mergeUserConfig = (hostedConfig, defaultConfigs) => {
 
   const { userFields: defaultUserFields, userTypes: defaultUserTypes } = defaultConfigs.user;
 
-  // When debugging, include default configs by passing 'true' here.
-  // Otherwise, use user fields from hosted assets.
-  const shouldMerge = mergeDefaultTypesAndFieldsForDebugging(false);
+  // IronPeer: merge local user config so we can define roles in code.
+  const shouldMerge = mergeDefaultTypesAndFieldsForDebugging(true);
   const userTypes = shouldMerge
     ? union(hostedUserTypes, defaultUserTypes, 'userType')
     : hostedUserTypes;

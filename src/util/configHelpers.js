@@ -1716,7 +1716,7 @@ const HITCH_TYPE_SUBCATEGORIES = [
   { name: 'Bumper pull', id: 'Bumper-pull' },
   { name: 'Gooseneck', id: 'Gooseneck' },
   { name: 'Fifth wheel', id: 'Fifth-wheel' },
-  { name: 'Panel hitch', id: 'Panel-hitch' },
+  { name: 'Pintle hitch', id: 'Pintle-hitch' },
 ];
 
 const applyLocalCategoryOverrides = (categories = []) => {

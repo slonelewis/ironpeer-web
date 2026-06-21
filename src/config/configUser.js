@@ -13,16 +13,19 @@
 
 export const userTypes = [
   {
-    userType: 'renter',
-    label: 'Renter — I want to rent equipment',
+    userType: 'owner',
+    label: 'List',
+    description: 'I have equipment I want to list and earn money renting it out.',
   },
   {
-    userType: 'owner',
-    label: 'Owner — I want to list my equipment',
+    userType: 'renter',
+    label: 'Rent',
+    description: 'I want to rent equipment for personal or professional use.',
   },
   {
     userType: 'hauler',
-    label: 'Hauler — I provide haul & transport services',
+    label: 'Haul',
+    description: 'I want to haul and transport equipment for owners and renters.',
   },
 ];
 

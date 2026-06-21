@@ -307,3 +307,26 @@
     }
   }
 }
+
+.signupButton {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  background: #E8450A;
+  color: #fff !important;
+  border-radius: 8px;
+  padding: 0 18px;
+  height: 38px;
+  margin: auto 0 auto 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none !important;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.signupButton:hover {
+  background: #c93a08;
+  color: #fff !important;
+  text-decoration: none !important;
+}

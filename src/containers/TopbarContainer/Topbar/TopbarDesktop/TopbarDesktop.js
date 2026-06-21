@@ -21,10 +21,8 @@ import css from './TopbarDesktop.module.css';
 
 const SignupLink = () => {
   return (
-    <NamedLink id="signup-link" name="SignupPage" className={css.topbarLink}>
-      <span className={css.topbarLinkLabel}>
-        <FormattedMessage id="TopbarDesktop.signup" />
-      </span>
+    <NamedLink id="signup-link" name="SignupPage" className={css.signupButton}>
+      <FormattedMessage id="TopbarDesktop.signup" />
     </NamedLink>
   );
 };

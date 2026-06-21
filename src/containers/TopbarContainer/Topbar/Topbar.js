@@ -17,6 +17,7 @@ import {
   LinkedLogo,
   Modal,
   ModalMissingInformation,
+  NamedLink,
 } from '../../../components';
 import { getSearchPageResourceLocatorStringParams } from '../../SearchPage/SearchPage.shared';
 
@@ -365,6 +366,11 @@ const TopbarComponent = props => {
           linkToExternalSite={config?.topbar?.logoLink}
         />
         {mobileSearchButtonMaybe}
+        {!isAuthenticated && !authInProgress ? (
+          <NamedLink name="SignupPage" className={css.mobileSignupButton}>
+            <FormattedMessage id="TopbarDesktop.signup" />
+          </NamedLink>
+        ) : null}
       </nav>
       <div className={css.desktop}>
         <TopbarDesktop

@@ -309,3 +309,30 @@
     margin: 0;
   }
 }
+
+.mobileSignupButton {
+  display: inline-flex;
+  align-items: center;
+  background: #E8450A;
+  color: #fff !important;
+  border-radius: 8px;
+  padding: 0 14px;
+  height: 36px;
+  margin: auto 8px auto 0;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none !important;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.mobileSignupButton:hover {
+  background: #c93a08;
+  color: #fff !important;
+}
+
+@media (--viewportMedium) {
+  .mobileSignupButton {
+    display: none;
+  }
+}

@@ -72,7 +72,8 @@ const FieldSelectListingType = props => {
     formId,
     intl,
   } = props;
-  const hasMultipleListingTypes = listingTypes?.length > 1;
+  // IronPeer: always auto-select the single listing type — never show the selector UI
+  const hasMultipleListingTypes = false;
 
   const handleOnChange = value => {
     const selectedListingType = listingTypes.find(config => config.listingType === value);

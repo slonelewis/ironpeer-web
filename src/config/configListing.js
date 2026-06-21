@@ -64,11 +64,11 @@ export const listingFields = [
       { option: 'weekly', label: 'Weekly' },
       { option: 'monthly', label: 'Monthly' },
     ],
-    showConfig: { label: 'Rental periods', isDetail: true },
+    showConfig: { label: 'Rental Duration', isDetail: true },
     saveConfig: {
-      label: 'Rental periods available',
+      label: 'Rental Duration',
       isRequired: true,
-      requiredMessage: 'Select at least one rental period.',
+      requiredMessage: 'Select at least one rental duration.',
     },
   },
   {

@@ -26,6 +26,14 @@ const createFilterOptions = options => options.map(o => ({ key: `${o.option}`, l
 
 const getLabel = fieldConfig => fieldConfig?.saveConfig?.label || fieldConfig?.label;
 
+const getLabelWithRequired = fieldConfig => {
+  const label = getLabel(fieldConfig);
+  const isRequired = fieldConfig?.saveConfig?.isRequired;
+  return isRequired
+    ? <>{label} <span style={{ color: '#E8450A', marginLeft: '2px', fontWeight: 600 }}>*</span></>
+    : label;
+};
+
 const CustomFieldEnum = props => {
   const { name, fieldConfig, defaultRequiredMessage, formId, intl } = props;
   const { enumOptions = [], saveConfig } = fieldConfig || {};
@@ -38,7 +46,7 @@ const CustomFieldEnum = props => {
     intl.formatMessage({ id: 'CustomExtendedDataField.placeholderSingleSelect' });
   const filterOptions = createFilterOptions(enumOptions);
 
-  const label = getLabel(fieldConfig);
+  const label = getLabelWithRequired(fieldConfig);
 
   return filterOptions ? (
     <FieldSelect
@@ -68,7 +76,7 @@ const CustomFieldMultiEnum = props => {
   const { name, fieldConfig, defaultRequiredMessage, formId } = props;
   const { enumOptions = [], saveConfig } = fieldConfig || {};
   const { isRequired, requiredMessage } = saveConfig || {};
-  const label = getLabel(fieldConfig);
+  const label = getLabelWithRequired(fieldConfig);
   const validateMaybe = isRequired
     ? { validate: nonEmptyArray(requiredMessage || defaultRequiredMessage) }
     : {};
@@ -89,7 +97,7 @@ const CustomFieldMultiEnum = props => {
 const CustomFieldShortText = props => {
   const { name, fieldConfig, defaultRequiredMessage, formId, intl } = props;
   const { placeholderMessage, isRequired, requiredMessage } = fieldConfig?.saveConfig || {};
-  const label = getLabel(fieldConfig);
+  const label = getLabelWithRequired(fieldConfig);
   const validateMaybe = isRequired
     ? { validate: required(requiredMessage || defaultRequiredMessage) }
     : {};
@@ -114,7 +122,7 @@ const CustomFieldShortText = props => {
 const CustomFieldText = props => {
   const { name, fieldConfig, defaultRequiredMessage, formId, intl } = props;
   const { placeholderMessage, isRequired, requiredMessage } = fieldConfig?.saveConfig || {};
-  const label = getLabel(fieldConfig);
+  const label = getLabelWithRequired(fieldConfig);
   const validateMaybe = isRequired
     ? { validate: required(requiredMessage || defaultRequiredMessage) }
     : {};
@@ -139,7 +147,7 @@ const CustomFieldLong = props => {
   const { name, fieldConfig, defaultRequiredMessage, formId, intl } = props;
   const { minimum, maximum, saveConfig } = fieldConfig;
   const { placeholderMessage, isRequired, requiredMessage } = saveConfig || {};
-  const label = getLabel(fieldConfig);
+  const label = getLabelWithRequired(fieldConfig);
   const placeholder =
     placeholderMessage || intl.formatMessage({ id: 'CustomExtendedDataField.placeholderLong' });
   const numberTooSmallMessage = intl.formatMessage(
@@ -193,7 +201,7 @@ const CustomFieldLong = props => {
 const CustomFieldBoolean = props => {
   const { name, fieldConfig, defaultRequiredMessage, formId, intl } = props;
   const { placeholderMessage, isRequired, requiredMessage } = fieldConfig?.saveConfig || {};
-  const label = getLabel(fieldConfig);
+  const label = getLabelWithRequired(fieldConfig);
   const validateMaybe = isRequired
     ? { validate: required(requiredMessage || defaultRequiredMessage) }
     : {};
@@ -216,7 +224,7 @@ const CustomFieldBoolean = props => {
 const CustomFieldYoutube = props => {
   const { name, fieldConfig, defaultRequiredMessage, formId, intl } = props;
   const { placeholderMessage, isRequired, requiredMessage } = fieldConfig?.saveConfig || {};
-  const label = getLabel(fieldConfig);
+  const label = getLabelWithRequired(fieldConfig);
   const placeholder =
     placeholderMessage ||
     intl.formatMessage({ id: 'CustomExtendedDataField.placeholderYoutubeVideoURL' });

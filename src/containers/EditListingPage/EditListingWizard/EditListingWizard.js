@@ -280,7 +280,7 @@ const tabCompleted = (tab, listing, config) => {
     case AVAILABILITY:
       return !!availabilityPlan;
     case PHOTOS:
-      return images && images.length > 0;
+      return images && images.length >= 5;
     case STYLE:
       return !!cardStyle;
     default:

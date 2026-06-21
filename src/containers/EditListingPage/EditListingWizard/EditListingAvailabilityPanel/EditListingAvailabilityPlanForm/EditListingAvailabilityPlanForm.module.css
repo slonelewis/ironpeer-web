@@ -77,3 +77,22 @@
     padding-bottom: unset;
   }
 }
+
+
+.selectAllButton {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding: 6px 14px;
+  background: none;
+  border: 1px solid #E8450A;
+  border-radius: 4px;
+  color: #E8450A;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.selectAllButton:hover {
+  background: #E8450A;
+  color: #fff;
+}

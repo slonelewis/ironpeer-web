@@ -132,6 +132,24 @@ const EditListingAvailabilityPlanForm = props => {
             <Heading as="h3" rootClassName={css.subheading}>
               <FormattedMessage id="EditListingAvailabilityPlanForm.hoursOfOperationTitle" />
             </Heading>
+            <button
+              type="button"
+              className={css.selectAllButton}
+              onClick={() => {
+                weekdays.forEach(day => {
+                  if (!values[day] || values[day].length === 0) {
+                    formApi.mutators.push(
+                      day,
+                      useFullDays
+                        ? { startTime: '00:00', endTime: '24:00', ...(useMultipleSeats ? { seats: 1 } : {}) }
+                        : { startTime: null, endTime: null, ...(useMultipleSeats ? { seats: 1 } : {}) }
+                    );
+                  }
+                });
+              }}
+            >
+              Select all days
+            </button>
             <div className={css.week}>
               {weekdays.map(w => {
                 return (

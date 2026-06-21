@@ -1373,10 +1373,10 @@ const mergeListingConfig = (hostedConfig, defaultConfigs, categoriesInUse) => {
     defaultConfigs.listing || {};
 
   // IronPeer: always use local listing types + fields as the source of truth.
-  // The Console listing types were accidentally set up incorrectly; local config
+  // Console listing types/fields may be stale or have duplicates; local config
   // defines the single equipment-rental type and all custom fields.
   const listingTypes = defaultListingTypes;
-  const listingFields = union(hostedListingFields, defaultListingFields, 'key');
+  const listingFields = defaultListingFields;
 
   const listingTypesInUse = listingTypes.map(lt => `${lt.listingType}`);
 

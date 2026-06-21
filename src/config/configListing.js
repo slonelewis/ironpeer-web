@@ -53,6 +53,126 @@
  *   - requiredMessage (optional):    Message for those fields, which are mandatory.
  */
 export const listingFields = [
+  // ─── IronPeer Equipment Fields ───────────────────────────────────────────────
+  {
+    key: 'equipmentMake',
+    scope: 'public',
+    schemaType: 'text',
+    showConfig: { label: 'Make', isDetail: true },
+    saveConfig: {
+      label: 'Make',
+      placeholderMessage: 'e.g. John Deere, Bobcat, Cat',
+      isRequired: false,
+    },
+  },
+  {
+    key: 'equipmentModel',
+    scope: 'public',
+    schemaType: 'text',
+    showConfig: { label: 'Model', isDetail: true },
+    saveConfig: {
+      label: 'Model',
+      placeholderMessage: 'e.g. 60G, S650, 320',
+      isRequired: false,
+    },
+  },
+  {
+    key: 'equipmentYear',
+    scope: 'public',
+    schemaType: 'long',
+    showConfig: { label: 'Year', isDetail: true },
+    saveConfig: {
+      label: 'Year',
+      placeholderMessage: 'e.g. 2022',
+      isRequired: false,
+    },
+  },
+  {
+    key: 'condition',
+    scope: 'public',
+    schemaType: 'enum',
+    enumOptions: [
+      { option: 'excellent', label: 'Excellent — like new' },
+      { option: 'good', label: 'Good — normal wear' },
+      { option: 'fair', label: 'Fair — functional, some wear' },
+    ],
+    filterConfig: {
+      indexForSearch: false,
+      filterType: 'SelectSingleFilter',
+      label: 'Condition',
+      group: 'secondary',
+    },
+    showConfig: { label: 'Condition', isDetail: true },
+    saveConfig: {
+      label: 'Condition',
+      placeholderMessage: 'Select condition',
+      isRequired: false,
+    },
+  },
+  {
+    key: 'engineHours',
+    scope: 'public',
+    schemaType: 'long',
+    showConfig: { label: 'Engine hours', isDetail: true },
+    saveConfig: {
+      label: 'Engine hours (if applicable)',
+      placeholderMessage: 'e.g. 450',
+      isRequired: false,
+    },
+  },
+  {
+    key: 'deliveryAvailable',
+    scope: 'public',
+    schemaType: 'boolean',
+    showConfig: { label: 'Delivery available', isDetail: true },
+    saveConfig: {
+      label: 'Delivery available',
+      isRequired: false,
+    },
+  },
+  {
+    key: 'deliveryRadius',
+    scope: 'public',
+    schemaType: 'long',
+    showConfig: { label: 'Delivery radius (miles)', isDetail: true },
+    saveConfig: {
+      label: 'Delivery radius (miles)',
+      placeholderMessage: 'e.g. 25',
+      isRequired: false,
+    },
+  },
+  {
+    key: 'deliveryFee',
+    scope: 'public',
+    schemaType: 'long',
+    showConfig: { label: 'Delivery fee ($)', isDetail: true },
+    saveConfig: {
+      label: 'Delivery fee (dollars)',
+      placeholderMessage: 'e.g. 75',
+      isRequired: false,
+    },
+  },
+  {
+    key: 'operatorRequired',
+    scope: 'public',
+    schemaType: 'boolean',
+    showConfig: { label: 'Operator included', isDetail: true },
+    saveConfig: {
+      label: 'Operator included with rental',
+      isRequired: false,
+    },
+  },
+  {
+    key: 'dailyHoursLimit',
+    scope: 'public',
+    schemaType: 'long',
+    showConfig: { label: 'Daily hours limit', isDetail: true },
+    saveConfig: {
+      label: 'Daily hours limit (powered equipment)',
+      placeholderMessage: 'e.g. 8',
+      isRequired: false,
+    },
+  },
   // {
   //   "scope": "public",
   //   "label": "Gears",
@@ -283,6 +403,20 @@ export const listingFields = [
  */
 
 export const listingTypes = [
+  {
+    listingType: 'equipment-rental',
+    label: 'Equipment rental',
+    transactionType: {
+      process: 'default-booking',
+      alias: 'default-booking/release-1',
+      unitType: 'day',
+    },
+    availabilityType: 'oneSeat',
+    defaultListingFields: {
+      location: true,
+      payoutDetails: true,
+    },
+  },
   // // Here are some examples of listingTypes
   // // TODO: SearchPage does not work well if both booking and product selling are used at the same time
   // {

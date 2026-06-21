@@ -246,8 +246,11 @@ const FieldSelectCategory = props => {
 
 // Add collect data for listing fields (both publicData and privateData) based on configuration
 const AddListingFields = props => {
-  const { listingType, listingFieldsConfig, selectedCategories, formId, intl } = props;
+  const { listingType, listingFieldsConfig, selectedCategories, formId, intl, values } = props;
   const targetCategoryIds = Object.values(selectedCategories);
+
+  // Conditional: deliveryRadius is required only when deliveryAvailable is true
+  const deliveryAvailable = values?.pub_deliveryAvailable;
 
   const fields = listingFieldsConfig.reduce((pickedFields, fieldConfig) => {
     const { key, schemaType, scope } = fieldConfig || {};
@@ -258,13 +261,26 @@ const AddListingFields = props => {
     const isTargetListingType = isFieldForListingType(listingType, fieldConfig);
     const isTargetCategory = isFieldForCategory(targetCategoryIds, fieldConfig);
 
+    // Build a potentially-overridden fieldConfig for conditional fields
+    let resolvedFieldConfig = fieldConfig;
+    if (key === 'deliveryRadius') {
+      resolvedFieldConfig = {
+        ...fieldConfig,
+        saveConfig: {
+          ...fieldConfig.saveConfig,
+          isRequired: deliveryAvailable === true,
+          requiredMessage: 'Delivery radius is required when delivery is available.',
+        },
+      };
+    }
+
     return isKnownSchemaType && isProviderScope && isTargetListingType && isTargetCategory
       ? [
           ...pickedFields,
           <CustomExtendedDataField
-            key={namespacedKey}
+            key={`${namespacedKey}_${deliveryAvailable}`}
             name={namespacedKey}
-            fieldConfig={fieldConfig}
+            fieldConfig={resolvedFieldConfig}
             defaultRequiredMessage={intl.formatMessage({
               id: 'EditListingDetailsForm.defaultRequiredMessage',
             })}
@@ -462,6 +478,7 @@ const EditListingDetailsForm = props => (
               selectedCategories={pickSelectedCategories(values)}
               formId={formId}
               intl={intl}
+              values={values}
             />
           )}
 

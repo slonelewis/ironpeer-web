@@ -144,7 +144,8 @@ export const listingFields = [
     showConfig: { label: 'Delivery available', isDetail: true },
     saveConfig: {
       label: 'Delivery available',
-      isRequired: false,
+      isRequired: true,
+      requiredMessage: 'Please indicate if delivery is available.',
     },
   },
   {

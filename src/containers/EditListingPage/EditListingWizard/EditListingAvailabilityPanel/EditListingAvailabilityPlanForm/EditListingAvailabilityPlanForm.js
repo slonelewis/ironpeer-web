@@ -136,6 +136,11 @@ const EditListingAvailabilityPlanForm = props => {
               type="button"
               className={css.selectAllButton}
               onClick={() => {
+                // Update activePlanDays so checkboxes visually check
+                const currentActive = values.activePlanDays || [];
+                const newActive = [...new Set([...currentActive, ...weekdays])];
+                formApi.change('activePlanDays', newActive);
+                // Push default entries for any day not already populated
                 weekdays.forEach(day => {
                   if (!values[day] || values[day].length === 0) {
                     formApi.mutators.push(

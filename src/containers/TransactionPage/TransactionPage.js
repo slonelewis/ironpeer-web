@@ -811,6 +811,117 @@ export const TransactionPageComponent = props => {
   });
 
   const actionButtonContainer = isMobile ? 'mobile' : 'desktop';
+
+  // ── Rental Flow ───────────────────────────────────────────────────────────
+  // Determine which rental flow component to show, if any.
+  // Only relevant for booking-process transactions (rentals).
+  const txProtectedData = transaction?.attributes?.protectedData || {};
+  const {
+    checkInPhotos,
+    checkInNote,
+    checkOutPhotos,
+    checkOutNote,
+    depositReleased,
+    damageDispute,
+  } = txProtectedData;
+
+  const bookingStart = booking?.attributes?.start;
+  const bookingEnd = booking?.attributes?.end;
+  const now = new Date();
+  const rentalHasStarted = bookingStart && new Date(bookingStart) <= now;
+  const hoursUntilReturn = bookingEnd ? (new Date(bookingEnd) - now) / (1000 * 60 * 60) : null;
+  const withinReturnWindow = hoursUntilReturn !== null && hoursUntilReturn <= 24;
+
+  let rentalFlowSection = null;
+  if (isDataAvailable && isBookingProcess(processName)) {
+    if (isCustomerRole && rentalHasStarted && !checkInPhotos) {
+      // Renter needs to document pickup
+      rentalFlowSection = (
+        <RentalCheckIn
+          onConfirmCheckIn={({ photos, note }) =>
+            onSaveCheckIn(transaction.id, photos, note)
+          }
+          inProgress={rentalFlowInProgress}
+          error={rentalFlowError?.message}
+        />
+      );
+    } else if (isCustomerRole && checkInPhotos && !checkOutPhotos) {
+      // Show completed check-in (read-only) always once check-in is done
+      const showCheckOut = withinReturnWindow;
+      if (showCheckOut) {
+        // Renter needs to document return
+        rentalFlowSection = (
+          <RentalCheckOut
+            onConfirmReturn={({ photos, note }) =>
+              onSaveCheckOut(transaction.id, photos, note)
+            }
+            inProgress={rentalFlowInProgress}
+            error={rentalFlowError?.message}
+          />
+        );
+      } else {
+        // Show completed check-in summary (return window not yet open)
+        rentalFlowSection = (
+          <RentalCheckIn
+            existingCheckIn={{
+              photos: checkInPhotos,
+              note: checkInNote,
+              confirmedAt: txProtectedData.checkInConfirmedAt,
+            }}
+          />
+        );
+      }
+    } else if (isCustomerRole && checkInPhotos && checkOutPhotos) {
+      // Show completed check-out (read-only)
+      rentalFlowSection = (
+        <RentalCheckOut
+          existingCheckOut={{
+            photos: checkOutPhotos,
+            note: checkOutNote,
+            confirmedAt: txProtectedData.checkOutConfirmedAt,
+          }}
+        />
+      );
+    } else if (isProviderRole && checkOutPhotos && !depositReleased && !damageDispute) {
+      // Owner needs to review return photos
+      rentalFlowSection = (
+        <RentalDamageReview
+          checkInPhotos={checkInPhotos}
+          checkInNote={checkInNote}
+          checkOutPhotos={checkOutPhotos}
+          checkOutNote={checkOutNote}
+          onReleaseDeposit={() => onReleaseDeposit(transaction.id)}
+          onReportDamage={({ description, estimatedCost }) =>
+            onReportDamage(transaction.id, description, estimatedCost)
+          }
+          inProgress={rentalFlowInProgress}
+          error={rentalFlowError?.message}
+        />
+      );
+    } else if (isProviderRole && depositReleased) {
+      rentalFlowSection = (
+        <RentalDamageReview
+          checkInPhotos={checkInPhotos}
+          checkOutPhotos={checkOutPhotos}
+          onReleaseDeposit={() => {}}
+          onReportDamage={() => {}}
+          depositReleased={true}
+        />
+      );
+    } else if (isProviderRole && damageDispute) {
+      rentalFlowSection = (
+        <RentalDamageReview
+          checkInPhotos={checkInPhotos}
+          checkOutPhotos={checkOutPhotos}
+          onReleaseDeposit={() => {}}
+          onReportDamage={() => {}}
+          damageDispute={damageDispute}
+        />
+      );
+    }
+  }
+  // ─────────────────────────────────────────────────────────────────────────
+
   // TransactionPanel is presentational component
   // that currently handles showing everything inside layout's main view area.
   const panel = isDataAvailable ? (
@@ -919,6 +1030,7 @@ export const TransactionPageComponent = props => {
         />
       }
       isInquiryProcess={processName === INQUIRY_PROCESS_NAME}
+      rentalFlowSection={rentalFlowSection}
       config={config}
       {...orderBreakdownMaybe}
       orderPanel={
@@ -1114,6 +1226,8 @@ const TransactionPage = props => {
     fetchLineItemsInProgress,
     fetchLineItemsError,
     fileUploadsDisabled,
+    rentalFlowInProgress,
+    rentalFlowError,
   } = useSelector(state => state.TransactionPage, shallowEqual);
 
   const currentUser = useSelector(state => state.user?.currentUser);
@@ -1176,6 +1290,22 @@ const TransactionPage = props => {
     (fileAttachmentId, isOwnFile) => dispatch(downloadFile(fileAttachmentId, isOwnFile)),
     [dispatch]
   );
+  const onSaveCheckIn = useCallback(
+    (txId, photos, note) => dispatch(saveRentalCheckIn(txId, photos, note)),
+    [dispatch]
+  );
+  const onSaveCheckOut = useCallback(
+    (txId, photos, note) => dispatch(saveRentalCheckOut(txId, photos, note)),
+    [dispatch]
+  );
+  const onReleaseDeposit = useCallback(
+    txId => dispatch(saveReleaseDeposit(txId)),
+    [dispatch]
+  );
+  const onReportDamage = useCallback(
+    (txId, description, estimatedCost) => dispatch(saveReportDamage(txId, description, estimatedCost)),
+    [dispatch]
+  );
 
   return (
     <TransactionPageComponent
@@ -1216,6 +1346,12 @@ const TransactionPage = props => {
       onUploadFile={onUploadFile}
       onClearUploadedFiles={onClearUploadedFiles}
       onDownloadFile={onDownloadFile}
+      onSaveCheckIn={onSaveCheckIn}
+      onSaveCheckOut={onSaveCheckOut}
+      onReleaseDeposit={onReleaseDeposit}
+      onReportDamage={onReportDamage}
+      rentalFlowInProgress={rentalFlowInProgress}
+      rentalFlowError={rentalFlowError}
       history={history}
     />
   );

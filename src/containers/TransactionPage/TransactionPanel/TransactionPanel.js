@@ -127,6 +127,7 @@ export class TransactionPanelComponent extends Component {
       hasViewingRights,
       transactionFieldsComponent,
       sendMessageForm,
+      rentalFlowSection,
     } = this.props;
 
     const hasTransitions = transitions.length > 0;
@@ -218,6 +219,7 @@ export class TransactionPanelComponent extends Component {
             {requestQuote}
             {offer}
             {transactionFieldsComponent}
+            {rentalFlowSection}
 
             {!isInquiryProcess ? (
               <div className={css.orderDetails}>

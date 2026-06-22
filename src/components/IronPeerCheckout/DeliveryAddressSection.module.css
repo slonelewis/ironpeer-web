@@ -1,0 +1,62 @@
+.root {
+  margin: 20px 0;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: #1a1a1a;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #666;
+  margin: 0 0 16px;
+}
+
+.row {
+  margin-bottom: 12px;
+}
+
+.twoCol {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.col {}
+
+.label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.req {
+  color: #E8450A;
+}
+
+.input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #1a1a1a;
+  background: #fff;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #E8450A;
+}

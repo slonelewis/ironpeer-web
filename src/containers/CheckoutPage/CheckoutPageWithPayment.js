@@ -37,6 +37,7 @@ import {
 } from './CheckoutPageTransactionHelpers.js';
 import { getErrorMessages } from './ErrorMessages';
 
+import { DeliveryAddressSection } from '../../components/IronPeerCheckout';
 import StripePaymentForm from './StripePaymentForm/StripePaymentForm';
 import DetailsSideCard from './DetailsSideCard';
 import MobileListingImage from './MobileListingImage';
@@ -416,6 +417,7 @@ export const CheckoutPageWithPayment = props => {
   const [submitting, setSubmitting] = useState(false);
   // Initialized stripe library is saved to state - if it's needed at some point here too.
   const [stripe, setStripe] = useState(null);
+  const [deliveryAddress, setDeliveryAddress] = useState({});
 
   const {
     scrollingDisabled,
@@ -606,6 +608,13 @@ export const CheckoutPageWithPayment = props => {
             breakdown={breakdown}
             priceVariantName={priceVariantName}
           />
+          {orderData?.deliveryMethod === 'delivery' ? (
+              <DeliveryAddressSection
+                value={deliveryAddress}
+                onChange={setDeliveryAddress}
+              />
+            ) : null}
+
           <section className={css.paymentContainer}>
             {errorMessages.initiateOrderErrorMessage}
             {errorMessages.listingNotFoundErrorMessage}

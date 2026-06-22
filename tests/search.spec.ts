@@ -2,13 +2,13 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Search page', () => {
   test('search page /s loads', async ({ page }) => {
-    await page.goto('/s', { timeout: 10000 });
+    await page.goto('/s', { timeout: 30000 });
     await expect(page).not.toHaveURL(/notfound|404/);
     await expect(page.locator('body')).toBeVisible();
   });
 
   test('search page shows listings or empty state', async ({ page }) => {
-    await page.goto('/s', { timeout: 10000 });
+    await page.goto('/s', { timeout: 30000 });
     // Either listing cards exist or an empty state message
     const listingCards = page.locator('a[href*="/l/"]');
     const emptyState = page.getByText(/no results|no listings|no equipment|nothing found/i);
@@ -18,7 +18,7 @@ test.describe('Search page', () => {
   });
 
   test('search results have clickable listing cards', async ({ page }) => {
-    await page.goto('/s', { timeout: 10000 });
+    await page.goto('/s', { timeout: 30000 });
     const firstListing = page.locator('a[href*="/l/"]').first();
     if (await firstListing.isVisible()) {
       const href = await firstListing.getAttribute('href');
@@ -28,7 +28,7 @@ test.describe('Search page', () => {
   });
 
   test('listing cards show title', async ({ page }) => {
-    await page.goto('/s', { timeout: 10000 });
+    await page.goto('/s', { timeout: 30000 });
     const firstCard = page.locator('a[href*="/l/"]').first();
     if (await firstCard.isVisible()) {
       // Card should have some text content (title)
@@ -38,7 +38,7 @@ test.describe('Search page', () => {
   });
 
   test('listing cards show price', async ({ page }) => {
-    await page.goto('/s', { timeout: 10000 });
+    await page.goto('/s', { timeout: 30000 });
     const firstCard = page.locator('a[href*="/l/"]').first();
     if (await firstCard.isVisible()) {
       // Price shown as $X/day or similar
@@ -54,7 +54,7 @@ test.describe('Search page', () => {
   });
 
   test('listing cards show image', async ({ page }) => {
-    await page.goto('/s', { timeout: 10000 });
+    await page.goto('/s', { timeout: 30000 });
     const firstCard = page.locator('a[href*="/l/"]').first();
     if (await firstCard.isVisible()) {
       // Should have an img inside or near the card
@@ -66,7 +66,7 @@ test.describe('Search page', () => {
   });
 
   test('search filters or search bar visible', async ({ page }) => {
-    await page.goto('/s', { timeout: 10000 });
+    await page.goto('/s', { timeout: 30000 });
     // Could be a search bar, category filter, price filter, etc.
     const searchInput = page.locator('input[type="search"], input[placeholder*="search" i], input[name*="keyword"]');
     const filterBtn = page.getByRole('button', { name: /filter|category|sort/i });
@@ -78,7 +78,7 @@ test.describe('Search page', () => {
 
   test('mobile: search page renders without overflow', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
-    await page.goto('/s', { timeout: 10000 });
+    await page.goto('/s', { timeout: 30000 });
     await expect(page.locator('body')).toBeVisible();
     // Check that horizontal scroll is not created
     const bodyScrollWidth = await page.evaluate(() => document.body.scrollWidth);

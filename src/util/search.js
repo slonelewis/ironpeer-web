@@ -3,7 +3,7 @@
  * showFilter takes priority and falls back to indexForSearch.
  */
 export const isFilterEnabled = filterConfig => {
-  return filterConfig.showFilter === true;
+  return filterConfig?.showFilter === true;
 };
 
 /**

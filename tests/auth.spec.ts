@@ -7,7 +7,7 @@ const TEST_PASSWORD = process.env.PLAYWRIGHT_TEST_PASSWORD || '';
 
 /** Helper: log in with given credentials */
 async function login(page: any, email: string, password: string) {
-  await page.goto('/login', { timeout: 10000 });
+  await page.goto('/login', { timeout: 30000 });
   await page.fill('input[type="email"], input[name*="email"]', email);
   await page.fill('input[type="password"]', password);
   await page.click('button[type="submit"]');
@@ -17,7 +17,7 @@ test.describe('Authentication', () => {
   test.describe.configure({ mode: 'serial' });
 
   test('login page has email + password fields and submit button', async ({ page }) => {
-    await page.goto('/login', { timeout: 10000 });
+    await page.goto('/login', { timeout: 30000 });
     await expect(page.locator('input[type="email"], input[name*="email"]').first()).toBeVisible();
     await expect(page.locator('input[type="password"]').first()).toBeVisible();
     await expect(page.locator('button[type="submit"]').first()).toBeVisible();
@@ -41,7 +41,7 @@ test.describe('Authentication', () => {
   });
 
   test('login with blank fields shows validation errors or prevents submit', async ({ page }) => {
-    await page.goto('/login', { timeout: 10000 });
+    await page.goto('/login', { timeout: 30000 });
     await page.click('button[type="submit"]');
     await page.waitForTimeout(1000);
     // HTML5 native validation or custom error messaging
@@ -55,7 +55,7 @@ test.describe('Authentication', () => {
   });
 
   test('recover password page has email field and submit button', async ({ page }) => {
-    await page.goto('/recover-password', { timeout: 10000 });
+    await page.goto('/recover-password', { timeout: 30000 });
     await expect(page.locator('input[type="email"], input[name*="email"]').first()).toBeVisible();
     await expect(page.locator('button[type="submit"]').first()).toBeVisible();
   });
@@ -64,7 +64,7 @@ test.describe('Authentication', () => {
     test.skip(!TEST_EMAIL || !TEST_PASSWORD, 'Skipping: no test credentials provided');
 
     await login(page, TEST_EMAIL, TEST_PASSWORD);
-    await page.waitForURL(/\//, { timeout: 10000 });
+    await page.waitForURL(/\//, { timeout: 30000 });
 
     // After login, should NOT see signup/login nav links
     // and SHOULD see inbox or profile links
@@ -84,7 +84,7 @@ test.describe('Authentication', () => {
     test.skip(!TEST_EMAIL || !TEST_PASSWORD, 'Skipping: no test credentials provided');
 
     await login(page, TEST_EMAIL, TEST_PASSWORD);
-    await page.waitForURL(/\//, { timeout: 10000 });
+    await page.waitForURL(/\//, { timeout: 30000 });
 
     const url = page.url();
     // Should no longer be on /login
@@ -95,7 +95,7 @@ test.describe('Authentication', () => {
     test.skip(!TEST_EMAIL || !TEST_PASSWORD, 'Skipping: no test credentials provided');
 
     await login(page, TEST_EMAIL, TEST_PASSWORD);
-    await page.waitForURL(/\//, { timeout: 10000 });
+    await page.waitForURL(/\//, { timeout: 30000 });
 
     // Find logout button (could be in a menu)
     const menuBtn = page

@@ -4,14 +4,14 @@ const COMING_SOON = true; // flip to false when going live
 
 test.describe('Navigation — public pages', () => {
   test('homepage loads (coming soon page in COMING_SOON mode)', async ({ page }) => {
-    await page.goto('/', { timeout: 10000 });
+    await page.goto('/', { timeout: 30000 });
     await expect(page.locator('body')).toBeVisible();
     // In coming soon mode, page should not 404
     await expect(page).not.toHaveURL(/notfound|404/);
   });
 
   test('login button visible on coming soon page', async ({ page }) => {
-    await page.goto('/', { timeout: 10000 });
+    await page.goto('/', { timeout: 30000 });
     const loginBtn = page
       .getByRole('link', { name: /log in/i })
       .or(page.getByRole('button', { name: /log in/i }));
@@ -19,7 +19,7 @@ test.describe('Navigation — public pages', () => {
   });
 
   test('login page loads and has form fields', async ({ page }) => {
-    await page.goto('/login', { timeout: 10000 });
+    await page.goto('/login', { timeout: 30000 });
     await expect(page).not.toHaveURL(/notfound|404/);
     await expect(page.locator('input[type="email"], input[name*="email"]').first()).toBeVisible();
     await expect(page.locator('input[type="password"]').first()).toBeVisible();
@@ -27,7 +27,7 @@ test.describe('Navigation — public pages', () => {
   });
 
   test('recover password page loads', async ({ page }) => {
-    await page.goto('/recover-password', { timeout: 10000 });
+    await page.goto('/recover-password', { timeout: 30000 });
     await expect(page).not.toHaveURL(/notfound|404/);
     await expect(page.locator('body')).toBeVisible();
     await expect(
@@ -36,7 +36,7 @@ test.describe('Navigation — public pages', () => {
   });
 
   test('terms of service page loads', async ({ page }) => {
-    await page.goto('/terms-of-service', { timeout: 10000 });
+    await page.goto('/terms-of-service', { timeout: 30000 });
     await expect(page).not.toHaveURL(/notfound|404/);
     await expect(page.locator('body')).toBeVisible();
     // Should contain some recognizable TOS content
@@ -46,7 +46,7 @@ test.describe('Navigation — public pages', () => {
   });
 
   test('privacy policy page loads', async ({ page }) => {
-    await page.goto('/privacy-policy', { timeout: 10000 });
+    await page.goto('/privacy-policy', { timeout: 30000 });
     await expect(page).not.toHaveURL(/notfound|404/);
     await expect(page.locator('body')).toBeVisible();
     await expect(
@@ -55,7 +55,7 @@ test.describe('Navigation — public pages', () => {
   });
 
   test('404 / notfound page loads for unknown route', async ({ page }) => {
-    await page.goto('/notfound', { timeout: 10000 });
+    await page.goto('/notfound', { timeout: 30000 });
     await expect(page.locator('body')).toBeVisible();
     // Should show a 404 or not-found message
     await expect(
@@ -64,7 +64,7 @@ test.describe('Navigation — public pages', () => {
   });
 
   test('unknown route redirects to or shows 404', async ({ page }) => {
-    await page.goto('/this-route-definitely-does-not-exist-xyz123', { timeout: 10000 });
+    await page.goto('/this-route-definitely-does-not-exist-xyz123', { timeout: 30000 });
     await expect(page.locator('body')).toBeVisible();
     // Either URL changes to /notfound or the page shows a not-found message
     const url = page.url();

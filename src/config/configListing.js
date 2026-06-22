@@ -426,7 +426,6 @@ export const listingTypes = [
     defaultListingFields: {
       location: true,
       payoutDetails: true,
-      pickup: true,
     },
   },
   // // Here are some examples of listingTypes

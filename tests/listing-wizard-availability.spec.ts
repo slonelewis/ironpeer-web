@@ -1,13 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Listing wizard — availability tab', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/login');
-    await page.fill('input[type="email"]', process.env.PLAYWRIGHT_TEST_EMAIL || '');
-    await page.fill('input[type="password"]', process.env.PLAYWRIGHT_TEST_PASSWORD || '');
-    await page.click('button[type="submit"]');
-    await page.waitForURL(/\//);
-  });
+  
 
   test('availability form is inline — no modal button', async ({ page }) => {
     await page.goto('/l/new');

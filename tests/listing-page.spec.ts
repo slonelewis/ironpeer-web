@@ -1,20 +1,19 @@
 import { test, expect } from '@playwright/test';
 
-// REQUIRES: at least one published listing on the marketplace
+// REQUIRES: test listing seeded in .env.playwright
+const LISTING_ID = process.env.PLAYWRIGHT_TEST_LISTING_ID || '';
+const LISTING_SLUG = process.env.PLAYWRIGHT_TEST_LISTING_SLUG || 'playwright-test-listing';
 
-/** Navigate to the first listing found via search */
-async function goToFirstListing(page: any): Promise<boolean> {
-  await page.goto('/s', { timeout: 10000 });
-  const firstListing = page.locator('a[href*="/l/"]').first();
-  if (!(await firstListing.isVisible())) return false;
-  await firstListing.click();
-  await page.waitForLoadState('domcontentloaded');
+/** Navigate directly to known test listing */
+async function goToTestListing(page: any): Promise<boolean> {
+  if (!LISTING_ID) return false;
+  await page.goto(`/l/${LISTING_SLUG}/${LISTING_ID}`, { waitUntil: 'domcontentloaded', timeout: 15000 });
   return true;
 }
 
 test.describe('Listing page', () => {
   test('individual listing page loads from search result', async ({ page }) => {
-    const found = await goToFirstListing(page);
+    const found = await goToTestListing(page);
     if (!found) {
       test.skip();
       return;
@@ -24,7 +23,7 @@ test.describe('Listing page', () => {
   });
 
   test('shows listing title', async ({ page }) => {
-    const found = await goToFirstListing(page);
+    const found = await goToTestListing(page);
     if (!found) { test.skip(); return; }
     // Title typically in h1 or prominent heading
     const heading = page.locator('h1, h2, [class*="title"]').first();
@@ -34,19 +33,19 @@ test.describe('Listing page', () => {
   });
 
   test('shows listing price', async ({ page }) => {
-    const found = await goToFirstListing(page);
+    const found = await goToTestListing(page);
     if (!found) { test.skip(); return; }
     await expect(page.getByText(/\$\d+/i).first()).toBeVisible();
   });
 
   test('shows IronPeer Protection badge', async ({ page }) => {
-    const found = await goToFirstListing(page);
+    const found = await goToTestListing(page);
     if (!found) { test.skip(); return; }
     await expect(page.getByText(/ironpeer protection/i).first()).toBeVisible();
   });
 
   test('shows security deposit notice', async ({ page }) => {
-    const found = await goToFirstListing(page);
+    const found = await goToTestListing(page);
     if (!found) { test.skip(); return; }
     await expect(
       page.getByText(/security deposit|refundable deposit/i).first()
@@ -54,7 +53,7 @@ test.describe('Listing page', () => {
   });
 
   test('shows cancellation policy', async ({ page }) => {
-    const found = await goToFirstListing(page);
+    const found = await goToTestListing(page);
     if (!found) { test.skip(); return; }
     await expect(
       page.getByText(/cancellation|72h|72 hour/i).first()
@@ -62,7 +61,7 @@ test.describe('Listing page', () => {
   });
 
   test('shows availability calendar', async ({ page }) => {
-    const found = await goToFirstListing(page);
+    const found = await goToTestListing(page);
     if (!found) { test.skip(); return; }
     // Calendar could be a date picker or calendar grid
     const calendar = page
@@ -79,7 +78,7 @@ test.describe('Listing page', () => {
   });
 
   test('shows owner info / avatar', async ({ page }) => {
-    const found = await goToFirstListing(page);
+    const found = await goToTestListing(page);
     if (!found) { test.skip(); return; }
     // Owner section could be a link to /u/:id or an avatar image
     const ownerSection = page
@@ -90,7 +89,7 @@ test.describe('Listing page', () => {
   });
 
   test('shows listing photos', async ({ page }) => {
-    const found = await goToFirstListing(page);
+    const found = await goToTestListing(page);
     if (!found) { test.skip(); return; }
     const img = page.locator('[class*="listing"] img, [class*="gallery"] img, [class*="photo"] img, [class*="image"] img').first();
     if (await img.count() > 0) {
@@ -102,7 +101,7 @@ test.describe('Listing page', () => {
   });
 
   test('shows category or subcategory', async ({ page }) => {
-    const found = await goToFirstListing(page);
+    const found = await goToTestListing(page);
     if (!found) { test.skip(); return; }
     // Could be breadcrumb, metadata, or tag
     const categoryText = page.getByText(
@@ -113,7 +112,7 @@ test.describe('Listing page', () => {
 
   test('booking panel visible on desktop', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
-    const found = await goToFirstListing(page);
+    const found = await goToTestListing(page);
     if (!found) { test.skip(); return; }
     // Booking/request panel — could be a sticky sidebar
     const bookPanel = page
@@ -124,7 +123,7 @@ test.describe('Listing page', () => {
   });
 
   test('delivery option shown when delivery available', async ({ page }) => {
-    const found = await goToFirstListing(page);
+    const found = await goToTestListing(page);
     if (!found) { test.skip(); return; }
     // Not all listings have delivery — only check if present
     const deliveryOption = page.getByText(/delivery|pickup/i).first();

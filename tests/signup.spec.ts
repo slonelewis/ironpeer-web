@@ -1,13 +1,8 @@
 import { test, expect } from '@playwright/test';
 
-// NOTE: signup tests require COMING_SOON=false in Railway.
-// They will be skipped while the site is in coming soon mode.
-const COMING_SOON = true; // flip to false when going live
 
 test.describe('Signup page', () => {
-  test.beforeEach(async ({ page }) => {
-    test.skip(COMING_SOON, 'Signup blocked by Coming Soon mode — enable when going live');
-    await page.goto('/signup');
+  test.beforeEach(async ({ page }) => {    await page.goto('/signup');
   });
 
   test('signup page loads', async ({ page }) => {

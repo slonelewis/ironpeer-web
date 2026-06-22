@@ -3,14 +3,7 @@ import { test, expect } from '@playwright/test';
 // These tests require a logged-in session.
 // Set PLAYWRIGHT_TEST_EMAIL and PLAYWRIGHT_TEST_PASSWORD env vars.
 test.describe('Listing wizard — categories', () => {
-  test.beforeEach(async ({ page }) => {
-    // Log in
-    await page.goto('/login');
-    await page.fill('input[type="email"]', process.env.PLAYWRIGHT_TEST_EMAIL || '');
-    await page.fill('input[type="password"]', process.env.PLAYWRIGHT_TEST_PASSWORD || '');
-    await page.click('button[type="submit"]');
-    await page.waitForURL(/\//);
-  });
+  
 
   test('can navigate to new listing wizard', async ({ page }) => {
     await page.goto('/l/new');

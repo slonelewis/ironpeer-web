@@ -1,13 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Listing wizard — protection tab', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/login');
-    await page.fill('input[type="email"]', process.env.PLAYWRIGHT_TEST_EMAIL || '');
-    await page.fill('input[type="password"]', process.env.PLAYWRIGHT_TEST_PASSWORD || '');
-    await page.click('button[type="submit"]');
-    await page.waitForURL(/\//);
-  });
+  
 
   test('Haulers & Trailers auto-locks to road-legal — no off-road option visible', async ({ page }) => {
     await page.goto('/l/new');

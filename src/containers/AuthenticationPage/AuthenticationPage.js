@@ -301,6 +301,12 @@ export const AuthenticationPageComponent = props => {
     // Already authenticated, redirect back to the page the user tried to access
     return <Redirect to={from} />;
   } else if (shouldRedirectToLandingPage) {
+    // Check if profile completion wizard is needed for new users
+    const profileComplete = user?.attributes?.profile?.publicData?.profileComplete;
+    if (!profileComplete) {
+      // New user — send them through the profile completion wizard
+      return <NamedRedirect name="ProfileCompletionPage" />;
+    }
     // Already authenticated, redirect to the landing page (this was direct access to /login or /signup)
     return <NamedRedirect name="LandingPage" />;
   } else if (show404) {

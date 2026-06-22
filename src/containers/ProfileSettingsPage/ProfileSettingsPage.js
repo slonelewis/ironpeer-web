@@ -196,6 +196,16 @@ export const ProfileSettingsPageComponent = props => {
         footer={<FooterContainer />}
       >
         <div className={css.content}>
+          {!publicData?.profileComplete ? (
+            <NamedLink name="ProfileCompletionPage" className={css.completionBanner}>
+              <span className={css.completionBannerIcon}>✅</span>
+              <span>
+                <strong>Finish setting up your profile</strong> — Complete your IronPeer setup to
+                start listing, renting, or hauling.
+              </span>
+              <span className={css.completionBannerArrow}>→</span>
+            </NamedLink>
+          ) : null}
           <div className={css.headingContainer}>
             <H3 as="h1" className={css.heading}>
               <FormattedMessage id="ProfileSettingsPage.heading" />

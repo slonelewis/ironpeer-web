@@ -82,7 +82,15 @@ import {
   clearUploadedFiles,
   selectFileUploads,
   downloadFile,
+  saveRentalCheckIn,
+  saveRentalCheckOut,
+  saveReleaseDeposit,
+  saveReportDamage,
 } from './TransactionPage.duck';
+
+import RentalCheckIn from '../../components/RentalCheckIn/RentalCheckIn';
+import RentalCheckOut from '../../components/RentalCheckOut/RentalCheckOut';
+import RentalDamageReview from '../../components/RentalDamageReview/RentalDamageReview';
 import css from './TransactionPage.module.css';
 
 const MAX_MOBILE_SCREEN_WIDTH = 1023;
@@ -354,6 +362,12 @@ export const TransactionPageComponent = props => {
     onClearUploadedFiles,
     onDownloadFile,
     fileUploadsDisabled,
+    onSaveCheckIn,
+    onSaveCheckOut,
+    onReleaseDeposit,
+    onReportDamage,
+    rentalFlowInProgress,
+    rentalFlowError,
     ...restOfProps
   } = props;
 

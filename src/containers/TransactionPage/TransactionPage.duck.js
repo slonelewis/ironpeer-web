@@ -916,6 +916,113 @@ export const fetchTransactionLineItems = ({ orderData, listingId, isOwnListing }
   return dispatch(fetchLineItemsThunk({ orderData, listingId, isOwnListing }));
 };
 
+// ================ Rental Flow ================ //
+// These thunks save check-in/check-out photos and damage review data to transaction protectedData.
+// They use sdk.transactions.transition with IronPeer-specific transition names.
+// Ensure these transitions exist in your Sharetribe process graph.
+
+export const TRANSITION_CHECK_IN = 'transition/check-in';
+export const TRANSITION_CHECK_OUT = 'transition/check-out';
+export const TRANSITION_RELEASE_DEPOSIT = 'transition/release-deposit';
+export const TRANSITION_REPORT_DAMAGE = 'transition/report-damage';
+
+const saveRentalFlowPayloadCreator = async ({ txId, transitionName, protectedDataParams }, thunkAPI) => {
+  const sdk = thunkAPI.extra;
+  try {
+    const params = { protectedData: protectedDataParams };
+    const response = await sdk.transactions.transition(
+      { id: txId, transition: transitionName, params },
+      { expand: true }
+    );
+    thunkAPI.dispatch(addMarketplaceEntities(response));
+    return response;
+  } catch (e) {
+    log.error(e, `rental-flow-transition-failed`, { transitionName });
+    return thunkAPI.rejectWithValue(storableError(e));
+  }
+};
+
+export const saveRentalFlowThunk = createAsyncThunk(
+  'TransactionPage/saveRentalFlow',
+  saveRentalFlowPayloadCreator
+);
+
+/**
+ * Save check-in photos and note. Called when renter confirms pickup.
+ * @param {string|UUID} txId
+ * @param {Object} photos - { front, back, left, right } keyed photo data
+ * @param {string} note - optional damage note
+ */
+export const saveRentalCheckIn = (txId, photos, note) => dispatch => {
+  return dispatch(
+    saveRentalFlowThunk({
+      txId,
+      transitionName: TRANSITION_CHECK_IN,
+      protectedDataParams: {
+        checkInPhotos: photos,
+        checkInNote: note || '',
+        checkInConfirmedAt: new Date().toISOString(),
+      },
+    })
+  );
+};
+
+/**
+ * Save check-out photos and note. Called when renter confirms return.
+ * @param {string|UUID} txId
+ * @param {Object} photos - { front, back, left, right } keyed photo data
+ * @param {string} note - optional damage note
+ */
+export const saveRentalCheckOut = (txId, photos, note) => dispatch => {
+  return dispatch(
+    saveRentalFlowThunk({
+      txId,
+      transitionName: TRANSITION_CHECK_OUT,
+      protectedDataParams: {
+        checkOutPhotos: photos,
+        checkOutNote: note || '',
+        checkOutConfirmedAt: new Date().toISOString(),
+      },
+    })
+  );
+};
+
+/**
+ * Release deposit — owner confirms no damage.
+ * @param {string|UUID} txId
+ */
+export const saveReleaseDeposit = txId => dispatch => {
+  return dispatch(
+    saveRentalFlowThunk({
+      txId,
+      transitionName: TRANSITION_RELEASE_DEPOSIT,
+      protectedDataParams: { depositReleased: true, depositReleasedAt: new Date().toISOString() },
+    })
+  );
+};
+
+/**
+ * Report damage — owner files a damage dispute.
+ * @param {string|UUID} txId
+ * @param {string} description
+ * @param {number|null} estimatedCost
+ */
+export const saveReportDamage = (txId, description, estimatedCost) => dispatch => {
+  return dispatch(
+    saveRentalFlowThunk({
+      txId,
+      transitionName: TRANSITION_REPORT_DAMAGE,
+      protectedDataParams: {
+        damageDispute: {
+          description,
+          estimatedCost: estimatedCost != null ? estimatedCost : null,
+          reportedAt: new Date().toISOString(),
+        },
+      },
+    })
+  );
+};
+
 // ================ Slice ================ //
 
 const initialState = {
@@ -975,6 +1082,8 @@ const initialState = {
   // store the information in state and use it to view the necessary information
   // if the configuration still has old access details.
   fileUploadsDisabled: false,
+  rentalFlowInProgress: false,
+  rentalFlowError: null,
   fileDownloads: {
     // [fileId.uuid]: { inProgress: bool, error: null | storable-error }
   },
@@ -1066,6 +1175,18 @@ const transactionPageSlice = createSlice({
       .addCase(makeTransitionThunk.rejected, (state, action) => {
         state.transitionInProgress = null;
         state.transitionError = action.payload;
+      })
+      // rentalFlow cases
+      .addCase(saveRentalFlowThunk.pending, state => {
+        state.rentalFlowInProgress = true;
+        state.rentalFlowError = null;
+      })
+      .addCase(saveRentalFlowThunk.fulfilled, state => {
+        state.rentalFlowInProgress = false;
+      })
+      .addCase(saveRentalFlowThunk.rejected, (state, action) => {
+        state.rentalFlowInProgress = false;
+        state.rentalFlowError = action.payload;
       })
       // fetchMessages cases
       .addCase(fetchMessagesThunk.pending, state => {

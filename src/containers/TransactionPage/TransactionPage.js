@@ -509,7 +509,7 @@ export const TransactionPageComponent = props => {
 
   // Submit review and close the review modal
   const onSubmitReview = values => {
-    const { reviewRating, reviewContent } = values;
+    const { reviewRating, reviewContent, subRatings } = values;
     const rating = Number.parseInt(reviewRating, 10);
     const { states, transitions } = process;
     const transitionOptions =
@@ -528,7 +528,11 @@ export const TransactionPageComponent = props => {
               .getTransitionsToStates([states.REVIEWED_BY_CUSTOMER])
               .includes(transaction.attributes.lastTransition),
           };
-    const params = { reviewRating: rating, reviewContent };
+    const params = {
+      reviewRating: rating,
+      reviewContent,
+      ...(subRatings ? { publicData: { subRatings } } : {}),
+    };
 
     onSendReview(transaction, transitionOptions, params, config)
       .then(r => {
@@ -1121,6 +1125,7 @@ export const TransactionPageComponent = props => {
           sendReviewInProgress={sendReviewInProgress}
           sendReviewError={sendReviewError}
           marketplaceName={config.marketplaceName}
+          reviewType={isCustomerRole ? 'customerReviewsProvider' : 'providerReviewsCustomer'}
         />
         {process?.transitions?.DISPUTE ? (
           <DisputeModal

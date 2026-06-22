@@ -26,6 +26,7 @@ import css from './ReviewModal.module.css';
  * @param {boolean} props.sendReviewInProgress - Whether the send review is in progress
  * @param {propTypes.error} props.sendReviewError - The send review error
  * @param {string} props.marketplaceName - The marketplace name
+ * @param {'customerReviewsProvider'|'providerReviewsCustomer'} [props.reviewType] - Controls sub-category ratings shown in ReviewForm
  * @returns {JSX.Element} The ReviewModal component
  */
 const ReviewModal = props => {
@@ -44,6 +45,7 @@ const ReviewModal = props => {
     reviewSent = false,
     sendReviewInProgress = false,
     sendReviewError,
+    reviewType,
   } = props;
 
   const classes = classNames(rootClassName || css.root, className);
@@ -74,6 +76,7 @@ const ReviewModal = props => {
         reviewSent={reviewSent}
         sendReviewInProgress={sendReviewInProgress}
         sendReviewError={sendReviewError}
+        reviewType={reviewType}
       />
     </Modal>
   );

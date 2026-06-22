@@ -1,0 +1,137 @@
+/* HaulerRatingSummary.module.css */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+}
+
+/* ── Overall score ── */
+.overallSection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ebebeb;
+}
+
+.overallScore {
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 1;
+  color: #222;
+}
+
+.overallDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.overallStars {
+  /* Inherits ReviewRating defaults */
+}
+
+.reviewCount {
+  font-size: 14px;
+  color: #717171;
+}
+
+.noReviews {
+  font-size: 15px;
+  color: #717171;
+  text-align: center;
+  padding: 24px 0;
+}
+
+/* ── Sub-category breakdown ── */
+.subCategoriesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ebebeb;
+}
+
+.subCategoryRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.subCategoryLabel {
+  font-size: 14px;
+  color: #333;
+  min-width: 180px;
+  flex-shrink: 0;
+}
+
+.barWrapper {
+  flex: 1;
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  background: #E8450A;
+  border-radius: 3px;
+  transition: width 0.35s ease;
+}
+
+.barValue {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  min-width: 30px;
+  text-align: right;
+}
+
+/* ── Individual reviews list ── */
+.reviewsList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.reviewCard {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.reviewAvatar {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+}
+
+.reviewBody {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.reviewStars {
+  /* Inherits ReviewRating defaults */
+}
+
+.reviewContent {
+  font-size: 15px;
+  color: #333;
+  margin: 2px 0 0;
+  line-height: 1.5;
+}
+
+.reviewDate {
+  font-size: 13px;
+  color: #717171;
+  margin: 2px 0 0;
+}

@@ -297,6 +297,39 @@ export const AuthenticationPageComponent = props => {
     );
   }
 
+  // Check account suspension before any redirect
+  const isSuspended = user?.attributes?.profile?.publicData?.suspended === true;
+  if (isAuthenticated && currentUserLoaded && isSuspended) {
+    return (
+      <div
+        style={{
+          position: 'fixed',
+          inset: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: '#fff',
+          zIndex: 9999,
+          padding: '32px',
+          textAlign: 'center',
+        }}
+      >
+        <div style={{ fontSize: '48px', marginBottom: '16px' }}>🚫</div>
+        <h1 style={{ fontSize: '24px', color: '#222', marginBottom: '12px' }}>
+          Account Suspended
+        </h1>
+        <p style={{ fontSize: '16px', color: '#555', maxWidth: '480px', lineHeight: 1.6 }}>
+          Your account has been suspended due to consistently low ratings. Contact{' '}
+          <a href="mailto:support@ironpeer.com" style={{ color: '#E8450A' }}>
+            support@ironpeer.com
+          </a>{' '}
+          to appeal.
+        </p>
+      </div>
+    );
+  }
+
   if (shouldRedirectToFrom) {
     // Already authenticated, redirect back to the page the user tried to access
     return <Redirect to={from} />;

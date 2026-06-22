@@ -1,0 +1,52 @@
+/* SectionReviews.module.css — Sub-category rating breakdown styles */
+
+.reviewEntry {
+  margin-bottom: 24px;
+}
+
+.subRatingBreakdown {
+  margin: 8px 0 0 56px; /* align with review body (past avatar) */
+  padding: 12px 16px;
+  background: #fafafa;
+  border: 1px solid #ebebeb;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.subRatingRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.subRatingLabel {
+  font-size: 13px;
+  color: #4a4a4a;
+  min-width: 160px;
+  flex-shrink: 0;
+}
+
+.subRatingBarWrapper {
+  flex: 1;
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.subRatingBar {
+  height: 100%;
+  background: #E8450A;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.subRatingValue {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  min-width: 28px;
+  text-align: right;
+}

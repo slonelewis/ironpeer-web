@@ -1,0 +1,68 @@
+/* HaulerReviewForm.module.css */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.intro {
+  font-size: 16px;
+  color: var(--colorGrey700, #4a4a4a);
+  margin: 0 0 20px 0;
+}
+
+/* Sub-category ratings section */
+.subRatingsSection {
+  margin-bottom: 24px;
+  border: 1px solid var(--colorGrey100, #e0e0e0);
+  border-radius: 8px;
+  padding: 16px 20px 8px;
+}
+
+.subRatingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--colorGrey100, #e0e0e0);
+}
+
+.subRatingRowLast {
+  border-bottom: none;
+  margin-bottom: 4px;
+}
+
+.subRatingLabel {
+  font-size: 15px;
+  color: var(--colorGrey700, #4a4a4a);
+  flex: 1;
+  padding-right: 12px;
+}
+
+.subRatingStars {
+  flex-shrink: 0;
+  margin-bottom: 0;
+}
+
+.reviewContent {
+  flex-shrink: 0;
+  margin-top: 8px;
+  margin-bottom: 24px;
+}
+
+.submitButton {
+  margin-top: auto;
+  margin-bottom: 0;
+  flex-shrink: 0;
+
+  /* Iron Orange primary */
+  background-color: #E8450A;
+  border-color: #E8450A;
+}
+
+.submitButton:hover {
+  background-color: #c93a08;
+  border-color: #c93a08;
+}

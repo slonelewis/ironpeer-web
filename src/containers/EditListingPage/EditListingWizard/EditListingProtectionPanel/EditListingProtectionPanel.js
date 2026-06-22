@@ -39,9 +39,13 @@ const EditListingProtectionPanel = props => {
   const classes = classNames(rootClassName || css.root, className);
   const isPublished = listing?.id && listing?.attributes?.state !== LISTING_STATE_DRAFT;
 
+  // If this is a trailer/hauler category, it is always road-legal — lock it
+  const publicData = listing?.attributes?.publicData || {};
+  const isTrailerCategory = publicData.categoryLevel1 === 'Haulers_and_trailers';
+
   // Pull existing values from privateData
   const privateData = listing?.attributes?.privateData || {};
-  const existingIsRoadLegal = privateData.isRoadLegal;
+  const existingIsRoadLegal = isTrailerCategory ? true : privateData.isRoadLegal;
   const existingHasInsurance = privateData.hasInsurance;
   const existingRegExpiry = privateData.registration?.expiresAt?.slice(0, 10) || '';
   const existingInsExpiry = privateData.insurance?.expiresAt?.slice(0, 10) || '';
@@ -49,7 +53,7 @@ const EditListingProtectionPanel = props => {
 
   // Local state
   const [isRoadLegal, setIsRoadLegal] = useState(
-    existingIsRoadLegal !== undefined ? existingIsRoadLegal : null
+    isTrailerCategory ? true : (existingIsRoadLegal !== undefined ? existingIsRoadLegal : null)
   );
   const [regFileName, setRegFileName] = useState(privateData.registration?.fileName || '');
   const [regExpiry, setRegExpiry] = useState(existingRegExpiry);
@@ -138,26 +142,34 @@ const EditListingProtectionPanel = props => {
       </div>
 
       {/* ── ROAD LEGAL ── */}
-      <div className={css.sectionTitle}>Is this equipment road-legal?</div>
-      <p style={{ fontSize: '0.875rem', color: '#666', marginBottom: '0.75rem' }}>
-        Examples: trailers, tow vehicles, equipment that travels on public roads.
-      </p>
-      <div className={css.buttonGroup}>
-        <button
-          type="button"
-          className={isRoadLegal === true ? css.optionButtonActive : css.optionButton}
-          onClick={() => setIsRoadLegal(true)}
-        >
-          Yes — it&apos;s road-legal
-        </button>
-        <button
-          type="button"
-          className={isRoadLegal === false ? css.optionButtonActive : css.optionButton}
-          onClick={() => setIsRoadLegal(false)}
-        >
-          No — off-road / yard equipment only
-        </button>
-      </div>
+      {isTrailerCategory ? (
+        <div style={{ fontSize: '0.875rem', color: '#555', marginBottom: '1rem', padding: '0.75rem', background: '#fff8f5', border: '1px solid #E8450A33', borderRadius: '6px' }}>
+          🚛 <strong>Trailers and haulers are road-legal by default.</strong> Registration is required.
+        </div>
+      ) : (
+        <>
+          <div className={css.sectionTitle}>Is this equipment road-legal?</div>
+          <p style={{ fontSize: '0.875rem', color: '#666', marginBottom: '0.75rem' }}>
+            Examples: trailers, tow vehicles, equipment that travels on public roads.
+          </p>
+          <div className={css.buttonGroup}>
+            <button
+              type="button"
+              className={isRoadLegal === true ? css.optionButtonActive : css.optionButton}
+              onClick={() => setIsRoadLegal(true)}
+            >
+              Yes — it&apos;s road-legal
+            </button>
+            <button
+              type="button"
+              className={isRoadLegal === false ? css.optionButtonActive : css.optionButton}
+              onClick={() => setIsRoadLegal(false)}
+            >
+              No — off-road / yard equipment only
+            </button>
+          </div>
+        </>
+      )}
 
       {isRoadLegal === true && (
         <div className={css.subSection}>

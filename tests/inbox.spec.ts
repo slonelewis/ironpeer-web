@@ -2,20 +2,8 @@ import { test, expect } from '@playwright/test';
 
 // REQUIRES: logged in
 
-const TEST_EMAIL = process.env.PLAYWRIGHT_TEST_EMAIL || '';
-const TEST_PASSWORD = process.env.PLAYWRIGHT_TEST_PASSWORD || '';
-
 test.describe('Inbox', () => {
   test.describe.configure({ mode: 'serial' });
-
-  test.beforeEach(async ({ page }) => {
-    test.skip(!TEST_EMAIL || !TEST_PASSWORD, 'Skipping: no test credentials provided');
-    await page.goto('/login', { timeout: 10000 });
-    await page.fill('input[type="email"], input[name*="email"]', TEST_EMAIL);
-    await page.fill('input[type="password"]', TEST_PASSWORD);
-    await page.click('button[type="submit"]');
-    await page.waitForURL(/\//, { timeout: 10000 });
-  });
 
   test('inbox page loads when logged in at /inbox', async ({ page }) => {
     await page.goto('/inbox', { timeout: 10000 });
@@ -25,22 +13,24 @@ test.describe('Inbox', () => {
 
   test('shows orders tab', async ({ page }) => {
     await page.goto('/inbox', { timeout: 10000 });
+    // Sharetribe uses 'As a customer' / 'As a provider' tab labels (not 'Orders'/'Sales')
     const ordersTab = page
-      .getByRole('tab', { name: /order/i })
-      .or(page.getByRole('link', { name: /order/i }))
-      .or(page.getByText(/^orders$/i))
+      .getByRole('link', { name: /as a customer/i })
+      .or(page.getByText(/as a customer/i))
+      .or(page.getByRole('tab', { name: /order|customer/i }))
       .first();
     await expect(ordersTab).toBeVisible();
   });
 
   test('shows sales tab', async ({ page }) => {
     await page.goto('/inbox', { timeout: 10000 });
+    // Sharetribe uses 'As a provider' tab label (not 'Sales')
     const salesTab = page
-      .getByRole('tab', { name: /sale/i })
-      .or(page.getByRole('link', { name: /sale/i }))
-      .or(page.getByText(/^sales$/i))
+      .getByRole('link', { name: /as a provider/i })
+      .or(page.getByText(/as a provider/i))
+      .or(page.getByRole('tab', { name: /sale|provider/i }))
       .first();
-    // Sales tab might only be visible for owners — conditional check
+    // Tab might only be visible for owners — conditional check
     if (await salesTab.isVisible()) {
       await expect(salesTab).toBeVisible();
     }

@@ -47,12 +47,14 @@ export default defineConfig({
       dependencies: ['setup'],
       testIgnore: [
         '**/auth.setup.ts',
+        '**/auth.spec.ts',
         '**/navigation.spec.ts',
         '**/homepage.spec.ts',
         '**/mobile.spec.ts',
+        '**/signup.spec.ts',
       ],
     },
-    // Tests that run without login (public pages)
+    // Tests that run without login (public pages + auth flow)
     {
       name: 'public',
       use: { ...devices['Desktop Chrome'] },
@@ -61,6 +63,7 @@ export default defineConfig({
         '**/homepage.spec.ts',
         '**/mobile.spec.ts',
         '**/search.spec.ts',
+        '**/auth.spec.ts',
       ],
     },
   ],

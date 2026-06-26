@@ -2,12 +2,6 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Reviews system', () => {
   test('review form requires minimum 20 characters', async ({ page }) => {
-    await page.goto('/login');
-    await page.fill('input[type="email"]', process.env.PLAYWRIGHT_TEST_EMAIL || '');
-    await page.fill('input[type="password"]', process.env.PLAYWRIGHT_TEST_PASSWORD || '');
-    await page.click('button[type="submit"]');
-    await page.waitForURL(/\//);
-
     // Navigate to a completed transaction if one exists
     await page.goto('/inbox/orders');
     const firstOrder = page.locator('a[href*="/order/"]').first();

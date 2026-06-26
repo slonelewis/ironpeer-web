@@ -2,20 +2,8 @@ import { test, expect } from '@playwright/test';
 
 // REQUIRES: logged in
 
-const TEST_EMAIL = process.env.PLAYWRIGHT_TEST_EMAIL || '';
-const TEST_PASSWORD = process.env.PLAYWRIGHT_TEST_PASSWORD || '';
-
 test.describe('Profile settings', () => {
   test.describe.configure({ mode: 'serial' });
-
-  test.beforeEach(async ({ page }) => {
-    test.skip(!TEST_EMAIL || !TEST_PASSWORD, 'Skipping: no test credentials provided');
-    await page.goto('/login', { timeout: 10000 });
-    await page.fill('input[type="email"], input[name*="email"]', TEST_EMAIL);
-    await page.fill('input[type="password"]', TEST_PASSWORD);
-    await page.click('button[type="submit"]');
-    await page.waitForURL(/\//, { timeout: 10000 });
-  });
 
   test('profile settings page loads when logged in', async ({ page }) => {
     await page.goto('/profile-settings', { timeout: 10000 });

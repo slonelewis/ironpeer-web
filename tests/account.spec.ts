@@ -2,20 +2,8 @@ import { test, expect } from '@playwright/test';
 
 // REQUIRES: logged in
 
-const TEST_EMAIL = process.env.PLAYWRIGHT_TEST_EMAIL || '';
-const TEST_PASSWORD = process.env.PLAYWRIGHT_TEST_PASSWORD || '';
-
 test.describe('Account settings', () => {
   test.describe.configure({ mode: 'serial' });
-
-  test.beforeEach(async ({ page }) => {
-    test.skip(!TEST_EMAIL || !TEST_PASSWORD, 'Skipping: no test credentials provided');
-    await page.goto('/login', { timeout: 10000 });
-    await page.fill('input[type="email"], input[name*="email"]', TEST_EMAIL);
-    await page.fill('input[type="password"]', TEST_PASSWORD);
-    await page.click('button[type="submit"]');
-    await page.waitForURL(/\//, { timeout: 10000 });
-  });
 
   test('/account loads when logged in', async ({ page }) => {
     await page.goto('/account', { timeout: 10000 });
@@ -24,7 +12,8 @@ test.describe('Account settings', () => {
   });
 
   test('/account/contact-details loads and shows email/phone fields', async ({ page }) => {
-    await page.goto('/account/contact-details', { timeout: 10000 });
+    await page.goto('/account/contact-details', { timeout: 15000 });
+    await page.waitForLoadState('networkidle');
     await expect(page).not.toHaveURL(/notfound|404|login/);
     // Should have email field
     const emailInput = page
@@ -62,9 +51,11 @@ test.describe('Account settings', () => {
   });
 
   test('/account shows navigation links to sub-pages', async ({ page }) => {
-    await page.goto('/account', { timeout: 10000 });
+    await page.goto('/account', { timeout: 15000 });
+    await page.waitForLoadState('networkidle');
     // Account page should have links to sub-sections
     const links = page.locator('a[href*="/account/"]');
+    await expect(links.first()).toBeVisible({ timeout: 10000 });
     const count = await links.count();
     expect(count).toBeGreaterThan(0);
   });

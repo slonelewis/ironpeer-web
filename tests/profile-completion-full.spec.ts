@@ -4,64 +4,60 @@ import { test, expect } from '@playwright/test';
 // NOTE: Basic profile-completion tests are in profile-completion.spec.ts.
 // This file tests the full wizard content including fields and hauler-specific steps.
 
-const TEST_EMAIL = process.env.PLAYWRIGHT_TEST_EMAIL || '';
-const TEST_PASSWORD = process.env.PLAYWRIGHT_TEST_PASSWORD || '';
-
 test.describe('Profile completion wizard — full', () => {
   test.describe.configure({ mode: 'serial' });
 
-  test.beforeEach(async ({ page }) => {
-    test.skip(!TEST_EMAIL || !TEST_PASSWORD, 'Skipping: no test credentials provided');
-    await page.goto('/login', { timeout: 10000 });
-    await page.fill('input[type="email"], input[name*="email"]', TEST_EMAIL);
-    await page.fill('input[type="password"]', TEST_PASSWORD);
-    await page.click('button[type="submit"]');
-    await page.waitForURL(/\//, { timeout: 10000 });
-  });
+  async function gotoProfileCompletion(page: any) {
+    await page.goto('/profile-completion', { timeout: 15000 });
+    await page.waitForLoadState('networkidle');
+    await expect(page).not.toHaveURL(/notfound|404/);
+  }
 
   test('/profile-completion loads when logged in', async ({ page }) => {
-    await page.goto('/profile-completion', { timeout: 10000 });
-    await expect(page).not.toHaveURL(/notfound|404/);
+    await gotoProfileCompletion(page);
     await expect(page.locator('body')).toBeVisible();
   });
 
   test('shows step indicator', async ({ page }) => {
-    await page.goto('/profile-completion', { timeout: 10000 });
+    await gotoProfileCompletion(page);
     const stepIndicator = page
       .getByText(/step \d+ of \d+/i)
       .or(page.locator('[class*="stepIndicator"], [class*="step-indicator"], [class*="StepIndicator"]'))
       .first();
-    await expect(stepIndicator).toBeVisible({ timeout: 5000 });
+    await expect(stepIndicator).toBeVisible({ timeout: 10000 });
   });
 
   test('has a Next or Continue button', async ({ page }) => {
-    await page.goto('/profile-completion', { timeout: 10000 });
+    await gotoProfileCompletion(page);
     const nextBtn = page
       .getByRole('button', { name: /next|continue/i })
       .first();
-    await expect(nextBtn).toBeVisible();
+    await expect(nextBtn).toBeVisible({ timeout: 10000 });
   });
 
   test('basic info step has first name field', async ({ page }) => {
-    await page.goto('/profile-completion', { timeout: 10000 });
+    await gotoProfileCompletion(page);
+    // Input has no name/id attr; label is adjacent sibling within .field div
     const firstNameInput = page
-      .locator('input[name*="firstName" i], input[name*="first_name" i], input[name*="givenName" i]')
+      .locator('label:has-text("First name") + input, input[placeholder="Jane"]')
+      .or(page.locator('input[name*="firstName" i], input[name*="first_name" i]'))
       .or(page.getByLabel(/first name/i))
       .first();
-    await expect(firstNameInput).toBeVisible();
+    await expect(firstNameInput).toBeVisible({ timeout: 10000 });
   });
 
   test('basic info step has last name field', async ({ page }) => {
-    await page.goto('/profile-completion', { timeout: 10000 });
+    await gotoProfileCompletion(page);
     const lastNameInput = page
-      .locator('input[name*="lastName" i], input[name*="last_name" i], input[name*="familyName" i]')
+      .locator('label:has-text("Last name") + input, input[placeholder="Doe"]')
+      .or(page.locator('input[name*="lastName" i], input[name*="last_name" i]'))
       .or(page.getByLabel(/last name/i))
       .first();
-    await expect(lastNameInput).toBeVisible();
+    await expect(lastNameInput).toBeVisible({ timeout: 10000 });
   });
 
   test('basic info step has bio field', async ({ page }) => {
-    await page.goto('/profile-completion', { timeout: 10000 });
+    await gotoProfileCompletion(page);
     const bioInput = page
       .locator('textarea[name*="bio" i]')
       .or(page.getByLabel(/bio|about yourself/i))

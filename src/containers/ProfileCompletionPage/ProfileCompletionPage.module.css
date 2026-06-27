@@ -605,6 +605,54 @@
   margin: 4px 0 0;
 }
 
+/* ============================================================
+   Hitch two-column layout
+   ============================================================ */
+
+.hitchColumns {
+  display: flex;
+  gap: 16px;
+  flex-direction: column;
+
+  @media (min-width: 480px) {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.hitchColumn {
+  flex: 1;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.hitchColumn .checkboxGroup {
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hitchColumn .checkboxLabel {
+  width: 100%;
+  border-radius: 6px;
+}
+
+.hitchColumnHeader {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6b7280;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1.5px solid #e5e7eb;
+}
+
+.hitchColumnHeaderCDL {
+  color: #b45309;
+  border-bottom-color: #fde047;
+}
+
 .cdlAlert {
   margin-top: 12px;
   padding: 10px 14px;

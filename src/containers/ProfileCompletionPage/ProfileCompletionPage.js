@@ -43,14 +43,20 @@ const US_STATES = [
 
 const CDL_THRESHOLD = 26000; // lbs — CDL required above this max tow capacity
 
-const HITCH_OPTIONS = [
+const NON_CDL_HITCH_OPTIONS = [
   { value: 'bumper-pull', label: 'Bumper pull' },
-  { value: 'pole',        label: 'Pole' },
   { value: 'gooseneck',   label: 'Gooseneck' },
   { value: 'kingpin',     label: 'Kingpin' },
-  { value: 'pintle',      label: 'Pintle' },
-  { value: 'other',       label: 'Other' },
+  { value: 'other-non-cdl', label: 'Other' },
 ];
+
+const CDL_HITCH_OPTIONS = [
+  { value: 'kingpin-cdl', label: 'Kingpin' },
+  { value: 'pintle',      label: 'Pintle hitch' },
+  { value: 'other-cdl',  label: 'Other' },
+];
+
+const CDL_HITCH_VALUES = CDL_HITCH_OPTIONS.map(o => o.value);
 
 // ================ Step builder ================ //
 
@@ -276,7 +282,8 @@ const RenterStep = () => (
 // ================ Step: Hauler Setup ================ //
 
 const HaulerStep = ({ values, onChange, errors }) => {
-  const requiresCDL = parseInt(values.maxTowCapacity || 0, 10) > CDL_THRESHOLD;
+  const hasCDLHitch = (values.hitchTypes || []).some(h => CDL_HITCH_VALUES.includes(h));
+  const requiresCDL = hasCDLHitch || parseInt(values.maxTowCapacity || 0, 10) > CDL_THRESHOLD;
 
   const toggleHitch = val => {
     const current = values.hitchTypes || [];
@@ -414,37 +421,75 @@ const HaulerStep = ({ values, onChange, errors }) => {
         </div>
       </fieldset>
 
-      {/* What do you haul with */}
+      {/* What do you haul with — two columns: Non-CDL / CDL */}
       <fieldset className={css.fieldset}>
         <legend className={css.fieldsetLegend}>What do you haul with? *</legend>
-        <p className={css.fieldsetHint}>Select all that apply</p>
+        <p className={css.fieldsetHint}>Select all that apply. CDL selections will require license documents.</p>
         {errors.hitchTypes && <p className={css.errorMsg}>{errors.hitchTypes}</p>}
-        <div className={css.checkboxGroup}>
-          {HITCH_OPTIONS.map(opt => (
-            <label key={opt.value} className={css.checkboxLabel}>
-              <input
-                type="checkbox"
-                checked={(values.hitchTypes || []).includes(opt.value)}
-                onChange={() => toggleHitch(opt.value)}
-              />
-              {opt.label}
-            </label>
-          ))}
-        </div>
-        {(values.hitchTypes || []).includes('other') && (
-          <div className={css.field} style={{ marginTop: 12, maxWidth: 380 }}>
-            <label className={css.label}>Describe your hitch type *</label>
-            <input
-              className={classNames(css.input, { [css.inputError]: errors.hitchTypeOther })}
-              type="text"
-              value={values.hitchTypeOther || ''}
-              onChange={e => onChange({ ...values, hitchTypeOther: e.target.value })}
-              placeholder="e.g. 5th wheel, air ride..."
-            />
-            <p className={css.helpText}>We’ll review this and may add it as a standard option.</p>
-            {errors.hitchTypeOther && <p className={css.errorMsg}>{errors.hitchTypeOther}</p>}
+
+        <div className={css.hitchColumns}>
+          {/* Non-CDL column */}
+          <div className={css.hitchColumn}>
+            <div className={css.hitchColumnHeader}>Non-CDL</div>
+            <div className={css.checkboxGroup}>
+              {NON_CDL_HITCH_OPTIONS.map(opt => (
+                <label key={opt.value} className={css.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={(values.hitchTypes || []).includes(opt.value)}
+                    onChange={() => toggleHitch(opt.value)}
+                  />
+                  {opt.label}
+                </label>
+              ))}
+            </div>
+            {(values.hitchTypes || []).includes('other-non-cdl') && (
+              <div className={css.field} style={{ marginTop: 10 }}>
+                <label className={css.label}>Describe *</label>
+                <input
+                  className={classNames(css.input, { [css.inputError]: errors.hitchTypeOtherNonCDL })}
+                  type="text"
+                  value={values.hitchTypeOtherNonCDL || ''}
+                  onChange={e => onChange({ ...values, hitchTypeOtherNonCDL: e.target.value })}
+                  placeholder="e.g. 5th wheel RV..."
+                />
+                <p className={css.helpText}>We’ll review and may add this option.</p>
+                {errors.hitchTypeOtherNonCDL && <p className={css.errorMsg}>{errors.hitchTypeOtherNonCDL}</p>}
+              </div>
+            )}
           </div>
-        )}
+
+          {/* CDL column */}
+          <div className={css.hitchColumn}>
+            <div className={classNames(css.hitchColumnHeader, css.hitchColumnHeaderCDL)}>CDL Required</div>
+            <div className={css.checkboxGroup}>
+              {CDL_HITCH_OPTIONS.map(opt => (
+                <label key={opt.value} className={css.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={(values.hitchTypes || []).includes(opt.value)}
+                    onChange={() => toggleHitch(opt.value)}
+                  />
+                  {opt.label}
+                </label>
+              ))}
+            </div>
+            {(values.hitchTypes || []).includes('other-cdl') && (
+              <div className={css.field} style={{ marginTop: 10 }}>
+                <label className={css.label}>Describe *</label>
+                <input
+                  className={classNames(css.input, { [css.inputError]: errors.hitchTypeOtherCDL })}
+                  type="text"
+                  value={values.hitchTypeOtherCDL || ''}
+                  onChange={e => onChange({ ...values, hitchTypeOtherCDL: e.target.value })}
+                  placeholder="e.g. air ride 5th wheel..."
+                />
+                <p className={css.helpText}>We’ll review and may add this option.</p>
+                {errors.hitchTypeOtherCDL && <p className={css.errorMsg}>{errors.hitchTypeOtherCDL}</p>}
+              </div>
+            )}
+          </div>
+        </div>
       </fieldset>
 
       {/* Tow capacity range */}
@@ -672,7 +717,8 @@ const ProfileCompletionPage = () => {
     vehicleMake: '',
     vehicleModel: '',
     hitchTypes: [],
-    hitchTypeOther: '',
+    hitchTypeOtherNonCDL: '',
+    hitchTypeOtherCDL: '',
     minTowCapacity: '',
     maxTowCapacity: '',
     cdlNumber: '',
@@ -706,9 +752,12 @@ const ProfileCompletionPage = () => {
     if (!haulerDetails.hitchTypes?.length) {
       errs.hitchTypes = 'Select at least one hitch type';
     }
-    // Other hitch text required
-    if ((haulerDetails.hitchTypes || []).includes('other') && !haulerDetails.hitchTypeOther?.trim()) {
-      errs.hitchTypeOther = 'Please describe your hitch type';
+    // Other text required if selected
+    if ((haulerDetails.hitchTypes || []).includes('other-non-cdl') && !haulerDetails.hitchTypeOtherNonCDL?.trim()) {
+      errs.hitchTypeOtherNonCDL = 'Please describe your hitch type';
+    }
+    if ((haulerDetails.hitchTypes || []).includes('other-cdl') && !haulerDetails.hitchTypeOtherCDL?.trim()) {
+      errs.hitchTypeOtherCDL = 'Please describe your hitch type';
     }
     // Tow capacity range
     if (haulerDetails.minTowCapacity === '' || haulerDetails.minTowCapacity === undefined) {
@@ -719,8 +768,9 @@ const ProfileCompletionPage = () => {
     } else if (parseInt(haulerDetails.maxTowCapacity, 10) <= parseInt(haulerDetails.minTowCapacity || 0, 10)) {
       errs.maxTowCapacity = 'Maximum must be greater than minimum';
     }
-    // CDL fields if over threshold
-    if (parseInt(haulerDetails.maxTowCapacity || 0, 10) > CDL_THRESHOLD) {
+    // CDL fields required if CDL hitch selected OR weight over threshold
+    const hasCDLHitchVal = (haulerDetails.hitchTypes || []).some(h => CDL_HITCH_VALUES.includes(h));
+    if (hasCDLHitchVal || parseInt(haulerDetails.maxTowCapacity || 0, 10) > CDL_THRESHOLD) {
       ['cdlNumber', 'cdlClass', 'cdlState', 'cdlExpiry'].forEach(f => {
         if (!haulerDetails[f]) errs[f] = 'Required';
       });
@@ -756,8 +806,10 @@ const ProfileCompletionPage = () => {
     };
 
     if (userRoles.includes('hauler')) {
-      const requiresCDL = parseInt(haulerDetails.maxTowCapacity || 0, 10) > CDL_THRESHOLD;
-      const hasOtherHitch = (haulerDetails.hitchTypes || []).includes('other');
+      const hasCDLHitchSave = (haulerDetails.hitchTypes || []).some(h => CDL_HITCH_VALUES.includes(h));
+      const requiresCDL = hasCDLHitchSave || parseInt(haulerDetails.maxTowCapacity || 0, 10) > CDL_THRESHOLD;
+      const hasOtherNonCDL = (haulerDetails.hitchTypes || []).includes('other-non-cdl');
+      const hasOtherCDL = (haulerDetails.hitchTypes || []).includes('other-cdl');
       updatePayload.protectedData = {
         haulerDetails: {
           accountType: haulerDetails.accountType,
@@ -769,7 +821,8 @@ const ProfileCompletionPage = () => {
           vehicleMake: haulerDetails.vehicleMake,
           vehicleModel: haulerDetails.vehicleModel,
           hitchTypes: haulerDetails.hitchTypes,
-          ...(hasOtherHitch ? { hitchTypeOther: haulerDetails.hitchTypeOther } : {}),
+          ...(hasOtherNonCDL ? { hitchTypeOtherNonCDL: haulerDetails.hitchTypeOtherNonCDL } : {}),
+          ...(hasOtherCDL ? { hitchTypeOtherCDL: haulerDetails.hitchTypeOtherCDL } : {}),
           minTowCapacity: parseInt(haulerDetails.minTowCapacity || 0, 10),
           maxTowCapacity: parseInt(haulerDetails.maxTowCapacity, 10),
           requiresCDL,
@@ -782,12 +835,16 @@ const ProfileCompletionPage = () => {
           } : {}),
         },
       };
-      // Save "other" hitch type to publicData so we can review and add it as a standard option
-      if (hasOtherHitch && haulerDetails.hitchTypeOther?.trim()) {
-        updatePayload.publicData = {
-          ...updatePayload.publicData,
-          otherHitchType: haulerDetails.hitchTypeOther.trim(),
-        };
+      // Save "other" hitch descriptions to publicData for review
+      const otherHitchData = {};
+      if (hasOtherNonCDL && haulerDetails.hitchTypeOtherNonCDL?.trim()) {
+        otherHitchData.otherHitchNonCDL = haulerDetails.hitchTypeOtherNonCDL.trim();
+      }
+      if (hasOtherCDL && haulerDetails.hitchTypeOtherCDL?.trim()) {
+        otherHitchData.otherHitchCDL = haulerDetails.hitchTypeOtherCDL.trim();
+      }
+      if (Object.keys(otherHitchData).length > 0) {
+        updatePayload.publicData = { ...updatePayload.publicData, ...otherHitchData };
       }
     }
 

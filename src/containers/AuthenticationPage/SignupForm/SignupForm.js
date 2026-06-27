@@ -1,5 +1,6 @@
 import React from 'react';
 import { Form as FinalForm, Field } from 'react-final-form';
+import arrayMutators from 'final-form-arrays';
 import classNames from 'classnames';
 
 import { FormattedMessage, useIntl } from '../../../util/reactIntl';
@@ -21,6 +22,7 @@ const isPasswordUsedMoreThanOnce = formValues => {
 const SignupFormComponent = props => (
   <FinalForm
     {...props}
+    mutators={{ ...arrayMutators }}
     initialValues={{ fname: 'New', lname: 'Member', userRoles: [] }}
     render={formRenderProps => {
       const {

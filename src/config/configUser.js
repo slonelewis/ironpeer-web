@@ -34,7 +34,7 @@ export const userFields = [
   {
     key: 'phoneNumber',
     scope: 'protected',
-    schemaType: 'text',
+    schemaType: 'short_text', // short_text = single-line input; 'text' renders as textarea
     showConfig: {
       label: 'Phone number',
       displayInProfile: false, // keep private

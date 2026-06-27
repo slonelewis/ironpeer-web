@@ -497,3 +497,95 @@
   font-weight: 500;
   flex: 1;
 }
+
+/* ============================================================
+   Radio & Checkbox groups
+   ============================================================ */
+
+.radioGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  padding: 8px 16px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.radioLabel input {
+  accent-color: #E8450A;
+  width: 16px;
+  height: 16px;
+}
+
+.radioLabel:has(input:checked) {
+  border-color: #E8450A;
+  background: #fff5f2;
+}
+
+.checkboxGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  padding: 8px 14px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  transition: border-color 0.15s, background 0.15s;
+  user-select: none;
+}
+
+.checkboxLabel input {
+  accent-color: #E8450A;
+  width: 16px;
+  height: 16px;
+}
+
+.checkboxLabel:has(input:checked) {
+  border-color: #E8450A;
+  background: #fff5f2;
+}
+
+.fieldsetHint {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin: 0 0 8px;
+}
+
+.helpText {
+  font-size: 0.78rem;
+  color: #9ca3af;
+  margin: 4px 0 0;
+}
+
+.cdlAlert {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #fefce8;
+  border: 1.5px solid #fde047;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #713f12;
+  line-height: 1.5;
+}

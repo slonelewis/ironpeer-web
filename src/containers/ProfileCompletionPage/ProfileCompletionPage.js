@@ -39,6 +39,19 @@ const US_STATES = [
   { code: 'WI', name: 'Wisconsin' }, { code: 'WY', name: 'Wyoming' },
 ];
 
+// ================ Hauler constants ================ //
+
+const CDL_THRESHOLD = 26000; // lbs — CDL required above this max tow capacity
+
+const HITCH_OPTIONS = [
+  { value: 'bumper-pull', label: 'Bumper pull' },
+  { value: 'pole',        label: 'Pole' },
+  { value: 'gooseneck',   label: 'Gooseneck' },
+  { value: 'kingpin',     label: 'Kingpin' },
+  { value: 'pintle',      label: 'Pintle' },
+  { value: 'other',       label: 'Other' },
+];
+
 // ================ Step builder ================ //
 
 const buildSteps = (userRoles = []) => {
@@ -262,113 +275,294 @@ const RenterStep = () => (
 
 // ================ Step: Hauler Setup ================ //
 
-const HaulerStep = ({ values, onChange, errors }) => (
-  <div>
-    <h2 className={css.stepTitle}>Hauler details</h2>
-    <p className={css.stepSubtitle}>
-      We need a few details to verify you're qualified to haul equipment.
-    </p>
+const HaulerStep = ({ values, onChange, errors }) => {
+  const requiresCDL = parseInt(values.maxTowCapacity || 0, 10) > CDL_THRESHOLD;
 
-    <fieldset className={css.fieldset}>
-      <legend className={css.fieldsetLegend}>Driver's License</legend>
+  const toggleHitch = val => {
+    const current = values.hitchTypes || [];
+    const next = current.includes(val)
+      ? current.filter(h => h !== val)
+      : [...current, val];
+    onChange({ ...values, hitchTypes: next });
+  };
 
-      <div className={css.fieldRow}>
-        <div className={classNames(css.field, css.fieldGrow)}>
-          <label className={css.label}>License number *</label>
-          <input
-            className={classNames(css.input, { [css.inputError]: errors.licenseNumber })}
-            type="text"
-            value={values.licenseNumber}
-            onChange={e => onChange({ ...values, licenseNumber: e.target.value })}
-            placeholder="A1234567"
-          />
-          {errors.licenseNumber && <p className={css.errorMsg}>{errors.licenseNumber}</p>}
+  return (
+    <div>
+      <h2 className={css.stepTitle}>Hauler details</h2>
+      <p className={css.stepSubtitle}>
+        We need a few details to verify you're qualified to haul equipment.
+      </p>
+
+      {/* Account type */}
+      <fieldset className={css.fieldset}>
+        <legend className={css.fieldsetLegend}>Account type *</legend>
+        <div className={css.radioGroup}>
+          {[{ value: 'individual', label: 'Individual' }, { value: 'business', label: 'Business' }].map(opt => (
+            <label key={opt.value} className={css.radioLabel}>
+              <input
+                type="radio"
+                name="accountType"
+                value={opt.value}
+                checked={values.accountType === opt.value}
+                onChange={() => onChange({
+                  ...values,
+                  accountType: opt.value,
+                  businessName: opt.value === 'individual' ? '' : values.businessName,
+                })}
+              />
+              {opt.label}
+            </label>
+          ))}
         </div>
 
-        <div className={css.field}>
-          <label className={css.label}>State *</label>
-          <select
-            className={classNames(css.select, { [css.inputError]: errors.licenseState })}
-            value={values.licenseState}
-            onChange={e => onChange({ ...values, licenseState: e.target.value })}
-          >
-            <option value="">Select…</option>
-            {US_STATES.map(s => (
-              <option key={s.code} value={s.code}>{s.code} — {s.name}</option>
-            ))}
-          </select>
-          {errors.licenseState && <p className={css.errorMsg}>{errors.licenseState}</p>}
-        </div>
-      </div>
+        {values.accountType === 'business' && (
+          <div className={css.field} style={{ maxWidth: 340, marginTop: 14 }}>
+            <label className={css.label}>Business name *</label>
+            <input
+              className={classNames(css.input, { [css.inputError]: errors.businessName })}
+              type="text"
+              value={values.businessName || ''}
+              onChange={e => onChange({ ...values, businessName: e.target.value })}
+              placeholder="Acme Hauling LLC"
+            />
+            {errors.businessName && <p className={css.errorMsg}>{errors.businessName}</p>}
+          </div>
+        )}
+      </fieldset>
 
-      <div className={css.field}>
-        <label className={css.label}>Expiry date *</label>
-        <input
-          className={classNames(css.input, { [css.inputError]: errors.licenseExpiry })}
-          type="date"
-          value={values.licenseExpiry}
-          onChange={e => onChange({ ...values, licenseExpiry: e.target.value })}
-        />
-        {errors.licenseExpiry && <p className={css.errorMsg}>{errors.licenseExpiry}</p>}
-      </div>
-    </fieldset>
-
-    <fieldset className={css.fieldset}>
-      <legend className={css.fieldsetLegend}>Vehicle</legend>
-
-      <div className={css.fieldRow}>
-        <div className={css.field}>
-          <label className={css.label}>Year *</label>
-          <input
-            className={classNames(css.input, { [css.inputError]: errors.vehicleYear })}
-            type="number"
-            value={values.vehicleYear}
-            onChange={e => onChange({ ...values, vehicleYear: e.target.value })}
-            placeholder="2020"
-            min="1990"
-            max={new Date().getFullYear() + 1}
-          />
-          {errors.vehicleYear && <p className={css.errorMsg}>{errors.vehicleYear}</p>}
+      {/* Driver's License */}
+      <fieldset className={css.fieldset}>
+        <legend className={css.fieldsetLegend}>Driver's License</legend>
+        <div className={css.fieldRow}>
+          <div className={css.field} style={{ maxWidth: 200 }}>
+            <label className={css.label}>License number *</label>
+            <input
+              className={classNames(css.input, { [css.inputError]: errors.licenseNumber })}
+              type="text"
+              value={values.licenseNumber}
+              onChange={e => onChange({ ...values, licenseNumber: e.target.value })}
+              placeholder="A1234567"
+            />
+            {errors.licenseNumber && <p className={css.errorMsg}>{errors.licenseNumber}</p>}
+          </div>
+          <div className={css.field} style={{ maxWidth: 160 }}>
+            <label className={css.label}>State *</label>
+            <select
+              className={classNames(css.select, { [css.inputError]: errors.licenseState })}
+              value={values.licenseState}
+              onChange={e => onChange({ ...values, licenseState: e.target.value })}
+            >
+              <option value="">Select…</option>
+              {US_STATES.map(s => (
+                <option key={s.code} value={s.code}>{s.code} — {s.name}</option>
+              ))}
+            </select>
+            {errors.licenseState && <p className={css.errorMsg}>{errors.licenseState}</p>}
+          </div>
+          <div className={css.field} style={{ maxWidth: 180 }}>
+            <label className={css.label}>Expiry date *</label>
+            <input
+              className={classNames(css.input, { [css.inputError]: errors.licenseExpiry })}
+              type="date"
+              value={values.licenseExpiry}
+              onChange={e => onChange({ ...values, licenseExpiry: e.target.value })}
+            />
+            {errors.licenseExpiry && <p className={css.errorMsg}>{errors.licenseExpiry}</p>}
+          </div>
         </div>
-        <div className={css.field}>
-          <label className={css.label}>Make *</label>
-          <input
-            className={classNames(css.input, { [css.inputError]: errors.vehicleMake })}
-            type="text"
-            value={values.vehicleMake}
-            onChange={e => onChange({ ...values, vehicleMake: e.target.value })}
-            placeholder="Ford"
-          />
-          {errors.vehicleMake && <p className={css.errorMsg}>{errors.vehicleMake}</p>}
-        </div>
-        <div className={css.field}>
-          <label className={css.label}>Model *</label>
-          <input
-            className={classNames(css.input, { [css.inputError]: errors.vehicleModel })}
-            type="text"
-            value={values.vehicleModel}
-            onChange={e => onChange({ ...values, vehicleModel: e.target.value })}
-            placeholder="F-250"
-          />
-          {errors.vehicleModel && <p className={css.errorMsg}>{errors.vehicleModel}</p>}
-        </div>
-      </div>
+      </fieldset>
 
-      <div className={css.field}>
-        <label className={css.label}>Max tow capacity (lbs) *</label>
-        <input
-          className={classNames(css.input, { [css.inputError]: errors.maxTowCapacity })}
-          type="number"
-          value={values.maxTowCapacity}
-          onChange={e => onChange({ ...values, maxTowCapacity: e.target.value })}
-          placeholder="15000"
-          min="1000"
-        />
-        {errors.maxTowCapacity && <p className={css.errorMsg}>{errors.maxTowCapacity}</p>}
-      </div>
-    </fieldset>
-  </div>
-);
+      {/* Tow vehicle */}
+      <fieldset className={css.fieldset}>
+        <legend className={css.fieldsetLegend}>Tow vehicle</legend>
+        <div className={css.fieldRow}>
+          <div className={css.field} style={{ maxWidth: 100 }}>
+            <label className={css.label}>Year *</label>
+            <input
+              className={classNames(css.input, { [css.inputError]: errors.vehicleYear })}
+              type="number"
+              value={values.vehicleYear}
+              onChange={e => onChange({ ...values, vehicleYear: e.target.value })}
+              placeholder="2020"
+              min="1990"
+              max={new Date().getFullYear() + 1}
+            />
+            {errors.vehicleYear && <p className={css.errorMsg}>{errors.vehicleYear}</p>}
+          </div>
+          <div className={css.field}>
+            <label className={css.label}>Make *</label>
+            <input
+              className={classNames(css.input, { [css.inputError]: errors.vehicleMake })}
+              type="text"
+              value={values.vehicleMake}
+              onChange={e => onChange({ ...values, vehicleMake: e.target.value })}
+              placeholder="Ford"
+            />
+            {errors.vehicleMake && <p className={css.errorMsg}>{errors.vehicleMake}</p>}
+          </div>
+          <div className={css.field}>
+            <label className={css.label}>Model *</label>
+            <input
+              className={classNames(css.input, { [css.inputError]: errors.vehicleModel })}
+              type="text"
+              value={values.vehicleModel}
+              onChange={e => onChange({ ...values, vehicleModel: e.target.value })}
+              placeholder="F-350"
+            />
+            {errors.vehicleModel && <p className={css.errorMsg}>{errors.vehicleModel}</p>}
+          </div>
+        </div>
+      </fieldset>
+
+      {/* What do you haul with */}
+      <fieldset className={css.fieldset}>
+        <legend className={css.fieldsetLegend}>What do you haul with? *</legend>
+        <p className={css.fieldsetHint}>Select all that apply</p>
+        {errors.hitchTypes && <p className={css.errorMsg}>{errors.hitchTypes}</p>}
+        <div className={css.checkboxGroup}>
+          {HITCH_OPTIONS.map(opt => (
+            <label key={opt.value} className={css.checkboxLabel}>
+              <input
+                type="checkbox"
+                checked={(values.hitchTypes || []).includes(opt.value)}
+                onChange={() => toggleHitch(opt.value)}
+              />
+              {opt.label}
+            </label>
+          ))}
+        </div>
+        {(values.hitchTypes || []).includes('other') && (
+          <div className={css.field} style={{ marginTop: 12, maxWidth: 380 }}>
+            <label className={css.label}>Describe your hitch type *</label>
+            <input
+              className={classNames(css.input, { [css.inputError]: errors.hitchTypeOther })}
+              type="text"
+              value={values.hitchTypeOther || ''}
+              onChange={e => onChange({ ...values, hitchTypeOther: e.target.value })}
+              placeholder="e.g. 5th wheel, air ride..."
+            />
+            <p className={css.helpText}>We’ll review this and may add it as a standard option.</p>
+            {errors.hitchTypeOther && <p className={css.errorMsg}>{errors.hitchTypeOther}</p>}
+          </div>
+        )}
+      </fieldset>
+
+      {/* Tow capacity range */}
+      <fieldset className={css.fieldset}>
+        <legend className={css.fieldsetLegend}>Tow capacity range (lbs) *</legend>
+        <div className={css.fieldRow} style={{ alignItems: 'flex-start' }}>
+          <div className={css.field}>
+            <label className={css.label}>Minimum *</label>
+            <input
+              className={classNames(css.input, { [css.inputError]: errors.minTowCapacity })}
+              type="number"
+              value={values.minTowCapacity || ''}
+              onChange={e => onChange({ ...values, minTowCapacity: e.target.value })}
+              placeholder="0"
+              min="0"
+            />
+            {errors.minTowCapacity && <p className={css.errorMsg}>{errors.minTowCapacity}</p>}
+          </div>
+          <div style={{ alignSelf: 'center', paddingTop: 20, color: '#9ca3af', fontWeight: 700 }}>—</div>
+          <div className={css.field}>
+            <label className={css.label}>Maximum *</label>
+            <input
+              className={classNames(css.input, { [css.inputError]: errors.maxTowCapacity })}
+              type="number"
+              value={values.maxTowCapacity || ''}
+              onChange={e => onChange({ ...values, maxTowCapacity: e.target.value })}
+              placeholder="15000"
+              min="1"
+            />
+            {errors.maxTowCapacity && <p className={css.errorMsg}>{errors.maxTowCapacity}</p>}
+          </div>
+        </div>
+        {requiresCDL && (
+          <div className={css.cdlAlert}>
+            <strong>⚠️ CDL may be required</strong> — hauling above {CDL_THRESHOLD.toLocaleString()} lbs typically requires a Commercial Driver’s License. Please fill in your CDL details below.
+          </div>
+        )}
+      </fieldset>
+
+      {/* CDL section — shown when weight > 26,000 lbs */}
+      {requiresCDL && (
+        <fieldset className={css.fieldset}>
+          <legend className={css.fieldsetLegend}>Commercial Driver’s License (CDL)</legend>
+          <p className={css.fieldsetHint}>Your max capacity exceeds {CDL_THRESHOLD.toLocaleString()} lbs — a CDL is required to haul at this weight.</p>
+          <div className={css.fieldRow}>
+            <div className={css.field} style={{ maxWidth: 200 }}>
+              <label className={css.label}>CDL number *</label>
+              <input
+                className={classNames(css.input, { [css.inputError]: errors.cdlNumber })}
+                type="text"
+                value={values.cdlNumber || ''}
+                onChange={e => onChange({ ...values, cdlNumber: e.target.value })}
+                placeholder="CDL number"
+              />
+              {errors.cdlNumber && <p className={css.errorMsg}>{errors.cdlNumber}</p>}
+            </div>
+            <div className={css.field} style={{ maxWidth: 120 }}>
+              <label className={css.label}>Class *</label>
+              <select
+                className={classNames(css.select, { [css.inputError]: errors.cdlClass })}
+                value={values.cdlClass || ''}
+                onChange={e => onChange({ ...values, cdlClass: e.target.value })}
+              >
+                <option value="">Select…</option>
+                <option value="A">Class A</option>
+                <option value="B">Class B</option>
+                <option value="C">Class C</option>
+              </select>
+              {errors.cdlClass && <p className={css.errorMsg}>{errors.cdlClass}</p>}
+            </div>
+            <div className={css.field} style={{ maxWidth: 160 }}>
+              <label className={css.label}>State *</label>
+              <select
+                className={classNames(css.select, { [css.inputError]: errors.cdlState })}
+                value={values.cdlState || ''}
+                onChange={e => onChange({ ...values, cdlState: e.target.value })}
+              >
+                <option value="">Select…</option>
+                {US_STATES.map(s => (
+                  <option key={s.code} value={s.code}>{s.code} — {s.name}</option>
+                ))}
+              </select>
+              {errors.cdlState && <p className={css.errorMsg}>{errors.cdlState}</p>}
+            </div>
+            <div className={css.field} style={{ maxWidth: 180 }}>
+              <label className={css.label}>Expiry date *</label>
+              <input
+                className={classNames(css.input, { [css.inputError]: errors.cdlExpiry })}
+                type="date"
+                value={values.cdlExpiry || ''}
+                onChange={e => onChange({ ...values, cdlExpiry: e.target.value })}
+              />
+              {errors.cdlExpiry && <p className={css.errorMsg}>{errors.cdlExpiry}</p>}
+            </div>
+          </div>
+          <div className={css.field} style={{ marginTop: 12 }}>
+            <label className={css.label}>Do you have a current medical examiner’s certificate (med card)? *</label>
+            <div className={css.radioGroup}>
+              {[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }].map(opt => (
+                <label key={opt.value} className={css.radioLabel}>
+                  <input
+                    type="radio"
+                    name="hasMedCard"
+                    value={opt.value}
+                    checked={values.hasMedCard === opt.value}
+                    onChange={() => onChange({ ...values, hasMedCard: opt.value })}
+                  />
+                  {opt.label}
+                </label>
+              ))}
+            </div>
+            {errors.hasMedCard && <p className={css.errorMsg}>{errors.hasMedCard}</p>}
+          </div>
+        </fieldset>
+      )}
+    </div>
+  );
+};
 
 // ================ Step: Complete ================ //
 
@@ -469,13 +663,23 @@ const ProfileCompletionPage = () => {
 
   // ---- Hauler form state ----
   const [haulerDetails, setHaulerDetails] = useState({
+    accountType: 'individual',
+    businessName: '',
     licenseNumber: '',
     licenseState: '',
     licenseExpiry: '',
     vehicleYear: '',
     vehicleMake: '',
     vehicleModel: '',
+    hitchTypes: [],
+    hitchTypeOther: '',
+    minTowCapacity: '',
     maxTowCapacity: '',
+    cdlNumber: '',
+    cdlClass: '',
+    cdlState: '',
+    cdlExpiry: '',
+    hasMedCard: '',
   });
   const [haulerErrors, setHaulerErrors] = useState({});
 
@@ -489,14 +693,39 @@ const ProfileCompletionPage = () => {
   };
 
   const validateHauler = () => {
-    const required = [
-      'licenseNumber', 'licenseState', 'licenseExpiry',
-      'vehicleYear', 'vehicleMake', 'vehicleModel', 'maxTowCapacity',
-    ];
     const errs = {};
-    required.forEach(f => {
+    // Required base fields
+    ['licenseNumber', 'licenseState', 'licenseExpiry', 'vehicleYear', 'vehicleMake', 'vehicleModel'].forEach(f => {
       if (!haulerDetails[f]) errs[f] = 'Required';
     });
+    // Business name required if business
+    if (haulerDetails.accountType === 'business' && !haulerDetails.businessName?.trim()) {
+      errs.businessName = 'Business name is required';
+    }
+    // At least one hitch type
+    if (!haulerDetails.hitchTypes?.length) {
+      errs.hitchTypes = 'Select at least one hitch type';
+    }
+    // Other hitch text required
+    if ((haulerDetails.hitchTypes || []).includes('other') && !haulerDetails.hitchTypeOther?.trim()) {
+      errs.hitchTypeOther = 'Please describe your hitch type';
+    }
+    // Tow capacity range
+    if (haulerDetails.minTowCapacity === '' || haulerDetails.minTowCapacity === undefined) {
+      errs.minTowCapacity = 'Required';
+    }
+    if (!haulerDetails.maxTowCapacity) {
+      errs.maxTowCapacity = 'Required';
+    } else if (parseInt(haulerDetails.maxTowCapacity, 10) <= parseInt(haulerDetails.minTowCapacity || 0, 10)) {
+      errs.maxTowCapacity = 'Maximum must be greater than minimum';
+    }
+    // CDL fields if over threshold
+    if (parseInt(haulerDetails.maxTowCapacity || 0, 10) > CDL_THRESHOLD) {
+      ['cdlNumber', 'cdlClass', 'cdlState', 'cdlExpiry'].forEach(f => {
+        if (!haulerDetails[f]) errs[f] = 'Required';
+      });
+      if (!haulerDetails.hasMedCard) errs.hasMedCard = 'Required';
+    }
     setHaulerErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -527,17 +756,39 @@ const ProfileCompletionPage = () => {
     };
 
     if (userRoles.includes('hauler')) {
+      const requiresCDL = parseInt(haulerDetails.maxTowCapacity || 0, 10) > CDL_THRESHOLD;
+      const hasOtherHitch = (haulerDetails.hitchTypes || []).includes('other');
       updatePayload.protectedData = {
         haulerDetails: {
+          accountType: haulerDetails.accountType,
+          ...(haulerDetails.accountType === 'business' ? { businessName: haulerDetails.businessName } : {}),
           licenseNumber: haulerDetails.licenseNumber,
           licenseState: haulerDetails.licenseState,
           licenseExpiry: haulerDetails.licenseExpiry,
           vehicleYear: parseInt(haulerDetails.vehicleYear, 10),
           vehicleMake: haulerDetails.vehicleMake,
           vehicleModel: haulerDetails.vehicleModel,
+          hitchTypes: haulerDetails.hitchTypes,
+          ...(hasOtherHitch ? { hitchTypeOther: haulerDetails.hitchTypeOther } : {}),
+          minTowCapacity: parseInt(haulerDetails.minTowCapacity || 0, 10),
           maxTowCapacity: parseInt(haulerDetails.maxTowCapacity, 10),
+          requiresCDL,
+          ...(requiresCDL ? {
+            cdlNumber: haulerDetails.cdlNumber,
+            cdlClass: haulerDetails.cdlClass,
+            cdlState: haulerDetails.cdlState,
+            cdlExpiry: haulerDetails.cdlExpiry,
+            hasMedCard: haulerDetails.hasMedCard === 'yes',
+          } : {}),
         },
       };
+      // Save "other" hitch type to publicData so we can review and add it as a standard option
+      if (hasOtherHitch && haulerDetails.hitchTypeOther?.trim()) {
+        updatePayload.publicData = {
+          ...updatePayload.publicData,
+          otherHitchType: haulerDetails.hitchTypeOther.trim(),
+        };
+      }
     }
 
     if (uploadedImageId) {

@@ -34,7 +34,7 @@
 
 /* Phone number field — compact single-line width */
 .phoneRow {
-  max-width: 220px;
+  max-width: 180px;
   margin-top: 24px;
 
   @media (--viewportMedium) {

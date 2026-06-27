@@ -41,22 +41,15 @@ const US_STATES = [
 
 // ================ Hauler constants ================ //
 
-const CDL_THRESHOLD = 26000; // lbs — CDL required above this max tow capacity
+const CDL_THRESHOLD = 26000; // lbs - CDL required above this max tow capacity
 
-const NON_CDL_HITCH_OPTIONS = [
-  { value: 'bumper-pull', label: 'Bumper pull' },
-  { value: 'gooseneck',   label: 'Gooseneck' },
-  { value: 'kingpin',     label: 'Kingpin' },
-  { value: 'other-non-cdl', label: 'Other' },
+const HITCH_OPTIONS = [
+  { value: 'bumper-pull',  label: 'Bumper pull' },
+  { value: 'pole',         label: 'Pole trailer' },
+  { value: 'gooseneck',    label: 'Gooseneck' },
+  { value: 'kingpin',      label: 'Kingpin (5th wheel)' },
+  { value: 'pintle',       label: 'Pintle hitch' },
 ];
-
-const CDL_HITCH_OPTIONS = [
-  { value: 'kingpin-cdl', label: 'Kingpin' },
-  { value: 'pintle',      label: 'Pintle hitch' },
-  { value: 'other-cdl',  label: 'Other' },
-];
-
-const CDL_HITCH_VALUES = CDL_HITCH_OPTIONS.map(o => o.value);
 
 // ================ Step builder ================ //
 
@@ -155,7 +148,7 @@ const BasicInfoStep = ({ values, onChange, errors }) => (
         className={css.textarea}
         value={values.bio}
         onChange={e => onChange({ ...values, bio: e.target.value })}
-        placeholder="Tell other IronPeer members a bit about yourself and what you use for…"
+        placeholder="Tell other IronPeer members a bit about yourself and what you use for..."
         rows={4}
       />
     </div>
@@ -216,7 +209,7 @@ const PhotoStep = ({ preview, onFileChange, uploadInProgress, uploadError }) => 
         )}
 
         {uploadError && (
-          <p className={css.errorMsg}>Upload failed — please try again.</p>
+          <p className={css.errorMsg}>Upload failed - please try again.</p>
         )}
       </div>
 
@@ -242,7 +235,7 @@ const OwnerStep = () => (
         </svg>
       </div>
       <div>
-        <p className={css.infoCardTitle}>Stripe Connect — Coming Soon</p>
+        <p className={css.infoCardTitle}>Stripe Connect - Coming Soon</p>
         <p className={css.infoCardBody}>
           Payout setup via Stripe Connect will be available when IronPeer goes live. We'll email
           you at that point to complete your payout account. No action needed now!
@@ -282,8 +275,7 @@ const RenterStep = () => (
 // ================ Step: Hauler Setup ================ //
 
 const HaulerStep = ({ values, onChange, errors }) => {
-  const hasCDLHitch = (values.hitchTypes || []).some(h => CDL_HITCH_VALUES.includes(h));
-  const requiresCDL = hasCDLHitch || parseInt(values.maxTowCapacity || 0, 10) > CDL_THRESHOLD;
+  const requiresCDL = parseInt(values.maxTowCapacity || 0, 10) > CDL_THRESHOLD;
 
   const toggleHitch = val => {
     const current = values.hitchTypes || [];
@@ -323,7 +315,7 @@ const HaulerStep = ({ values, onChange, errors }) => {
         </div>
 
         {values.accountType === 'business' && (
-          <div className={classNames(css.field, css.narrowFieldMd)} style={{ marginTop: 14 }}>
+          <div className={classNames(css.field, css.narrowField)} style={{ marginTop: 14 }}>
             <label className={css.label}>Business name *</label>
             <input
               className={classNames(css.input, { [css.inputError]: errors.businessName })}
@@ -331,7 +323,6 @@ const HaulerStep = ({ values, onChange, errors }) => {
               value={values.businessName || ''}
               onChange={e => onChange({ ...values, businessName: e.target.value })}
               placeholder="Acme Hauling LLC"
-              style={{ width: '100%', maxWidth: '300px' }}
             />
             {errors.businessName && <p className={css.errorMsg}>{errors.businessName}</p>}
           </div>
@@ -361,9 +352,9 @@ const HaulerStep = ({ values, onChange, errors }) => {
               value={values.licenseState}
               onChange={e => onChange({ ...values, licenseState: e.target.value })}
             >
-              <option value="">Select…</option>
+              <option value="">Select...</option>
               {US_STATES.map(s => (
-                <option key={s.code} value={s.code}>{s.code} — {s.name}</option>
+                <option key={s.code} value={s.code}>{s.code} - {s.name}</option>
               ))}
             </select>
             {errors.licenseState && <p className={css.errorMsg}>{errors.licenseState}</p>}
@@ -423,74 +414,22 @@ const HaulerStep = ({ values, onChange, errors }) => {
         </div>
       </fieldset>
 
-      {/* What do you haul with — two columns: Non-CDL / CDL */}
+      {/* What do you haul with — hitch types */}
       <fieldset className={css.fieldset}>
         <legend className={css.fieldsetLegend}>What do you haul with? *</legend>
-        <p className={css.fieldsetHint}>Select all that apply. CDL selections will require license documents.</p>
+        <p className={css.fieldsetHint}>Select all that apply.</p>
         {errors.hitchTypes && <p className={css.errorMsg}>{errors.hitchTypes}</p>}
-
-        <div className={css.hitchColumns}>
-          {/* Non-CDL column */}
-          <div className={css.hitchColumn}>
-            <div className={css.hitchColumnHeader}>Non-CDL</div>
-            <div className={css.checkboxGroup}>
-              {NON_CDL_HITCH_OPTIONS.map(opt => (
-                <label key={opt.value} className={css.checkboxLabel}>
-                  <input
-                    type="checkbox"
-                    checked={(values.hitchTypes || []).includes(opt.value)}
-                    onChange={() => toggleHitch(opt.value)}
-                  />
-                  {opt.label}
-                </label>
-              ))}
-            </div>
-            {(values.hitchTypes || []).includes('other-non-cdl') && (
-              <div className={css.field} style={{ marginTop: 10 }}>
-                <label className={css.label}>Describe *</label>
-                <input
-                  className={classNames(css.input, { [css.inputError]: errors.hitchTypeOtherNonCDL })}
-                  type="text"
-                  value={values.hitchTypeOtherNonCDL || ''}
-                  onChange={e => onChange({ ...values, hitchTypeOtherNonCDL: e.target.value })}
-                  placeholder="e.g. 5th wheel RV..."
-                />
-                <p className={css.helpText}>We’ll review and may add this option.</p>
-                {errors.hitchTypeOtherNonCDL && <p className={css.errorMsg}>{errors.hitchTypeOtherNonCDL}</p>}
-              </div>
-            )}
-          </div>
-
-          {/* CDL column */}
-          <div className={css.hitchColumn}>
-            <div className={classNames(css.hitchColumnHeader, css.hitchColumnHeaderCDL)}>CDL Required</div>
-            <div className={css.checkboxGroup}>
-              {CDL_HITCH_OPTIONS.map(opt => (
-                <label key={opt.value} className={css.checkboxLabel}>
-                  <input
-                    type="checkbox"
-                    checked={(values.hitchTypes || []).includes(opt.value)}
-                    onChange={() => toggleHitch(opt.value)}
-                  />
-                  {opt.label}
-                </label>
-              ))}
-            </div>
-            {(values.hitchTypes || []).includes('other-cdl') && (
-              <div className={css.field} style={{ marginTop: 10 }}>
-                <label className={css.label}>Describe *</label>
-                <input
-                  className={classNames(css.input, { [css.inputError]: errors.hitchTypeOtherCDL })}
-                  type="text"
-                  value={values.hitchTypeOtherCDL || ''}
-                  onChange={e => onChange({ ...values, hitchTypeOtherCDL: e.target.value })}
-                  placeholder="e.g. air ride 5th wheel..."
-                />
-                <p className={css.helpText}>We’ll review and may add this option.</p>
-                {errors.hitchTypeOtherCDL && <p className={css.errorMsg}>{errors.hitchTypeOtherCDL}</p>}
-              </div>
-            )}
-          </div>
+        <div className={css.checkboxGroup}>
+          {HITCH_OPTIONS.map(opt => (
+            <label key={opt.value} className={css.checkboxLabel}>
+              <input
+                type="checkbox"
+                checked={(values.hitchTypes || []).includes(opt.value)}
+                onChange={() => toggleHitch(opt.value)}
+              />
+              {opt.label}
+            </label>
+          ))}
         </div>
       </fieldset>
 
@@ -510,7 +449,7 @@ const HaulerStep = ({ values, onChange, errors }) => {
             />
             {errors.minTowCapacity && <p className={css.errorMsg}>{errors.minTowCapacity}</p>}
           </div>
-          <div style={{ alignSelf: 'center', paddingTop: 20, color: '#9ca3af', fontWeight: 700 }}>—</div>
+          <div style={{ alignSelf: 'center', paddingTop: 20, color: '#9ca3af', fontWeight: 700 }}>-</div>
           <div className={css.field}>
             <label className={css.label}>Maximum *</label>
             <input
@@ -526,16 +465,16 @@ const HaulerStep = ({ values, onChange, errors }) => {
         </div>
         {requiresCDL && (
           <div className={css.cdlAlert}>
-            <strong>⚠️ CDL may be required</strong> — hauling above {CDL_THRESHOLD.toLocaleString()} lbs typically requires a Commercial Driver’s License. Please fill in your CDL details below.
+            <strong>⚠️ CDL may be required</strong> - hauling above {CDL_THRESHOLD.toLocaleString()} lbs typically requires a Commercial Driver's License. Please fill in your CDL details below.
           </div>
         )}
       </fieldset>
 
-      {/* CDL section — shown when weight > 26,000 lbs */}
+      {/* CDL section - shown when weight > 26,000 lbs */}
       {requiresCDL && (
         <fieldset className={css.fieldset}>
-          <legend className={css.fieldsetLegend}>Commercial Driver’s License (CDL)</legend>
-          <p className={css.fieldsetHint}>Your max capacity exceeds {CDL_THRESHOLD.toLocaleString()} lbs — a CDL is required to haul at this weight.</p>
+          <legend className={css.fieldsetLegend}>Commercial Driver's License (CDL)</legend>
+          <p className={css.fieldsetHint}>Your max capacity exceeds {CDL_THRESHOLD.toLocaleString()} lbs - a CDL is required to haul at this weight.</p>
           <div className={css.fieldRow}>
             <div className={css.field} style={{ maxWidth: 200 }}>
               <label className={css.label}>CDL number *</label>
@@ -555,7 +494,7 @@ const HaulerStep = ({ values, onChange, errors }) => {
                 value={values.cdlClass || ''}
                 onChange={e => onChange({ ...values, cdlClass: e.target.value })}
               >
-                <option value="">Select…</option>
+                <option value="">Select...</option>
                 <option value="A">Class A</option>
                 <option value="B">Class B</option>
                 <option value="C">Class C</option>
@@ -569,9 +508,9 @@ const HaulerStep = ({ values, onChange, errors }) => {
                 value={values.cdlState || ''}
                 onChange={e => onChange({ ...values, cdlState: e.target.value })}
               >
-                <option value="">Select…</option>
+                <option value="">Select...</option>
                 {US_STATES.map(s => (
-                  <option key={s.code} value={s.code}>{s.code} — {s.name}</option>
+                  <option key={s.code} value={s.code}>{s.code} - {s.name}</option>
                 ))}
               </select>
               {errors.cdlState && <p className={css.errorMsg}>{errors.cdlState}</p>}
@@ -588,7 +527,7 @@ const HaulerStep = ({ values, onChange, errors }) => {
             </div>
           </div>
           <div className={css.field} style={{ marginTop: 12 }}>
-            <label className={css.label}>Do you have a current medical examiner’s certificate (med card)? *</label>
+            <label className={css.label}>Do you have a current medical examiner's certificate (med card)? *</label>
             <div className={css.radioGroup}>
               {[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }].map(opt => (
                 <label key={opt.value} className={css.radioLabel}>
@@ -638,7 +577,7 @@ const CompleteStep = ({ userRoles, basicInfo, haulerDetails, onGoHome }) => {
         <div className={css.summaryRow}>
           <span className={css.summaryLabel}>Name</span>
           <span className={css.summaryValue}>
-            {[basicInfo.firstName, basicInfo.lastName].filter(Boolean).join(' ') || '—'}
+            {[basicInfo.firstName, basicInfo.lastName].filter(Boolean).join(' ') || '-'}
           </span>
         </div>
         {basicInfo.bio ? (
@@ -675,7 +614,7 @@ const CompleteStep = ({ userRoles, basicInfo, haulerDetails, onGoHome }) => {
 // ================ Main Page Component ================ //
 
 /**
- * ProfileCompletionPage — multi-step wizard shown after first signup.
+ * ProfileCompletionPage - multi-step wizard shown after first signup.
  * Shown when currentUser.attributes.profile.publicData.profileComplete !== true.
  */
 const ProfileCompletionPage = () => {
@@ -754,13 +693,6 @@ const ProfileCompletionPage = () => {
     if (!haulerDetails.hitchTypes?.length) {
       errs.hitchTypes = 'Select at least one hitch type';
     }
-    // Other text required if selected
-    if ((haulerDetails.hitchTypes || []).includes('other-non-cdl') && !haulerDetails.hitchTypeOtherNonCDL?.trim()) {
-      errs.hitchTypeOtherNonCDL = 'Please describe your hitch type';
-    }
-    if ((haulerDetails.hitchTypes || []).includes('other-cdl') && !haulerDetails.hitchTypeOtherCDL?.trim()) {
-      errs.hitchTypeOtherCDL = 'Please describe your hitch type';
-    }
     // Tow capacity range
     if (haulerDetails.minTowCapacity === '' || haulerDetails.minTowCapacity === undefined) {
       errs.minTowCapacity = 'Required';
@@ -770,9 +702,8 @@ const ProfileCompletionPage = () => {
     } else if (parseInt(haulerDetails.maxTowCapacity, 10) <= parseInt(haulerDetails.minTowCapacity || 0, 10)) {
       errs.maxTowCapacity = 'Maximum must be greater than minimum';
     }
-    // CDL fields required if CDL hitch selected OR weight over threshold
-    const hasCDLHitchVal = (haulerDetails.hitchTypes || []).some(h => CDL_HITCH_VALUES.includes(h));
-    if (hasCDLHitchVal || parseInt(haulerDetails.maxTowCapacity || 0, 10) > CDL_THRESHOLD) {
+    // CDL fields required if weight over threshold
+    if (parseInt(haulerDetails.maxTowCapacity || 0, 10) > CDL_THRESHOLD) {
       ['cdlNumber', 'cdlClass', 'cdlState', 'cdlExpiry'].forEach(f => {
         if (!haulerDetails[f]) errs[f] = 'Required';
       });
@@ -808,10 +739,7 @@ const ProfileCompletionPage = () => {
     };
 
     if (userRoles.includes('hauler')) {
-      const hasCDLHitchSave = (haulerDetails.hitchTypes || []).some(h => CDL_HITCH_VALUES.includes(h));
-      const requiresCDL = hasCDLHitchSave || parseInt(haulerDetails.maxTowCapacity || 0, 10) > CDL_THRESHOLD;
-      const hasOtherNonCDL = (haulerDetails.hitchTypes || []).includes('other-non-cdl');
-      const hasOtherCDL = (haulerDetails.hitchTypes || []).includes('other-cdl');
+      const requiresCDL = parseInt(haulerDetails.maxTowCapacity || 0, 10) > CDL_THRESHOLD;
       updatePayload.protectedData = {
         haulerDetails: {
           accountType: haulerDetails.accountType,
@@ -823,8 +751,6 @@ const ProfileCompletionPage = () => {
           vehicleMake: haulerDetails.vehicleMake,
           vehicleModel: haulerDetails.vehicleModel,
           hitchTypes: haulerDetails.hitchTypes,
-          ...(hasOtherNonCDL ? { hitchTypeOtherNonCDL: haulerDetails.hitchTypeOtherNonCDL } : {}),
-          ...(hasOtherCDL ? { hitchTypeOtherCDL: haulerDetails.hitchTypeOtherCDL } : {}),
           minTowCapacity: parseInt(haulerDetails.minTowCapacity || 0, 10),
           maxTowCapacity: parseInt(haulerDetails.maxTowCapacity, 10),
           requiresCDL,
@@ -837,17 +763,6 @@ const ProfileCompletionPage = () => {
           } : {}),
         },
       };
-      // Save "other" hitch descriptions to publicData for review
-      const otherHitchData = {};
-      if (hasOtherNonCDL && haulerDetails.hitchTypeOtherNonCDL?.trim()) {
-        otherHitchData.otherHitchNonCDL = haulerDetails.hitchTypeOtherNonCDL.trim();
-      }
-      if (hasOtherCDL && haulerDetails.hitchTypeOtherCDL?.trim()) {
-        otherHitchData.otherHitchCDL = haulerDetails.hitchTypeOtherCDL.trim();
-      }
-      if (Object.keys(otherHitchData).length > 0) {
-        updatePayload.publicData = { ...updatePayload.publicData, ...otherHitchData };
-      }
     }
 
     if (uploadedImageId) {
@@ -933,7 +848,7 @@ const ProfileCompletionPage = () => {
   const isFirstStep = currentStepIndex === 0;
 
   return (
-    <Page title="Complete your profile — IronPeer" scrollingDisabled={false}>
+    <Page title="Complete your profile - IronPeer" scrollingDisabled={false}>
       <TopbarContainer />
       <div className={css.root}>
         <div className={css.card}>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form as FinalForm } from 'react-final-form';
+import { Form as FinalForm, Field } from 'react-final-form';
 import classNames from 'classnames';
 
 import { FormattedMessage, useIntl } from '../../../util/reactIntl';
@@ -21,8 +21,7 @@ const isPasswordUsedMoreThanOnce = formValues => {
 const SignupFormComponent = props => (
   <FinalForm
     {...props}
-    // fname + lname required by Sharetribe API — collected for real in ProfileCompletionPage
-    initialValues={{ fname: 'New', lname: 'Member' }}
+    initialValues={{ fname: 'New', lname: 'Member', userRoles: [] }}
     render={formRenderProps => {
       const {
         rootClassName,
@@ -64,6 +63,11 @@ const SignupFormComponent = props => (
 
       return (
         <Form className={classes} onSubmit={handleSubmit}>
+          {/* Hidden — required by Sharetribe API; real values collected in ProfileCompletionPage */}
+          <Field name="fname" render={() => null} />
+          <Field name="lname" render={() => null} />
+          <Field name="userRoles" render={() => null} />
+
           <FieldTextInput
             type="email"
             id={formId ? `${formId}.email` : 'email'}

@@ -32,9 +32,14 @@
   }
 }
 
-/* Phone number field — constrain width so it doesn’t span the full form */
-.row:has(input[name='phoneNumber']) {
-  max-width: 260px;
+/* Phone number field — compact single-line width */
+.phoneRow {
+  max-width: 220px;
+  margin-top: 24px;
+
+  @media (--viewportMedium) {
+    margin-top: 32px;
+  }
 }
 
 .firstNameRoot {

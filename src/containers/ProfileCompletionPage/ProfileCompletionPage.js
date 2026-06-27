@@ -331,6 +331,7 @@ const HaulerStep = ({ values, onChange, errors }) => {
               value={values.businessName || ''}
               onChange={e => onChange({ ...values, businessName: e.target.value })}
               placeholder="Acme Hauling LLC"
+              style={{ width: '100%', maxWidth: '300px' }}
             />
             {errors.businessName && <p className={css.errorMsg}>{errors.businessName}</p>}
           </div>
@@ -349,6 +350,7 @@ const HaulerStep = ({ values, onChange, errors }) => {
               value={values.licenseNumber}
               onChange={e => onChange({ ...values, licenseNumber: e.target.value })}
               placeholder="A1234567"
+              style={{ width: '160px' }}
             />
             {errors.licenseNumber && <p className={css.errorMsg}>{errors.licenseNumber}</p>}
           </div>

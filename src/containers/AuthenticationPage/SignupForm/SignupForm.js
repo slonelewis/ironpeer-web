@@ -202,14 +202,13 @@ const SignupFormComponent = props => (
                 validate={passwordValidators}
               />
 
-              <div style={{ maxWidth: 240 }}>
-                <UserFieldPhoneNumber
-                  formName="SignupForm"
-                  className={css.row}
-                  userTypeConfig={userTypeConfig}
-                  intl={intl}
-                />
-              </div>
+              <UserFieldPhoneNumber
+                formName="SignupForm"
+                className={css.row}
+                rootClassName={css.phoneRow}
+                userTypeConfig={userTypeConfig}
+                intl={intl}
+              />
             </div>
           ) : null}
 

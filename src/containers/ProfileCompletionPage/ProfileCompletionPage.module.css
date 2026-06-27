@@ -155,6 +155,32 @@
 
 .fieldRow .field {
   flex: 1;
+  min-width: 0;
+}
+
+/* Explicit-width field overrides — defeat flex-grow */
+.fieldXS {
+  flex: 0 0 90px !important;
+  max-width: 90px !important;
+}
+
+.fieldSm {
+  flex: 0 0 150px !important;
+  max-width: 150px !important;
+}
+
+.fieldMd {
+  flex: 0 0 220px !important;
+  max-width: 220px !important;
+}
+
+/* Standalone (not in fieldRow) narrow wrapper */
+.narrowField {
+  max-width: 260px;
+}
+
+.narrowFieldMd {
+  max-width: 320px;
 }
 
 .label {

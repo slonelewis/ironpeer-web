@@ -316,7 +316,7 @@ const HaulerStep = ({ values, onChange, errors }) => {
         </div>
 
         {values.accountType === 'business' && (
-          <div className={css.field} style={{ maxWidth: 340, marginTop: 14 }}>
+          <div className={classNames(css.field, css.narrowFieldMd)} style={{ marginTop: 14 }}>
             <label className={css.label}>Business name *</label>
             <input
               className={classNames(css.input, { [css.inputError]: errors.businessName })}
@@ -334,7 +334,7 @@ const HaulerStep = ({ values, onChange, errors }) => {
       <fieldset className={css.fieldset}>
         <legend className={css.fieldsetLegend}>Driver's License</legend>
         <div className={css.fieldRow}>
-          <div className={css.field} style={{ maxWidth: 200 }}>
+          <div className={classNames(css.field, css.fieldMd)}>
             <label className={css.label}>License number *</label>
             <input
               className={classNames(css.input, { [css.inputError]: errors.licenseNumber })}
@@ -345,7 +345,7 @@ const HaulerStep = ({ values, onChange, errors }) => {
             />
             {errors.licenseNumber && <p className={css.errorMsg}>{errors.licenseNumber}</p>}
           </div>
-          <div className={css.field} style={{ maxWidth: 160 }}>
+          <div className={classNames(css.field, css.fieldSm)}>
             <label className={css.label}>State *</label>
             <select
               className={classNames(css.select, { [css.inputError]: errors.licenseState })}
@@ -359,7 +359,7 @@ const HaulerStep = ({ values, onChange, errors }) => {
             </select>
             {errors.licenseState && <p className={css.errorMsg}>{errors.licenseState}</p>}
           </div>
-          <div className={css.field} style={{ maxWidth: 180 }}>
+          <div className={classNames(css.field, css.fieldSm)}>
             <label className={css.label}>Expiry date *</label>
             <input
               className={classNames(css.input, { [css.inputError]: errors.licenseExpiry })}
@@ -376,7 +376,7 @@ const HaulerStep = ({ values, onChange, errors }) => {
       <fieldset className={css.fieldset}>
         <legend className={css.fieldsetLegend}>Tow vehicle</legend>
         <div className={css.fieldRow}>
-          <div className={css.field} style={{ maxWidth: 100 }}>
+          <div className={classNames(css.field, css.fieldXS)}>
             <label className={css.label}>Year *</label>
             <input
               className={classNames(css.input, { [css.inputError]: errors.vehicleYear })}

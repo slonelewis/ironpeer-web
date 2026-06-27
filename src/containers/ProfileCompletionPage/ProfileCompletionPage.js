@@ -53,22 +53,75 @@ const HITCH_OPTIONS = [
 
 // ================ Step builder ================ //
 
-const buildSteps = (userRoles = []) => {
+const buildSteps = (selectedRoles = []) => {
   const steps = [
+    { id: 'roleSelection', label: 'Your Role' },
     { id: 'basicInfo', label: 'Basic Info' },
     { id: 'photo', label: 'Profile Photo' },
   ];
-  if (userRoles.includes('owner')) {
+  if (selectedRoles.includes('owner')) {
     steps.push({ id: 'owner', label: 'Payout Setup' });
   }
-  if (userRoles.includes('renter')) {
+  if (selectedRoles.includes('renter')) {
     steps.push({ id: 'renter', label: 'Verify Identity' });
   }
-  if (userRoles.includes('hauler')) {
+  if (selectedRoles.includes('hauler')) {
     steps.push({ id: 'hauler', label: 'Hauler Details' });
   }
   steps.push({ id: 'complete', label: 'All Set!' });
   return steps;
+};
+
+// ================ Step: Role Selection ================ //
+
+const ROLE_OPTIONS = [
+  { value: 'renter', label: 'Rent', description: 'Rent locally owned equipment near you.' },
+  { value: 'owner',  label: 'List', description: 'List your equipment and start earning.' },
+  { value: 'hauler', label: 'Haul', description: 'Haul equipment and trailers for others.' },
+];
+
+const RoleSelectionStep = ({ selectedRoles, onChange, error }) => {
+  const toggle = val => {
+    const next = selectedRoles.includes(val)
+      ? selectedRoles.filter(r => r !== val)
+      : [...selectedRoles, val];
+    onChange(next);
+  };
+
+  return (
+    <div>
+      <h2 className={css.stepTitle}>What are you here to do?</h2>
+      <p className={css.stepSubtitle}>Select all that apply. You can add more roles later.</p>
+      {error && <p className={css.errorMsg}>{error}</p>}
+      <div className={css.roleCards}>
+        {ROLE_OPTIONS.map(role => (
+          <div
+            key={role.value}
+            className={classNames(css.roleCard, { [css.roleCardSelected]: selectedRoles.includes(role.value) })}
+            onClick={() => toggle(role.value)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={e => e.key === 'Enter' && toggle(role.value)}
+          >
+            <div className={css.roleCardCheck}>
+              {selectedRoles.includes(role.value) ? (
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <circle cx="9" cy="9" r="9" fill="#E8450A" />
+                  <path d="M5 9l3 3 5-5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ) : (
+                <div className={css.roleCardCheckEmpty} />
+              )}
+            </div>
+            <div className={css.roleCardContent}>
+              <div className={css.roleCardLabel}>{role.label}</div>
+              <div className={css.roleCardDesc}>{role.description}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 // ================ Step Indicator ================ //
@@ -140,6 +193,18 @@ const BasicInfoStep = ({ values, onChange, errors }) => (
         />
         {errors.lastName && <p className={css.errorMsg}>{errors.lastName}</p>}
       </div>
+    </div>
+
+    <div className={css.field} style={{ maxWidth: '220px' }}>
+      <label className={css.label}>Phone number *</label>
+      <input
+        className={classNames(css.input, { [css.inputError]: errors.phone })}
+        type="tel"
+        value={values.phone || ''}
+        onChange={e => onChange({ ...values, phone: e.target.value })}
+        placeholder="(360) 555-1234"
+      />
+      {errors.phone && <p className={css.errorMsg}>{errors.phone}</p>}
     </div>
 
     <div className={css.field}>
@@ -628,17 +693,23 @@ const ProfileCompletionPage = () => {
 
   const profile = currentUser?.attributes?.profile || {};
   const publicData = profile.publicData || {};
-  const userRoles = publicData.userRoles || [];
+  const protectedData = profile.protectedData || {};
+  const savedRoles = publicData.userRoles || [];
 
-  const steps = buildSteps(userRoles);
+  // ---- Role selection state (step 0) ----
+  const [selectedRoles, setSelectedRoles] = useState(savedRoles);
+  const [roleError, setRoleError] = useState(null);
+
+  const steps = buildSteps(selectedRoles);
 
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const currentStep = steps[currentStepIndex];
 
   // ---- Basic info form state ----
   const [basicInfo, setBasicInfo] = useState({
-    firstName: profile.firstName || '',
-    lastName: profile.lastName || '',
+    firstName: profile.firstName !== 'New' ? (profile.firstName || '') : '',
+    lastName: profile.lastName !== 'Member' ? (profile.lastName || '') : '',
+    phone: protectedData.phoneNumber || '',
     bio: profile.bio || '',
   });
   const [basicInfoErrors, setBasicInfoErrors] = useState({});
@@ -675,6 +746,7 @@ const ProfileCompletionPage = () => {
     const errs = {};
     if (!basicInfo.firstName.trim()) errs.firstName = 'First name is required';
     if (!basicInfo.lastName.trim()) errs.lastName = 'Last name is required';
+    if (!basicInfo.phone?.trim()) errs.phone = 'Phone number is required';
     setBasicInfoErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -728,17 +800,21 @@ const ProfileCompletionPage = () => {
   // ---- Final save ----
   const handleFinalSave = useCallback(async () => {
     const updatePayload = {
-      firstName: basicInfo.firstName.trim() || profile.firstName || '',
-      lastName: basicInfo.lastName.trim() || profile.lastName || '',
+      firstName: basicInfo.firstName.trim() || '',
+      lastName: basicInfo.lastName.trim() || '',
       bio: basicInfo.bio || '',
       publicData: {
+        userRoles: selectedRoles,
         profileComplete: true,
-        ...(userRoles.includes('owner') ? { ownerSetupComplete: true } : {}),
-        ...(userRoles.includes('renter') ? { renterSetupComplete: true } : {}),
+        ...(selectedRoles.includes('owner') ? { ownerSetupComplete: true } : {}),
+        ...(selectedRoles.includes('renter') ? { renterSetupComplete: true } : {}),
+      },
+      protectedData: {
+        phoneNumber: basicInfo.phone?.trim() || '',
       },
     };
 
-    if (userRoles.includes('hauler')) {
+    if (selectedRoles.includes('hauler')) {
       const requiresCDL = parseInt(haulerDetails.maxTowCapacity || 0, 10) > CDL_THRESHOLD;
       updatePayload.protectedData = {
         haulerDetails: {
@@ -773,10 +849,17 @@ const ProfileCompletionPage = () => {
     if (!result.error) {
       setCurrentStepIndex(prev => prev + 1);
     }
-  }, [dispatch, basicInfo, haulerDetails, uploadedImageId, userRoles, profile]);
+  }, [dispatch, basicInfo, haulerDetails, uploadedImageId, selectedRoles, profile]);
 
   // ---- Navigation ----
   const handleNext = useCallback(async () => {
+    if (currentStep.id === 'roleSelection') {
+      if (selectedRoles.length === 0) {
+        setRoleError('Please select at least one option to continue.');
+        return;
+      }
+      setRoleError(null);
+    }
     if (currentStep.id === 'basicInfo' && !validateBasicInfo()) return;
     if (currentStep.id === 'hauler' && !validateHauler()) return;
 
@@ -801,6 +884,14 @@ const ProfileCompletionPage = () => {
   // ---- Render current step content ----
   const renderStepContent = () => {
     switch (currentStep.id) {
+      case 'roleSelection':
+        return (
+          <RoleSelectionStep
+            selectedRoles={selectedRoles}
+            onChange={setSelectedRoles}
+            error={roleError}
+          />
+        );
       case 'basicInfo':
         return (
           <BasicInfoStep
@@ -833,7 +924,7 @@ const ProfileCompletionPage = () => {
       case 'complete':
         return (
           <CompleteStep
-            userRoles={userRoles}
+            userRoles={selectedRoles}
             basicInfo={basicInfo}
             haulerDetails={haulerDetails}
             onGoHome={handleGoHome}

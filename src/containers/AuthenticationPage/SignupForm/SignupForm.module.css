@@ -34,12 +34,20 @@
 
 /* Phone number field — compact single-line width */
 .phoneRow {
-  max-width: 180px;
+  max-width: 200px;
   margin-top: 24px;
 
   @media (--viewportMedium) {
     margin-top: 32px;
   }
+}
+
+/* Override Sharetribe's tall input height for the phone field */
+.phoneRow input {
+  min-height: unset !important;
+  height: 42px !important;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
 }
 
 .firstNameRoot {

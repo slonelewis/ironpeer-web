@@ -67,7 +67,7 @@ export const userFields = [
       label: 'Are you listing as an individual or a business?',
       placeholderMessage: 'Select one',
       isRequired: true,
-      displayInSignUp: true,
+      displayInSignUp: false, // collected in ProfileCompletionPage
     },
     userTypeConfig: {
       limitToUserTypeIds: true,
@@ -88,7 +88,7 @@ export const userFields = [
       label: 'Business name',
       placeholderMessage: 'e.g. Lewis Equipment LLC',
       isRequired: false,
-      displayInSignUp: true,
+      displayInSignUp: false, // collected in ProfileCompletionPage
     },
     userTypeConfig: {
       limitToUserTypeIds: true,
@@ -130,7 +130,7 @@ export const userFields = [
       label: "Driver's license state (2-letter, e.g. WA)",
       placeholderMessage: 'WA',
       isRequired: true,
-      displayInSignUp: true,
+      displayInSignUp: false, // collected in ProfileCompletionPage
     },
     userTypeConfig: {
       limitToUserTypeIds: true,
@@ -156,7 +156,7 @@ export const userFields = [
     saveConfig: {
       label: 'What do you haul with?',
       isRequired: true,
-      displayInSignUp: true,
+      displayInSignUp: false, // collected in ProfileCompletionPage
     },
     userTypeConfig: {
       limitToUserTypeIds: true,
@@ -176,7 +176,7 @@ export const userFields = [
       label: 'Max haul weight (lbs)',
       placeholderMessage: 'e.g. 20000',
       isRequired: false,
-      displayInSignUp: true,
+      displayInSignUp: false, // collected in ProfileCompletionPage
     },
     userTypeConfig: {
       limitToUserTypeIds: true,

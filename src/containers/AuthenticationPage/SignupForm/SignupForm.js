@@ -194,13 +194,14 @@ const SignupFormComponent = props => (
                 validate={passwordValidators}
               />
 
-              <UserFieldPhoneNumber
-                formName="SignupForm"
-                className={css.row}
-                rootClassName={css.phoneRow}
-                userTypeConfig={userTypeConfig}
-                intl={intl}
-              />
+              <div style={{ maxWidth: '200px', marginTop: '24px' }}>
+                <UserFieldPhoneNumber
+                  formName="SignupForm"
+                  className={css.row}
+                  userTypeConfig={userTypeConfig}
+                  intl={intl}
+                />
+              </div>
             </div>
           ) : null}
 

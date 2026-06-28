@@ -194,14 +194,14 @@ const RECENT_LISTINGS = [
 ];
 
 const CATEGORIES = [
-  { icon: <ExcavatorIcon />, name: 'Dirt Work' },
-  { icon: <DumpTrailerIcon />, name: 'Hauling & Trailers' },
-  { icon: <ZeroTurnMowerIcon />, name: 'Lawn & Landscaping' },
-  { icon: '🚜', name: 'Farm & Agriculture' },
-  { icon: '🏗️', name: 'Construction' },
-  { icon: '🔩', name: 'Attachments' },
-  { icon: '⚡', name: 'Power & Lighting' },
-  { icon: '❄️', name: 'Seasonal' },
+  { icon: <ExcavatorIcon />, name: 'Dirt Work', categoryId: 'Dirt_work' },
+  { icon: <DumpTrailerIcon />, name: 'Hauling & Trailers', categoryId: 'Haulers_and_trailers' },
+  { icon: '🚜', name: 'Farm & Agriculture', categoryId: 'Farm_and_agriculture' },
+  { icon: '🏗️', name: 'Construction', categoryId: 'Construction' },
+  { icon: '🌿', name: 'Lawn & Landscaping', categoryId: 'Lawn_and_landscaping' },
+  { icon: '⚡', name: 'Power & Lighting', categoryId: 'Power_and_lighting' },
+  { icon: '❄️', name: 'Snow Removal', categoryId: 'Snow_removal' },
+  { icon: '🔩', name: 'Other', categoryId: 'Other' },
 ];
 
 // ─── LISTING CARD ─────────────────────────────────────────────────────────────
@@ -260,11 +260,12 @@ const RealListingCard = ({ listing, index }) => {
 };
 
 // Fallback mock card (used when no real listings yet)
+// These are illustrative examples only — labeled clearly so users aren't misled
 const MockListingCard = ({ listing }) => (
-  <NamedLink name="SearchPage" className={css.listingCard}>
+  <NamedLink name="SignupPage" className={`${css.listingCard} ${css.listingCardMock}`}>
     <div className={css.listingImg} style={{ background: listing.bg }}>
       <span className={css.listingEmoji}>{listing.emoji}</span>
-      {listing.badge && <span className={css.listingBadge}>{listing.badge}</span>}
+      <span className={css.listingBadgeSample}>Sample</span>
     </div>
     <div className={css.listingMeta}>
       <div>
@@ -381,6 +382,15 @@ export const LandingPageComponent = props => {
       <section className={css.listings}>
         <div className={css.sectionLabel}>Available near you</div>
         <div className={css.sectionTitle}>Featured equipment</div>
+        {!hasRealListings && (
+          <div className={css.mockListingsBanner}>
+            <span className={css.mockListingsBannerIcon}>🚀</span>
+            <div>
+              <strong>IronPeer is just getting started.</strong> These are example listings to show you what's coming.
+              {' '}<NamedLink name="SignupPage" className={css.mockListingsBannerLink}>List your equipment first →</NamedLink>
+            </div>
+          </div>
+        )}
         <div className={css.listingsGrid}>
           {hasRealListings
             ? featuredReal.map((listing, i) => (
@@ -398,7 +408,12 @@ export const LandingPageComponent = props => {
         <div className={css.sectionTitle}>Find what you need</div>
         <div className={css.categoryGrid}>
           {CATEGORIES.map((cat, i) => (
-            <NamedLink key={i} name="SearchPage" className={css.categoryCard}>
+            <NamedLink
+              key={i}
+              name="SearchPage"
+              to={{ search: `?pub_categoryLevel1=${cat.categoryId}` }}
+              className={css.categoryCard}
+            >
               <div className={css.categoryIcon}>
                 {typeof cat.icon === 'string' ? cat.icon : cat.icon}
               </div>

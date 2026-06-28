@@ -74,7 +74,7 @@ export const listingFields = [
   {
     key: 'equipmentMake',
     scope: 'public',
-    schemaType: 'text',
+    schemaType: 'shortText',
     showConfig: { label: 'Make', isDetail: true },
     saveConfig: {
       label: 'Make',
@@ -85,7 +85,7 @@ export const listingFields = [
   {
     key: 'equipmentModel',
     scope: 'public',
-    schemaType: 'text',
+    schemaType: 'shortText',
     showConfig: { label: 'Model', isDetail: true },
     saveConfig: {
       label: 'Model',
@@ -112,6 +112,7 @@ export const listingFields = [
       { option: 'excellent', label: 'Excellent — like new' },
       { option: 'good', label: 'Good — normal wear' },
       { option: 'fair', label: 'Fair — functional, some wear' },
+      { option: 'poor', label: 'Poor — usable, notable wear' },
     ],
     filterConfig: {
       indexForSearch: false,
@@ -179,6 +180,7 @@ export const listingFields = [
       label: 'Daily hours limit (powered equipment)',
       placeholderMessage: 'e.g. 8',
       isRequired: false,
+      helpText: 'Max engine hours the renter can run per day. Overage is billed at your hourly rate. Leave blank for no limit.',
     },
   },
   // {

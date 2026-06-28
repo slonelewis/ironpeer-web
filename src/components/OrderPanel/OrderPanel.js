@@ -381,7 +381,7 @@ const OrderPanel = props => {
   const supportedProcessesInfo = getSupportedProcessesInfo();
   const isKnownProcess = supportedProcessesInfo.map(info => info.name).includes(processName);
 
-  const { pickupEnabled, shippingEnabled, trailerReady, trailerIncluded, hitchRequired, trailerPlugType, minTowRatingLbs } = listing?.attributes?.publicData || {};
+  const { pickupEnabled, shippingEnabled, trailerReady, trailerType, hitchRequired, trailerPlugType, trailerLengthFt, trailerGVWR } = listing?.attributes?.publicData || {};
 
   const listingTypeConfig = validListingTypes.find(conf => conf.listingType === listingType);
   const displayShipping = displayDeliveryShipping(listingTypeConfig);
@@ -523,31 +523,35 @@ const OrderPanel = props => {
                 color: '#374151',
               }}>
                 <div style={{ fontWeight: 700, color: '#E8450A', marginBottom: '0.35rem' }}>
-                  🚛 Trailer-Ready Pickup
+                  🚛 Trailer-Ready
                 </div>
-                <div style={{ lineHeight: 1.5 }}>
-                  {trailerIncluded
-                    ? 'Equipment is pre-loaded on the owner’s trailer — just bring a truck and hook up.'
-                    : 'Equipment is pre-loaded and ready — bring your own trailer.'}
+                <div style={{ lineHeight: 1.5, marginBottom: '0.5rem' }}>
+                  Pre-loaded on the owner’s trailer and ready to go. Pick it up yourself, or request delivery.
                 </div>
-                {(hitchRequired || trailerPlugType || minTowRatingLbs) && (
-                  <div style={{ marginTop: '0.5rem', color: '#6b7280', fontSize: '0.8rem', display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
-                    {hitchRequired && <span>Hitch: <strong>{{
-                      'ball-2in': '2” ball',
-                      'ball-2-5-16in': '2-5/16” ball',
-                      'gooseneck': 'Gooseneck',
-                      'pintle': 'Pintle hitch',
-                      'fifth-wheel': '5th wheel / kingpin',
-                    }[hitchRequired] || hitchRequired}</strong></span>}
-                    {trailerPlugType && <span>Plug: <strong>{{
-                      '7pin-flat': '7-pin flat blade',
-                      '4pin-flat': '4-pin flat',
-                      '7pin-round': '7-pin round',
-                      '5pin-flat': '5-pin flat',
-                    }[trailerPlugType] || trailerPlugType}</strong></span>}
-                    {minTowRatingLbs && <span>Min tow: <strong>{minTowRatingLbs.toLocaleString()} lbs</strong></span>}
-                  </div>
-                )}
+                <div style={{ color: '#6b7280', fontSize: '0.8rem', display: 'flex', flexWrap: 'wrap', gap: '0.6rem 1.25rem' }}>
+                  {trailerType && <span>Type: <strong>{{
+                    'bumper-pull-flatbed': 'Bumper pull flatbed',
+                    'gooseneck-flatbed': 'Gooseneck flatbed',
+                    'lowboy': 'Lowboy',
+                    'tilt-deck': 'Tilt deck',
+                    'enclosed': 'Enclosed',
+                  }[trailerType] || trailerType}</strong></span>}
+                  {trailerLengthFt && <span>Length: <strong>{trailerLengthFt} ft</strong></span>}
+                  {trailerGVWR && <span>GVWR: <strong>{trailerGVWR.toLocaleString()} lbs</strong></span>}
+                  {hitchRequired && <span>Hitch: <strong>{{
+                    'ball-2in': '2” ball',
+                    'ball-2-5-16in': '2-5/16” ball',
+                    'gooseneck': 'Gooseneck',
+                    'pintle': 'Pintle hitch',
+                    'fifth-wheel': '5th wheel / kingpin',
+                  }[hitchRequired] || hitchRequired}</strong></span>}
+                  {trailerPlugType && <span>Plug: <strong>{{
+                    '7pin-flat': '7-pin flat blade',
+                    '4pin-flat': '4-pin flat',
+                    '7pin-round': '7-pin round',
+                    '5pin-flat': '5-pin flat',
+                  }[trailerPlugType] || trailerPlugType}</strong></span>}
+                </div>
               </div>
             )}
             <SecurityDepositNotice listingPrice={price} compact />

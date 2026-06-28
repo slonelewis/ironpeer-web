@@ -52,10 +52,11 @@ const getInitialValues = props => {
     equipmentHeightFt,
     haulerNotes,
     trailerReady,
-    trailerIncluded,
+    trailerType,
     hitchRequired,
     trailerPlugType,
-    minTowRatingLbs,
+    trailerLengthFt,
+    trailerGVWR,
   } = publicData;
   const deliveryOptions = [];
 
@@ -109,10 +110,11 @@ const getInitialValues = props => {
     equipmentHeightFt: equipmentHeightFt || '',
     haulerNotes: haulerNotes || '',
     trailerReady: trailerReady !== undefined ? trailerReady : null,
-    trailerIncluded: trailerIncluded !== undefined ? trailerIncluded : null,
+    trailerType: trailerType || '',
     hitchRequired: hitchRequired || '',
     trailerPlugType: trailerPlugType || '',
-    minTowRatingLbs: minTowRatingLbs || '',
+    trailerLengthFt: trailerLengthFt || '',
+    trailerGVWR: trailerGVWR || '',
   };
 };
 
@@ -214,10 +216,11 @@ const EditListingDeliveryPanel = props => {
               equipmentHeightFt,
               haulerNotes,
               trailerReady,
-              trailerIncluded,
+              trailerType,
               hitchRequired,
               trailerPlugType,
-              minTowRatingLbs,
+              trailerLengthFt,
+              trailerGVWR,
             } = values;
 
             const shippingEnabled = deliveryOptions.includes('shipping');
@@ -264,18 +267,20 @@ const EditListingDeliveryPanel = props => {
               ? {
                   trailerReady: trailerReady === true,
                   ...(trailerReady === true ? {
-                    trailerIncluded: trailerIncluded === true,
+                    trailerType: trailerType || null,
                     hitchRequired: hitchRequired || null,
                     trailerPlugType: trailerPlugType || null,
-                    minTowRatingLbs: minTowRatingLbs ? parseInt(minTowRatingLbs, 10) : null,
+                    trailerLengthFt: trailerLengthFt ? parseFloat(trailerLengthFt) : null,
+                    trailerGVWR: trailerGVWR ? parseInt(trailerGVWR, 10) : null,
                   } : {
-                    trailerIncluded: null,
+                    trailerType: null,
                     hitchRequired: null,
                     trailerPlugType: null,
-                    minTowRatingLbs: null,
+                    trailerLengthFt: null,
+                    trailerGVWR: null,
                   }),
                 }
-              : { trailerReady: false, trailerIncluded: null, hitchRequired: null, trailerPlugType: null, minTowRatingLbs: null };
+              : { trailerReady: false, trailerType: null, hitchRequired: null, trailerPlugType: null, trailerLengthFt: null, trailerGVWR: null };
 
             const updateValues = {
               geolocation: origin,

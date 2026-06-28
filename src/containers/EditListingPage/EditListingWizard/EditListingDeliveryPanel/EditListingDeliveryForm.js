@@ -179,23 +179,23 @@ export const EditListingDeliveryForm = props => (
 
                 {values.trailerReady === true && (
                   <div className={css.trailerSubFields}>
-                    <p className={css.deliveryMethodLabel}>Is the trailer included in the rental?</p>
-                    <div className={css.buttonGroup}>
-                      <button
-                        type="button"
-                        className={values.trailerIncluded === true ? css.optionButtonActive : css.optionButton}
-                        onClick={() => form.change('trailerIncluded', true)}
-                      >
-                        Yes — renter just needs a truck
-                      </button>
-                      <button
-                        type="button"
-                        className={values.trailerIncluded === false ? css.optionButtonActive : css.optionButton}
-                        onClick={() => form.change('trailerIncluded', false)}
-                      >
-                        No — renter brings their own trailer
-                      </button>
+                    <div className={css.infoBox} style={{ marginBottom: '1rem' }}>
+                      🚛 The trailer is included in the rental. Renters can pick it up themselves, request owner delivery, or have a hauler deliver it — no unloading required on your end.
                     </div>
+
+                    <p className={css.deliveryMethodLabel}>Trailer type</p>
+                    <select
+                      className={css.selectInput}
+                      value={values.trailerType || ''}
+                      onChange={e => form.change('trailerType', e.target.value)}
+                    >
+                      <option value="">Select trailer type...</option>
+                      <option value="bumper-pull-flatbed">Bumper pull flatbed</option>
+                      <option value="gooseneck-flatbed">Gooseneck flatbed</option>
+                      <option value="lowboy">Lowboy / low deck</option>
+                      <option value="tilt-deck">Tilt deck</option>
+                      <option value="enclosed">Enclosed trailer</option>
+                    </select>
 
                     <div className={css.hitchPlugRow}>
                       <div className={css.hitchPlugField}>
@@ -228,19 +228,37 @@ export const EditListingDeliveryForm = props => (
                         </select>
                       </div>
                     </div>
-                    <p className={css.trailerReadyHint} style={{ marginTop: '-0.5rem', marginBottom: '1rem' }}>
-                      💡 Tip: Add a photo of your hitch ball and plug connector in the Photos tab so renters can verify compatibility before they drive out.
-                    </p>
 
-                    <FieldTextInput
-                      className={css.input}
-                      type="number"
-                      name="minTowRatingLbs"
-                      id={`${formId}.minTowRatingLbs`}
-                      label="Minimum tow rating required (lbs)"
-                      placeholder="e.g. 10000"
-                      min="1"
-                    />
+                    <div className={css.hitchPlugRow}>
+                      <div className={css.hitchPlugField}>
+                        <FieldTextInput
+                          className={css.input}
+                          type="number"
+                          name="trailerLengthFt"
+                          id={`${formId}.trailerLengthFt`}
+                          label="Trailer length (ft)"
+                          placeholder="e.g. 20"
+                          min="1"
+                        />
+                      </div>
+                      <div className={css.hitchPlugField}>
+                        <FieldTextInput
+                          className={css.input}
+                          type="number"
+                          name="trailerGVWR"
+                          id={`${formId}.trailerGVWR`}
+                          label="Trailer GVWR (lbs)"
+                          placeholder="e.g. 14000"
+                          min="1"
+                        />
+                      </div>
+                    </div>
+                    <p className={css.trailerReadyHint}>
+                      GVWR = gross vehicle weight rating — the max total weight of the loaded trailer. Renters and haulers use this to confirm their truck can handle it.
+                    </p>
+                    <p className={css.trailerReadyHint} style={{ marginTop: '0.25rem' }}>
+                      💡 Tip: Add a photo of your hitch ball and plug connector in the Photos tab so renters can verify compatibility before driving out.
+                    </p>
                   </div>
                 )}
               </div>

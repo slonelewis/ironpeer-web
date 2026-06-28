@@ -238,6 +238,11 @@ const EditListingProtectionPanel = props => {
       {isRoadLegal === false && (
         <div style={{ fontSize: '0.875rem', color: '#666', marginBottom: '1rem', padding: '0.75rem', background: '#f5f5f5', borderRadius: '6px' }}>
           No registration required for off-road equipment. 👍
+          {isTrailerReady && (
+            <div style={{ marginTop: '0.5rem', color: '#E8450A', fontWeight: 500 }}>
+              🚛 Your equipment doesn&apos;t need registration, but the trailer it&apos;s loaded on does — see the Trailer Documentation section below.
+            </div>
+          )}
         </div>
       )}
 
@@ -323,9 +328,9 @@ const EditListingProtectionPanel = props => {
         <>
           <hr style={{ margin: '1.5rem 0', border: 'none', borderTop: '1px solid #e5e7eb' }} />
           <div className={css.sectionTitle}>🚛 Trailer Documentation</div>
-          <p style={{ fontSize: '0.875rem', color: '#666', marginBottom: '1rem' }}>
-            Since this listing includes a trailer, we need documentation for the trailer separately from the equipment.
-          </p>
+          <div style={{ background: '#fff3cd', border: '1px solid #ffc107', borderRadius: '6px', padding: '0.75rem', marginBottom: '1rem', fontSize: '0.875rem' }}>
+            ⚠️ <strong>Required before publishing.</strong> Since renters are picking up or receiving a trailer, IronPeer requires trailer registration and insurance status on file. Your listing cannot be published without completing this section.
+          </div>
 
           <strong style={{ fontSize: '0.875rem' }}>Trailer Registration</strong>
           <p style={{ fontSize: '0.875rem', color: '#666', margin: '0.35rem 0 0.75rem' }}>

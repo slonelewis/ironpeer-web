@@ -445,6 +445,7 @@ class EditListingWizard extends Component {
       showPayoutDetails: false,
       selectedListingType: null,
       mounted: false,
+      trailerDocsError: null,
     };
     this.handleCreateFlowTabScrolling = this.handleCreateFlowTabScrolling.bind(this);
     this.handlePublishListing = this.handlePublishListing.bind(this);
@@ -468,6 +469,17 @@ class EditListingWizard extends Component {
 
   handlePublishListing(id) {
     const { onPublishListingDraft, currentUser, stripeAccount, listing, config } = this.props;
+
+    // IronPeer: enforce trailer docs before publish
+    const trailerReady = listing?.attributes?.publicData?.trailerReady;
+    const trailerRegistration = listing?.attributes?.privateData?.trailerRegistration;
+    if (trailerReady === true && !trailerRegistration) {
+      this.setState({
+        trailerDocsError: 'Please complete the Trailer Documentation section in the Protection tab before publishing.',
+      });
+      return;
+    }
+    this.setState({ trailerDocsError: null });
     const processName = listing?.attributes?.publicData?.transactionProcessAlias.split('/')[0];
     const isInquiryProcess = processName === INQUIRY_PROCESS_NAME;
 
@@ -731,6 +743,19 @@ class EditListingWizard extends Component {
             );
           })}
         </Tabs>
+        {this.state.trailerDocsError && (
+          <div style={{
+            background: '#fff3cd',
+            border: '1px solid #ffc107',
+            borderRadius: '6px',
+            padding: '0.75rem 1rem',
+            margin: '1rem 1.5rem',
+            fontSize: '0.875rem',
+            color: '#856404',
+          }}>
+            ⚠️ {this.state.trailerDocsError}
+          </div>
+        )}
         <Modal
           id="EditListingWizard.payoutModal"
           isOpen={this.state.showPayoutDetails}

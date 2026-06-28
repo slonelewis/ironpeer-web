@@ -272,6 +272,48 @@ export const ListingPageComponent = props => {
               )}
             </div>
             {showDescription && <SectionText text={description} showAsIngress />}
+            {publicData.trailerReady && (
+              <div style={{
+                background: '#fff8f0',
+                border: '1.5px solid #E8450A',
+                borderRadius: '10px',
+                padding: '0.75rem 1rem',
+                margin: '1rem 0',
+                fontSize: '0.875rem',
+                color: '#374151',
+              }}>
+                <div style={{ fontWeight: 700, color: '#E8450A', marginBottom: '0.35rem', fontSize: '1rem' }}>
+                  🚛 Trailer-Ready Pickup
+                </div>
+                <div style={{ lineHeight: 1.5, marginBottom: '0.5rem' }}>
+                  Pre-loaded on the owner&apos;s trailer and ready to go. Pick it up yourself, or request delivery.
+                </div>
+                <div style={{ color: '#6b7280', fontSize: '0.8rem', display: 'flex', flexWrap: 'wrap', gap: '0.4rem 1.25rem' }}>
+                  {publicData.trailerType && <span>Type: <strong>{{
+                    'bumper-pull-flatbed': 'Bumper pull flatbed',
+                    'gooseneck-flatbed': 'Gooseneck flatbed',
+                    'lowboy': 'Lowboy',
+                    'tilt-deck': 'Tilt deck',
+                    'enclosed': 'Enclosed',
+                  }[publicData.trailerType] || publicData.trailerType}</strong></span>}
+                  {publicData.trailerLengthFt && <span>Length: <strong>{publicData.trailerLengthFt} ft</strong></span>}
+                  {publicData.trailerGVWR && <span>GVWR: <strong>{Number(publicData.trailerGVWR).toLocaleString()} lbs</strong></span>}
+                  {publicData.hitchRequired && <span>Hitch: <strong>{{
+                    'ball-2in': '2" ball',
+                    'ball-2-5-16in': '2-5/16" ball',
+                    'gooseneck': 'Gooseneck',
+                    'pintle': 'Pintle hitch',
+                    'fifth-wheel': '5th wheel / kingpin',
+                  }[publicData.hitchRequired] || publicData.hitchRequired}</strong></span>}
+                  {publicData.trailerPlugType && <span>Plug: <strong>{{
+                    '7pin-flat': '7-pin flat blade',
+                    '4pin-flat': '4-pin flat',
+                    '7pin-round': '7-pin round',
+                    '5pin-flat': '5-pin flat',
+                  }[publicData.trailerPlugType] || publicData.trailerPlugType}</strong></span>}
+                </div>
+              </div>
+            )}
 
             <CustomListingFields
               publicData={publicData}

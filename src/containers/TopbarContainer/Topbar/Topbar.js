@@ -365,12 +365,14 @@ const TopbarComponent = props => {
           alt={intl.formatMessage({ id: 'Topbar.logoIcon' })}
           linkToExternalSite={config?.topbar?.logoLink}
         />
-        {mobileSearchButtonMaybe}
-        {!isAuthenticated && !authInProgress ? (
-          <NamedLink name="SignupPage" className={css.mobileSignupButton}>
-            <FormattedMessage id="TopbarDesktop.signup" />
-          </NamedLink>
-        ) : null}
+        <div className={css.mobileRight}>
+          {mobileSearchButtonMaybe}
+          {!isAuthenticated && !authInProgress ? (
+            <NamedLink name="SignupPage" className={css.mobileSignupButton}>
+              <FormattedMessage id="TopbarDesktop.signup" />
+            </NamedLink>
+          ) : null}
+        </div>
       </nav>
       <div className={css.desktop}>
         <TopbarDesktop

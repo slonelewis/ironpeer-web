@@ -241,14 +241,47 @@ export const EditListingDeliveryForm = props => (
                       placeholder="e.g. 50"
                       min="1"
                     />
-                    <FieldCurrencyInput
-                      id={`${formId}.deliveryFee`}
-                      name="deliveryFee"
-                      className={css.input}
-                      label="Delivery fee (leave blank if free)"
-                      placeholder="$0.00"
-                      currencyConfig={currencyConfig}
-                    />
+                    <div className={css.feeTypeSection}>
+                      <p className={css.feeTypeLabel}>How do you charge for delivery?</p>
+                      <div className={css.feeTypeOption}>
+                        <FieldRadioButton
+                          id={`${formId}.deliveryFeeType.flat`}
+                          name="deliveryFeeType"
+                          label="Flat fee"
+                          value="flat"
+                        />
+                        <p className={css.feeTypeHint}>One price, regardless of distance</p>
+                      </div>
+                      <div className={css.feeTypeOption}>
+                        <FieldRadioButton
+                          id={`${formId}.deliveryFeeType.flatPlusMileage`}
+                          name="deliveryFeeType"
+                          label="Flat fee + per mile"
+                          value="flatPlusMileage"
+                        />
+                        <p className={css.feeTypeHint}>Base rate plus a per-mile charge</p>
+                      </div>
+                    </div>
+                    {(values.deliveryFeeType === 'flat' || values.deliveryFeeType === 'flatPlusMileage') && (
+                      <FieldCurrencyInput
+                        id={`${formId}.deliveryFee`}
+                        name="deliveryFee"
+                        className={css.input}
+                        label={values.deliveryFeeType === 'flatPlusMileage' ? 'Base delivery fee' : 'Delivery fee (leave blank if free)'}
+                        placeholder="$0.00"
+                        currencyConfig={currencyConfig}
+                      />
+                    )}
+                    {values.deliveryFeeType === 'flatPlusMileage' && (
+                      <FieldCurrencyInput
+                        id={`${formId}.deliveryPricePerMile`}
+                        name="deliveryPricePerMile"
+                        className={css.input}
+                        label="Rate per mile"
+                        placeholder="e.g. $2.50"
+                        currencyConfig={currencyConfig}
+                      />
+                    )}
                   </div>
                 )}
 

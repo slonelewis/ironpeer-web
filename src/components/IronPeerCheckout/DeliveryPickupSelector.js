@@ -10,22 +10,35 @@ import css from './DeliveryPickupSelector.module.css';
  * @component
  * @param {Object} props
  * @param {boolean} props.deliveryAvailable - Whether delivery is offered for this listing
- * @param {number} [props.deliveryFee] - Delivery fee in cents
+ * @param {number} [props.deliveryFee] - Delivery fee in cents (flat, or base fee for flat+mile)
  * @param {number} [props.deliveryRadius] - Delivery radius in miles
+ * @param {'flat'|'flatPlusMileage'} [props.deliveryFeeType] - Fee structure type
+ * @param {number} [props.deliveryPricePerMile] - Per-mile rate in cents (flatPlusMileage only)
  * @param {'pickup'|'delivery'} props.value - Currently selected method
  * @param {Function} props.onChange - Called with 'pickup' or 'delivery' when selection changes
  */
 const DeliveryPickupSelector = props => {
-  const { deliveryAvailable, deliveryFee, deliveryRadius, value, onChange } = props;
+  const { deliveryAvailable, deliveryFee, deliveryRadius, deliveryFeeType, deliveryPricePerMile, value, onChange } = props;
 
   if (!deliveryAvailable) {
     return null;
   }
 
-  const deliveryFeeDollars = deliveryFee ? Math.round(deliveryFee / 100) : 0;
-  const deliveryFeeText = deliveryFee
-    ? `+$${deliveryFeeDollars.toLocaleString()}`
-    : 'Free';
+  const isPerMile = deliveryFeeType === 'flatPlusMileage' && deliveryPricePerMile;
+  const baseFeeDollars = deliveryFee ? (deliveryFee / 100) : 0;
+  const perMileDollars = deliveryPricePerMile ? (deliveryPricePerMile / 100) : 0;
+
+  let deliveryFeeText;
+  if (isPerMile) {
+    const basePart = baseFeeDollars > 0 ? `$${baseFeeDollars.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}` : null;
+    const perMilePart = `$${perMileDollars.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}/mi`;
+    deliveryFeeText = basePart ? `${basePart} + ${perMilePart}` : `From ${perMilePart}`;
+  } else if (deliveryFee) {
+    deliveryFeeText = `+$${Math.round(baseFeeDollars).toLocaleString()}`;
+  } else {
+    deliveryFeeText = 'Free';
+  }
+
   const radiusText = deliveryRadius ? `, within ${deliveryRadius} miles` : '';
 
   const handleSelect = method => {

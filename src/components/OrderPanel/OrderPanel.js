@@ -322,7 +322,16 @@ const OrderPanel = props => {
     deliveryAvailable: listingDeliveryAvailable,
     deliveryFee: listingDeliveryFee,
     deliveryRadius: listingDeliveryRadius,
+    // IronPeer delivery fields
+    deliveryFeeInSubunits: listingDeliveryFeeInSubunits,
+    deliveryRadiusMiles: listingDeliveryRadiusMiles,
+    deliveryFeeType: listingDeliveryFeeType,
+    deliveryPricePerMileInSubunits: listingDeliveryPricePerMileInSubunits,
   } = publicData;
+
+  // Prefer the IronPeer-specific fields; fall back to legacy names if set
+  const resolvedDeliveryFee = listingDeliveryFeeInSubunits ?? listingDeliveryFee;
+  const resolvedDeliveryRadius = listingDeliveryRadiusMiles ?? listingDeliveryRadius;
 
   const processName = resolveLatestProcessName(transactionProcessAlias.split('/')[0]);
   const lineItemUnitType = lineItemUnitTypeMaybe || `line-item/${unitType}`;
@@ -473,8 +482,10 @@ const OrderPanel = props => {
         {listingDeliveryAvailable ? (
           <DeliveryPickupSelector
             deliveryAvailable={listingDeliveryAvailable}
-            deliveryFee={listingDeliveryFee}
-            deliveryRadius={listingDeliveryRadius}
+            deliveryFee={resolvedDeliveryFee}
+            deliveryRadius={resolvedDeliveryRadius}
+            deliveryFeeType={listingDeliveryFeeType}
+            deliveryPricePerMile={listingDeliveryPricePerMileInSubunits}
             value={deliveryMethod}
             onChange={setDeliveryMethod}
           />

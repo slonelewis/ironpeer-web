@@ -123,6 +123,27 @@
   flex: 1;
 }
 
+.feeTypeSection {
+  margin-bottom: 12px;
+}
+
+.feeTypeLabel {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #374151;
+  margin: 0 0 10px;
+}
+
+.feeTypeOption {
+  margin-bottom: 4px;
+}
+
+.feeTypeHint {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin: 2px 0 8px 26px;
+}
+
 .infoBox {
   background: #fff8f0;
   border: 1px solid #fed7aa;

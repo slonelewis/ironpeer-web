@@ -44,6 +44,8 @@ const getInitialValues = props => {
     deliveryMethod,
     deliveryRadiusMiles,
     deliveryFeeInSubunits,
+    deliveryFeeType,
+    deliveryPricePerMileInSubunits,
     equipmentWeightLbs,
     equipmentLengthFt,
     equipmentWidthFt,
@@ -74,6 +76,11 @@ const getInitialValues = props => {
       ? new Money(deliveryFeeInSubunits, currency)
       : null;
 
+  const deliveryPricePerMileAsMoney =
+    deliveryPricePerMileInSubunits != null
+      ? new Money(deliveryPricePerMileInSubunits, currency)
+      : null;
+
   // Initial values for the form
   return {
     building,
@@ -88,7 +95,9 @@ const getInitialValues = props => {
     shippingPriceInSubunitsAdditionalItems: shippingAdditionalItemsAsMoney,
     deliveryMethod: deliveryMethod || null,
     deliveryRadiusMiles: deliveryRadiusMiles || '',
+    deliveryFeeType: deliveryFeeType || 'flat',
     deliveryFee: deliveryFeeAsMoney,
+    deliveryPricePerMile: deliveryPricePerMileAsMoney,
     equipmentWeightLbs: equipmentWeightLbs || '',
     equipmentLengthFt: equipmentLengthFt || '',
     equipmentWidthFt: equipmentWidthFt || '',
@@ -183,7 +192,9 @@ const EditListingDeliveryPanel = props => {
               deliveryOptions,
               deliveryMethod,
               deliveryRadiusMiles,
+              deliveryFeeType,
               deliveryFee,
+              deliveryPricePerMile,
               equipmentWeightLbs,
               equipmentLengthFt,
               equipmentWidthFt,
@@ -213,7 +224,12 @@ const EditListingDeliveryPanel = props => {
                   deliveryMethod,
                   ...(deliveryMethod === 'self' ? {
                     deliveryRadiusMiles: deliveryRadiusMiles ? parseInt(deliveryRadiusMiles, 10) : null,
+                    deliveryFeeType: deliveryFeeType || 'flat',
                     deliveryFeeInSubunits: deliveryFee?.amount ?? null,
+                    deliveryPricePerMileInSubunits:
+                      deliveryFeeType === 'flatPlusMileage'
+                        ? (deliveryPricePerMile?.amount ?? null)
+                        : null,
                   } : {}),
                   ...(deliveryMethod === 'hauler' ? {
                     equipmentWeightLbs: equipmentWeightLbs ? parseInt(equipmentWeightLbs, 10) : null,
@@ -247,6 +263,16 @@ const EditListingDeliveryPanel = props => {
                 shippingPriceInSubunitsOneItem,
                 shippingPriceInSubunitsAdditionalItems,
                 deliveryOptions,
+                deliveryMethod,
+                deliveryRadiusMiles,
+                deliveryFeeType: deliveryFeeType || 'flat',
+                deliveryFee,
+                deliveryPricePerMile,
+                equipmentWeightLbs,
+                equipmentLengthFt,
+                equipmentWidthFt,
+                equipmentHeightFt,
+                haulerNotes,
               },
             });
             onSubmit(updateValues);

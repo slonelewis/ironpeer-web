@@ -1183,7 +1183,14 @@ const ProfileCompletionPage = () => {
       }
       setPhotoError(null);
     }
-    if (currentStep.id === 'hauler' && !validateHauler()) return;
+    if (currentStep.id === 'hauler' && !validateHauler()) {
+      // Scroll to first visible error
+      setTimeout(() => {
+        const firstError = document.querySelector('[class*="errorMsg"], [class*="inputError"]');
+        if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 50);
+      return;
+    }
 
     const isLastDataStep = currentStepIndex === steps.length - 2;
     if (isLastDataStep) {

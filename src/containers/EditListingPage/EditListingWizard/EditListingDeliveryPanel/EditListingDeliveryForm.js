@@ -197,19 +197,41 @@ export const EditListingDeliveryForm = props => (
                       </button>
                     </div>
 
-                    <p className={css.deliveryMethodLabel} style={{ marginTop: '1rem' }}>Hitch required</p>
-                    <select
-                      className={css.selectInput}
-                      value={values.hitchRequired || ''}
-                      onChange={e => form.change('hitchRequired', e.target.value)}
-                    >
-                      <option value="">Select hitch type...</option>
-                      <option value="ball-2in">2&quot; ball</option>
-                      <option value="ball-2-5-16in">2-5/16&quot; ball</option>
-                      <option value="gooseneck">Gooseneck</option>
-                      <option value="pintle">Pintle hitch</option>
-                      <option value="fifth-wheel">5th wheel / kingpin</option>
-                    </select>
+                    <div className={css.hitchPlugRow}>
+                      <div className={css.hitchPlugField}>
+                        <p className={css.deliveryMethodLabel}>Hitch required</p>
+                        <select
+                          className={css.selectInput}
+                          value={values.hitchRequired || ''}
+                          onChange={e => form.change('hitchRequired', e.target.value)}
+                        >
+                          <option value="">Select hitch type...</option>
+                          <option value="ball-2in">2&quot; ball</option>
+                          <option value="ball-2-5-16in">2-5/16&quot; ball</option>
+                          <option value="gooseneck">Gooseneck</option>
+                          <option value="pintle">Pintle hitch</option>
+                          <option value="fifth-wheel">5th wheel / kingpin</option>
+                        </select>
+                      </div>
+                      <div className={css.hitchPlugField}>
+                        <p className={css.deliveryMethodLabel}>Trailer plug type</p>
+                        <select
+                          className={css.selectInput}
+                          value={values.trailerPlugType || ''}
+                          onChange={e => form.change('trailerPlugType', e.target.value)}
+                        >
+                          <option value="">Select plug type...</option>
+                          <option value="7pin-round">7-pin round (most common)</option>
+                          <option value="4pin-flat">4-pin flat</option>
+                          <option value="7pin-flat">7-pin flat blade</option>
+                          <option value="5pin-flat">5-pin flat</option>
+                          <option value="none">No plug / N/A</option>
+                        </select>
+                      </div>
+                    </div>
+                    <p className={css.trailerReadyHint} style={{ marginTop: '-0.5rem', marginBottom: '1rem' }}>
+                      💡 Tip: Add a photo of your hitch ball and plug connector in the Photos tab so renters can verify compatibility before they drive out.
+                    </p>
 
                     <FieldTextInput
                       className={css.input}

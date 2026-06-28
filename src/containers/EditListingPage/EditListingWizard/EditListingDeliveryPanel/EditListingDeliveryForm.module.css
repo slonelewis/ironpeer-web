@@ -224,3 +224,15 @@
   outline: none;
   border-color: #E8450A;
 }
+
+.hitchPlugRow {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.hitchPlugField {
+  flex: 1;
+  min-width: 0;
+}

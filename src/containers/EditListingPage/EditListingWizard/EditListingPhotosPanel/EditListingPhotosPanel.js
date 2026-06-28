@@ -84,6 +84,27 @@ const EditListingPhotosPanel = props => {
       <H3 as="h1">
         <FormattedMessage id={panelHeadingProps.id} values={{ ...panelHeadingProps.values }} />
       </H3>
+
+      {/* IronPeer: photo tips */}
+      <div style={{
+        background: '#fff8f0',
+        border: '1px solid #fed7aa',
+        borderRadius: '10px',
+        padding: '0.75rem 1rem',
+        marginBottom: '1.25rem',
+        fontSize: '0.875rem',
+        color: '#374151',
+        lineHeight: 1.6,
+      }}>
+        <strong>📸 Photo tips</strong>
+        <ul style={{ margin: '0.4rem 0 0', paddingLeft: '1.25rem' }}>
+          <li>Show all sides of the equipment — front, back, left, right</li>
+          <li>Include any damage, wear, or notable features</li>
+          {listing?.attributes?.publicData?.trailerReady && (
+            <li><strong>🚛 Trailer-ready listing:</strong> Add a photo of your hitch ball and plug connector so renters can verify compatibility before driving out</li>
+          )}
+        </ul>
+      </div>
       {/* <H3 as="h1">
         {isPublished ? (
           <FormattedMessage

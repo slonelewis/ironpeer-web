@@ -381,7 +381,7 @@ const OrderPanel = props => {
   const supportedProcessesInfo = getSupportedProcessesInfo();
   const isKnownProcess = supportedProcessesInfo.map(info => info.name).includes(processName);
 
-  const { pickupEnabled, shippingEnabled, trailerReady, trailerIncluded, hitchRequired, minTowRatingLbs } = listing?.attributes?.publicData || {};
+  const { pickupEnabled, shippingEnabled, trailerReady, trailerIncluded, hitchRequired, trailerPlugType, minTowRatingLbs } = listing?.attributes?.publicData || {};
 
   const listingTypeConfig = validListingTypes.find(conf => conf.listingType === listingType);
   const displayShipping = displayDeliveryShipping(listingTypeConfig);
@@ -530,16 +530,22 @@ const OrderPanel = props => {
                     ? 'Equipment is pre-loaded on the owner’s trailer — just bring a truck and hook up.'
                     : 'Equipment is pre-loaded and ready — bring your own trailer.'}
                 </div>
-                {(hitchRequired || minTowRatingLbs) && (
-                  <div style={{ marginTop: '0.5rem', color: '#6b7280', fontSize: '0.8rem' }}>
-                    {hitchRequired && <span style={{ marginRight: '1rem' }}>Hitch: <strong>{{
+                {(hitchRequired || trailerPlugType || minTowRatingLbs) && (
+                  <div style={{ marginTop: '0.5rem', color: '#6b7280', fontSize: '0.8rem', display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+                    {hitchRequired && <span>Hitch: <strong>{{
                       'ball-2in': '2” ball',
                       'ball-2-5-16in': '2-5/16” ball',
                       'gooseneck': 'Gooseneck',
                       'pintle': 'Pintle hitch',
                       'fifth-wheel': '5th wheel / kingpin',
                     }[hitchRequired] || hitchRequired}</strong></span>}
-                    {minTowRatingLbs && <span>Min tow rating: <strong>{minTowRatingLbs.toLocaleString()} lbs</strong></span>}
+                    {trailerPlugType && trailerPlugType !== 'none' && <span>Plug: <strong>{{
+                      '7pin-round': '7-pin round',
+                      '4pin-flat': '4-pin flat',
+                      '7pin-flat': '7-pin flat blade',
+                      '5pin-flat': '5-pin flat',
+                    }[trailerPlugType] || trailerPlugType}</strong></span>}
+                    {minTowRatingLbs && <span>Min tow: <strong>{minTowRatingLbs.toLocaleString()} lbs</strong></span>}
                   </div>
                 )}
               </div>

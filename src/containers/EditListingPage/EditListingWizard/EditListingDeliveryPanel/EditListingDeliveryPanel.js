@@ -54,6 +54,7 @@ const getInitialValues = props => {
     trailerReady,
     trailerIncluded,
     hitchRequired,
+    trailerPlugType,
     minTowRatingLbs,
   } = publicData;
   const deliveryOptions = [];
@@ -110,6 +111,7 @@ const getInitialValues = props => {
     trailerReady: trailerReady !== undefined ? trailerReady : null,
     trailerIncluded: trailerIncluded !== undefined ? trailerIncluded : null,
     hitchRequired: hitchRequired || '',
+    trailerPlugType: trailerPlugType || '',
     minTowRatingLbs: minTowRatingLbs || '',
   };
 };
@@ -214,6 +216,7 @@ const EditListingDeliveryPanel = props => {
               trailerReady,
               trailerIncluded,
               hitchRequired,
+              trailerPlugType,
               minTowRatingLbs,
             } = values;
 
@@ -263,14 +266,16 @@ const EditListingDeliveryPanel = props => {
                   ...(trailerReady === true ? {
                     trailerIncluded: trailerIncluded === true,
                     hitchRequired: hitchRequired || null,
+                    trailerPlugType: trailerPlugType || null,
                     minTowRatingLbs: minTowRatingLbs ? parseInt(minTowRatingLbs, 10) : null,
                   } : {
                     trailerIncluded: null,
                     hitchRequired: null,
+                    trailerPlugType: null,
                     minTowRatingLbs: null,
                   }),
                 }
-              : { trailerReady: false, trailerIncluded: null, hitchRequired: null, minTowRatingLbs: null };
+              : { trailerReady: false, trailerIncluded: null, hitchRequired: null, trailerPlugType: null, minTowRatingLbs: null };
 
             const updateValues = {
               geolocation: origin,

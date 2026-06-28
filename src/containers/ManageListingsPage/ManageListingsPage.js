@@ -37,6 +37,33 @@ import {
 import css from './ManageListingsPage.module.css';
 import DiscardDraftModal from './DiscardDraftModal/DiscardDraftModal';
 
+const EmptyState = () => (
+  <div className={css.emptyState}>
+    <div className={css.emptyStateIcon}>
+      <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="36" cy="36" r="36" fill="#FDF0EB" />
+        <path d="M22 44V30a2 2 0 0 1 2-2h4l4-6h8l4 6h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H24a2 2 0 0 1-2-2z" stroke="#E8450A" strokeWidth="2" strokeLinejoin="round" fill="none"/>
+        <circle cx="36" cy="37" r="5" stroke="#E8450A" strokeWidth="2" fill="none"/>
+        <path d="M20 32h4M48 32h4" stroke="#E8450A" strokeWidth="2" strokeLinecap="round"/>
+      </svg>
+    </div>
+    <h2 className={css.emptyStateTitle}>List your first piece of equipment</h2>
+    <p className={css.emptyStateSubtitle}>
+      Share what you own with people in your area and start earning when it's sitting idle.
+    </p>
+    <NamedLink className={css.emptyStateCta} name="NewListingPage">
+      + Post a listing
+    </NamedLink>
+    <div className={css.emptyStateCategories}>
+      <span>🚜 Farm & ag</span>
+      <span>🏗️ Construction</span>
+      <span>🚛 Haulers & trailers</span>
+      <span>⚡ Power & lighting</span>
+      <span>🌿 Lawn & landscaping</span>
+    </div>
+  </div>
+);
+
 const Heading = props => {
   const { listingsAreLoaded, pagination } = props;
   const hasResults = listingsAreLoaded && pagination.totalItems > 0;
@@ -50,16 +77,7 @@ const Heading = props => {
       />
     </H3>
   ) : hasNoResults ? (
-    <div className={css.noResultsContainer}>
-      <H3 as="h1" className={css.headingNoListings}>
-        <FormattedMessage id="ManageListingsPage.noResults" />
-      </H3>
-      <p className={css.createListingParagraph}>
-        <NamedLink className={css.createListingLink} name="NewListingPage">
-          <FormattedMessage id="ManageListingsPage.createListing" />
-        </NamedLink>
-      </p>
-    </div>
+    <EmptyState />
   ) : null;
 };
 

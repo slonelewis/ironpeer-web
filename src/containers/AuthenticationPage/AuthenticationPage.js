@@ -282,8 +282,10 @@ export const AuthenticationPageComponent = props => {
   });
 
   const shouldRedirectToFrom = isAuthenticated && from;
+  // Redirect to landing/profile-completion even if email isn't verified yet —
+  // email verification is handled as a separate gate, not a blocker here.
   const shouldRedirectToLandingPage =
-    isAuthenticated && currentUserLoaded && !showEmailVerification;
+    isAuthenticated && currentUserLoaded;
   if (!mounted && shouldRedirectToLandingPage) {
     // Show a blank page for already authenticated users,
     // when the first rendering on client side is not yet done

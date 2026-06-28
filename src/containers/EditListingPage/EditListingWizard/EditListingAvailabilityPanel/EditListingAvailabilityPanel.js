@@ -306,9 +306,11 @@ const EditListingAvailabilityPanel = props => {
         useFullDays={useFullDays}
         useMultipleSeats={useMultipleSeats}
         unitType={unitType}
+        hideTitle={!isPublished}
+        hideSubmitButton={!isPublished}
       />
 
-      {hasAvailabilityPlan ? (
+      {hasAvailabilityPlan && isPublished ? (
         <>
           <WeeklyCalendar
             className={css.section}

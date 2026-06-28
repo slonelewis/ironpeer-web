@@ -208,7 +208,7 @@
   "EditListingAvailabilityPanel.WeeklyCalendar.seats": "{seats, plural, one {{seats} seat} other {{seats} seats}}",
   "EditListingAvailabilityPanel.addException": "Add an availability exception",
   "EditListingAvailabilityPanel.availabilityPlanInfo": "When is this listing available for booking? Start by setting a default weekly schedule. After that you can adjust the availability for specific dates.",
-  "EditListingAvailabilityPanel.createListingTitle": "Availability",
+  "EditListingAvailabilityPanel.createListingTitle": "When is your equipment available?",
   "EditListingAvailabilityPanel.editAvailabilityPlan": "Edit default schedule",
   "EditListingAvailabilityPanel.exceptionAvailable": "Available",
   "EditListingAvailabilityPanel.exceptionNotAvailable": "Not available",

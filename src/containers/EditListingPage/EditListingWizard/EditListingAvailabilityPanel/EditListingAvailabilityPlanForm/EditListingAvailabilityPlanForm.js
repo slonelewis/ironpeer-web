@@ -61,6 +61,8 @@ const submit = (onSubmit, weekdays) => values => {
  * @param {Function} props.handleSubmit
  * @param {boolean} props.inProgress
  * @param {string} props.listingTitle
+ * @param {boolean} [props.hideTitle] - hide the form heading (used in new listing flow)
+ * @param {boolean} [props.hideSubmitButton] - hide the Save Schedule button (used in new listing flow)
  * @param {Array<Weekday>} props.weekdays
  * @param {boolean} props.useFullDays
  * @param {boolean} props.useMultipleSeats
@@ -72,7 +74,7 @@ const submit = (onSubmit, weekdays) => values => {
  */
 const EditListingAvailabilityPlanForm = props => {
   const intl = useIntl();
-  const { onSubmit, ...restOfprops } = props;
+  const { onSubmit, hideTitle, hideSubmitButton, ...restOfprops } = props;
   return (
     <FinalForm
       {...restOfprops}
@@ -112,12 +114,14 @@ const EditListingAvailabilityPlanForm = props => {
 
         return (
           <Form id={formId} className={classes} onSubmit={handleSubmit}>
-            <H3 as="h2" className={css.heading}>
-              <FormattedMessage
-                id="EditListingAvailabilityPlanForm.title"
-                values={{ listingTitle }}
-              />
-            </H3>
+            {!hideTitle && (
+              <H3 as="h2" className={css.heading}>
+                <FormattedMessage
+                  id="EditListingAvailabilityPlanForm.title"
+                  values={{ listingTitle }}
+                />
+              </H3>
+            )}
             <Heading as="h3" rootClassName={css.subheading}>
               <FormattedMessage id="EditListingAvailabilityPlanForm.timezonePickerTitle" />
             </Heading>
@@ -172,16 +176,18 @@ const EditListingAvailabilityPlanForm = props => {
               })}
             </div>
 
-            <div className={css.submitButton}>
-              {updateListingError ? (
-                <p className={css.error}>
-                  <FormattedMessage id="EditListingAvailabilityPlanForm.updateFailed" />
-                </p>
-              ) : null}
-              <PrimaryButton type="submit" inProgress={submitInProgress} disabled={submitDisabled}>
-                <FormattedMessage id="EditListingAvailabilityPlanForm.saveSchedule" />
-              </PrimaryButton>
-            </div>
+            {!hideSubmitButton && (
+              <div className={css.submitButton}>
+                {updateListingError ? (
+                  <p className={css.error}>
+                    <FormattedMessage id="EditListingAvailabilityPlanForm.updateFailed" />
+                  </p>
+                ) : null}
+                <PrimaryButton type="submit" inProgress={submitInProgress} disabled={submitDisabled}>
+                  <FormattedMessage id="EditListingAvailabilityPlanForm.saveSchedule" />
+                </PrimaryButton>
+              </div>
+            )}
           </Form>
         );
       }}

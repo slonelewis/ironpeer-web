@@ -57,6 +57,7 @@ import CustomListingFields from './CustomListingFields';
 import ListingPageAccessWrapper from './ListingPageAccessWrapper';
 
 import css from './ListingPage.module.css';
+import FlatbedTrailerIcon from '../../components/FlatbedTrailerIcon';
 
 const MIN_LENGTH_FOR_LONG_WORDS_IN_TITLE = 16;
 
@@ -283,7 +284,8 @@ export const ListingPageComponent = props => {
                 color: '#374151',
               }}>
                 <div style={{ fontWeight: 700, color: '#E8450A', marginBottom: '0.35rem', fontSize: '1rem' }}>
-                  🚛 Trailer-Ready Pickup
+                  <FlatbedTrailerIcon width={20} height={12} style={{ marginRight: '6px', color: '#E8450A' }} />
+                  Trailer-Ready Pickup
                 </div>
                 <div style={{ lineHeight: 1.5, marginBottom: '0.5rem' }}>
                   Pre-loaded on the owner&apos;s trailer and ready to go. Pick it up yourself, or request delivery.

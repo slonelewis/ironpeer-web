@@ -11,6 +11,7 @@ import { H3, ListingLink } from '../../../../components';
 // Import modules from this directory
 import EditListingPhotosForm from './EditListingPhotosForm';
 import css from './EditListingPhotosPanel.module.css';
+import FlatbedTrailerIcon from '../../../../components/FlatbedTrailerIcon';
 
 const getInitialValues = params => {
   const { images = [] } = params;
@@ -101,7 +102,7 @@ const EditListingPhotosPanel = props => {
           <li>Show all sides of the equipment — front, back, left, right</li>
           <li>Include any damage, wear, or notable features</li>
           {listing?.attributes?.publicData?.trailerReady && (
-            <li><strong>🚛 Trailer-ready listing:</strong> Add a photo of your hitch ball and plug connector so renters can verify compatibility before driving out</li>
+            <li><strong><FlatbedTrailerIcon width={18} height={11} style={{ marginRight: '5px', color: 'currentColor' }} />Trailer-ready listing:</strong> Add a photo of your hitch ball and plug connector so renters can verify compatibility before driving out</li>
           )}
         </ul>
       </div>

@@ -27,6 +27,8 @@ import {
 
 // Import modules from this directory
 import css from './EditListingDeliveryForm.module.css';
+import FlatbedTrailerIcon from '../../../../components/FlatbedTrailerIcon';
+import PlugTypeSelect from './PlugTypeSelect';
 
 const identity = v => v;
 
@@ -156,7 +158,7 @@ export const EditListingDeliveryForm = props => (
             {/* IronPeer: Trailer-ready pickup option */}
             {pickupEnabled && (
               <div className={css.trailerReadySection}>
-                <p className={css.deliveryMethodLabel}>🚛 Trailer-ready pickup</p>
+                <p className={css.deliveryMethodLabel}><FlatbedTrailerIcon width={20} height={12} style={{ marginRight: '6px' }} />Trailer-ready pickup</p>
                 <p className={css.trailerReadyHint}>
                   Does this equipment come pre-loaded on a trailer, ready for someone to hook up and go?
                 </p>
@@ -180,7 +182,7 @@ export const EditListingDeliveryForm = props => (
                 {values.trailerReady === true && (
                   <div className={css.trailerSubFields}>
                     <div className={css.infoBox} style={{ marginBottom: '1rem' }}>
-                      🚛 The trailer is included in the rental. Renters can pick it up themselves, request owner delivery, or have a hauler deliver it — no unloading required on your end.
+                      <FlatbedTrailerIcon width={20} height={12} style={{ marginRight: '6px', flexShrink: 0 }} />The trailer is included in the rental. Renters can pick it up themselves, request owner delivery, or have a hauler deliver it — no unloading required on your end.
                     </div>
 
                     <p className={css.deliveryMethodLabel}>Trailer type</p>
@@ -215,17 +217,11 @@ export const EditListingDeliveryForm = props => (
                       </div>
                       <div className={css.hitchPlugField}>
                         <p className={css.deliveryMethodLabel}>Trailer plug type</p>
-                        <select
-                          className={css.selectInput}
+                        <PlugTypeSelect
+                          id={`${formId}.trailerPlugType`}
                           value={values.trailerPlugType || ''}
-                          onChange={e => form.change('trailerPlugType', e.target.value)}
-                        >
-                          <option value="">Select plug type...</option>
-                          <option value="7pin-flat">7-pin flat blade (most common — modern trucks)</option>
-                          <option value="4pin-flat">4-pin flat (small/light trailers, lights only)</option>
-                          <option value="7pin-round">7-pin round (older &amp; heavy-duty trucks)</option>
-                          <option value="5pin-flat">5-pin flat (mid-size trailers w/ brakes)</option>
-                        </select>
+                          onChange={v => form.change('trailerPlugType', v)}
+                        />
                       </div>
                     </div>
 
@@ -399,7 +395,7 @@ export const EditListingDeliveryForm = props => (
                 {values.deliveryMethod === 'hauler' && (
                   <div className={css.deliverySubFields}>
                     <div className={css.infoBox}>
-                      🚛 <strong>Hauler network coming soon</strong> — we'll match your listing with a qualified hauler when the network launches. Fill in your equipment details below so we're ready.
+                      <FlatbedTrailerIcon width={20} height={12} style={{ marginRight: '6px', flexShrink: 0 }} /><strong>Hauler network coming soon</strong> — we'll match your listing with a qualified hauler when the network launches. Fill in your equipment details below so we're ready.
                     </div>
                     <FieldTextInput
                       className={css.input}

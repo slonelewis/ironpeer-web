@@ -6,6 +6,7 @@ import { LISTING_STATE_DRAFT } from '../../../../util/types';
 import { H3, ListingLink, PrimaryButton } from '../../../../components';
 
 import css from './EditListingProtectionPanel.module.css';
+import FlatbedTrailerIcon from '../../../../components/FlatbedTrailerIcon';
 
 const UpdatePageTitle = ({ panelHeading }) => null; // handled by parent
 
@@ -178,7 +179,7 @@ const EditListingProtectionPanel = props => {
       {/* ── ROAD LEGAL ── */}
       {isTrailerCategory ? (
         <div style={{ fontSize: '0.875rem', color: '#555', marginBottom: '1rem', padding: '0.75rem', background: '#fff8f5', border: '1px solid #E8450A33', borderRadius: '6px' }}>
-          🚛 <strong>Trailers and haulers are road-legal by default.</strong> Registration is required.
+          <FlatbedTrailerIcon width={18} height={11} style={{ marginRight: '6px', color: '#E8450A' }} /><strong>Trailers and haulers are road-legal by default.</strong> Registration is required.
         </div>
       ) : (
         <>
@@ -240,7 +241,7 @@ const EditListingProtectionPanel = props => {
           No registration required for off-road equipment. 👍
           {isTrailerReady && (
             <div style={{ marginTop: '0.5rem', color: '#E8450A', fontWeight: 500 }}>
-              🚛 Your equipment doesn&apos;t need registration, but the trailer it&apos;s loaded on does — see the Trailer Documentation section below.
+              <FlatbedTrailerIcon width={18} height={11} style={{ marginRight: '6px', color: '#E8450A' }} />Your equipment doesn&apos;t need registration, but the trailer it&apos;s loaded on does — see the Trailer Documentation section below.
             </div>
           )}
         </div>
@@ -327,7 +328,7 @@ const EditListingProtectionPanel = props => {
       {isTrailerReady && (
         <>
           <hr style={{ margin: '1.5rem 0', border: 'none', borderTop: '1px solid #e5e7eb' }} />
-          <div className={css.sectionTitle}>🚛 Trailer Documentation</div>
+          <div className={css.sectionTitle}><FlatbedTrailerIcon width={18} height={11} style={{ marginRight: '6px', color: '#E8450A' }} />Trailer Documentation</div>
           <div style={{ background: '#fff3cd', border: '1px solid #ffc107', borderRadius: '6px', padding: '0.75rem', marginBottom: '1rem', fontSize: '0.875rem' }}>
             ⚠️ <strong>Required before publishing.</strong> Since renters are picking up or receiving a trailer, IronPeer requires trailer registration and insurance status on file. Your listing cannot be published without completing this section.
           </div>

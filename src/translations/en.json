@@ -352,7 +352,7 @@
   "EditListingStylePanel.createListingTitle": "Style",
   "EditListingStylePanel.title": "Edit the style of {listingTitle}",
   "EditListingWizard.default-booking.new.saveAvailability": "Publish listing",
-  "EditListingWizard.default-booking.new.saveProtection": "Save & continue",
+  "EditListingWizard.default-booking.new.saveProtection": "Publish listing",
   "EditListingWizard.default-booking.edit.saveProtection": "Save changes",
   "EditListingWizard.default-booking.new.saveDetails": "Next",
   "EditListingWizard.default-booking.new.saveDelivery": "Next",

@@ -47,6 +47,7 @@ import PriceVariantPicker from './PriceVariantPicker/PriceVariantPicker';
 import SubmitFinePrint from './SubmitFinePrint/SubmitFinePrint';
 
 import css from './OrderPanel.module.css';
+import FlatbedTrailerIcon from '../FlatbedTrailerIcon';
 
 const BookingTimeForm = loadable(() =>
   import(/* webpackChunkName: "BookingTimeForm" */ './BookingTimeForm/BookingTimeForm')
@@ -523,7 +524,8 @@ const OrderPanel = props => {
                 color: '#374151',
               }}>
                 <div style={{ fontWeight: 700, color: '#E8450A', marginBottom: '0.35rem' }}>
-                  🚛 Trailer-Ready
+                  <FlatbedTrailerIcon width={20} height={12} style={{ marginRight: '6px', color: '#E8450A' }} />
+                  Trailer-Ready
                 </div>
                 <div style={{ lineHeight: 1.5, marginBottom: '0.5rem' }}>
                   Pre-loaded on the owner’s trailer and ready to go. Pick it up yourself, or request delivery.

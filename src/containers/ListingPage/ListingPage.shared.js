@@ -473,7 +473,17 @@ export const handleSubmit = parameters => values => {
     confirmPaymentError: null,
   };
 
-  const saveToSessionStorage = !currentUser;
+  // If not logged in, redirect to signup and return to listing page after
+  if (!currentUser) {
+    const state = { from: `${history.location?.pathname}${history.location?.search || ''}` };
+    // Save order data to session storage so it survives the auth redirect
+    const { setInitialValues } = findRouteByRouteName('CheckoutPage', routes);
+    callSetInitialValues(setInitialValues, initialValues, true);
+    history.push(createResourceLocatorString('SignupPage', routes, {}, {}), state);
+    return;
+  }
+
+  const saveToSessionStorage = false;
 
   // Customize the state of the CheckoutPage with the current listing and the selected orderData
   const { setInitialValues } = findRouteByRouteName('CheckoutPage', routes);

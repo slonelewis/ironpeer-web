@@ -22,6 +22,7 @@ import {
   FieldCurrencyInput,
   FieldTextInput,
   FieldCheckbox,
+  FieldRadioButton,
 } from '../../../../components';
 
 // Import modules from this directory
@@ -212,6 +213,101 @@ export const EditListingDeliveryForm = props => (
           />
 
           <div className={shippingClasses}>
+            {/* IronPeer: delivery method */}
+            {shippingEnabled && (
+              <div className={css.deliveryMethodSection}>
+                <p className={css.deliveryMethodLabel}>How will you deliver it?</p>
+                <FieldRadioButton
+                  id={`${formId}.deliveryMethod.self`}
+                  name="deliveryMethod"
+                  label="I'll deliver it myself"
+                  value="self"
+                />
+                <FieldRadioButton
+                  id={`${formId}.deliveryMethod.hauler`}
+                  name="deliveryMethod"
+                  label="I need a hauler to deliver it"
+                  value="hauler"
+                />
+
+                {values.deliveryMethod === 'self' && (
+                  <div className={css.deliverySubFields}>
+                    <FieldTextInput
+                      className={css.input}
+                      type="number"
+                      name="deliveryRadiusMiles"
+                      id={`${formId}.deliveryRadiusMiles`}
+                      label="Delivery radius (miles)"
+                      placeholder="e.g. 50"
+                      min="1"
+                    />
+                    <FieldCurrencyInput
+                      id={`${formId}.deliveryFee`}
+                      name="deliveryFee"
+                      className={css.input}
+                      label="Delivery fee (leave blank if free)"
+                      placeholder="$0.00"
+                      currencyConfig={currencyConfig}
+                    />
+                  </div>
+                )}
+
+                {values.deliveryMethod === 'hauler' && (
+                  <div className={css.deliverySubFields}>
+                    <div className={css.infoBox}>
+                      🚛 <strong>Hauler network coming soon</strong> — we'll match your listing with a qualified hauler when the network launches. Fill in your equipment details below so we're ready.
+                    </div>
+                    <FieldTextInput
+                      className={css.input}
+                      type="number"
+                      name="equipmentWeightLbs"
+                      id={`${formId}.equipmentWeightLbs`}
+                      label="Equipment weight (lbs)"
+                      placeholder="e.g. 8500"
+                      min="1"
+                    />
+                    <div className={css.dimensionsRow}>
+                      <FieldTextInput
+                        className={css.dimensionInput}
+                        type="number"
+                        name="equipmentLengthFt"
+                        id={`${formId}.equipmentLengthFt`}
+                        label="Length (ft)"
+                        placeholder="L"
+                        min="1"
+                      />
+                      <FieldTextInput
+                        className={css.dimensionInput}
+                        type="number"
+                        name="equipmentWidthFt"
+                        id={`${formId}.equipmentWidthFt`}
+                        label="Width (ft)"
+                        placeholder="W"
+                        min="1"
+                      />
+                      <FieldTextInput
+                        className={css.dimensionInput}
+                        type="number"
+                        name="equipmentHeightFt"
+                        id={`${formId}.equipmentHeightFt`}
+                        label="Height (ft)"
+                        placeholder="H"
+                        min="1"
+                      />
+                    </div>
+                    <FieldTextInput
+                      className={css.input}
+                      type="textarea"
+                      name="haulerNotes"
+                      id={`${formId}.haulerNotes`}
+                      label="Notes for hauler (optional)"
+                      placeholder="Any special instructions for loading, access, etc."
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
             <FieldCurrencyInput
               id={
                 formId

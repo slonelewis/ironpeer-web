@@ -41,6 +41,14 @@ const getInitialValues = props => {
     pickupEnabled,
     shippingPriceInSubunitsOneItem,
     shippingPriceInSubunitsAdditionalItems,
+    deliveryMethod,
+    deliveryRadiusMiles,
+    deliveryFeeInSubunits,
+    equipmentWeightLbs,
+    equipmentLengthFt,
+    equipmentWidthFt,
+    equipmentHeightFt,
+    haulerNotes,
   } = publicData;
   const deliveryOptions = [];
 
@@ -61,6 +69,11 @@ const getInitialValues = props => {
       ? new Money(shippingPriceInSubunitsAdditionalItems, currency)
       : null;
 
+  const deliveryFeeAsMoney =
+    deliveryFeeInSubunits != null
+      ? new Money(deliveryFeeInSubunits, currency)
+      : null;
+
   // Initial values for the form
   return {
     building,
@@ -73,6 +86,14 @@ const getInitialValues = props => {
     deliveryOptions,
     shippingPriceInSubunitsOneItem: shippingOneItemAsMoney,
     shippingPriceInSubunitsAdditionalItems: shippingAdditionalItemsAsMoney,
+    deliveryMethod: deliveryMethod || null,
+    deliveryRadiusMiles: deliveryRadiusMiles || '',
+    deliveryFee: deliveryFeeAsMoney,
+    equipmentWeightLbs: equipmentWeightLbs || '',
+    equipmentLengthFt: equipmentLengthFt || '',
+    equipmentWidthFt: equipmentWidthFt || '',
+    equipmentHeightFt: equipmentHeightFt || '',
+    haulerNotes: haulerNotes || '',
   };
 };
 
@@ -160,6 +181,14 @@ const EditListingDeliveryPanel = props => {
               shippingPriceInSubunitsOneItem,
               shippingPriceInSubunitsAdditionalItems,
               deliveryOptions,
+              deliveryMethod,
+              deliveryRadiusMiles,
+              deliveryFee,
+              equipmentWeightLbs,
+              equipmentLengthFt,
+              equipmentWidthFt,
+              equipmentHeightFt,
+              haulerNotes,
             } = values;
 
             const shippingEnabled = deliveryOptions.includes('shipping');
@@ -173,13 +202,28 @@ const EditListingDeliveryPanel = props => {
             const shippingDataMaybe =
               shippingEnabled && shippingPriceInSubunitsOneItem != null
                 ? {
-                    // Note: we only save the "amount" because currency should not differ from listing's price.
-                    // Money is always dealt in subunits (e.g. cents) to avoid float calculations.
                     shippingPriceInSubunitsOneItem: shippingPriceInSubunitsOneItem.amount,
                     shippingPriceInSubunitsAdditionalItems:
                       shippingPriceInSubunitsAdditionalItems?.amount,
                   }
                 : {};
+
+            const ironpeerDeliveryData = shippingEnabled && deliveryMethod
+              ? {
+                  deliveryMethod,
+                  ...(deliveryMethod === 'self' ? {
+                    deliveryRadiusMiles: deliveryRadiusMiles ? parseInt(deliveryRadiusMiles, 10) : null,
+                    deliveryFeeInSubunits: deliveryFee?.amount ?? null,
+                  } : {}),
+                  ...(deliveryMethod === 'hauler' ? {
+                    equipmentWeightLbs: equipmentWeightLbs ? parseInt(equipmentWeightLbs, 10) : null,
+                    equipmentLengthFt: equipmentLengthFt ? parseFloat(equipmentLengthFt) : null,
+                    equipmentWidthFt: equipmentWidthFt ? parseFloat(equipmentWidthFt) : null,
+                    equipmentHeightFt: equipmentHeightFt ? parseFloat(equipmentHeightFt) : null,
+                    haulerNotes: haulerNotes || null,
+                  } : {}),
+                }
+              : {};
 
             // New values for listing attributes
             const updateValues = {
@@ -189,6 +233,7 @@ const EditListingDeliveryPanel = props => {
                 ...pickupDataMaybe,
                 shippingEnabled,
                 ...shippingDataMaybe,
+                ...ironpeerDeliveryData,
               },
             };
 

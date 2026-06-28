@@ -88,3 +88,47 @@
     margin-top: 100px;
   }
 }
+
+/* IronPeer delivery method fields */
+.deliveryMethodSection {
+  margin: 16px 0 8px;
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.deliveryMethodLabel {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #111827;
+  margin: 0 0 12px;
+}
+
+.deliverySubFields {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dimensionsRow {
+  display: flex;
+  gap: 12px;
+}
+
+.dimensionInput {
+  flex: 1;
+}
+
+.infoBox {
+  background: #fff8f0;
+  border: 1px solid #fed7aa;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 0.875rem;
+  color: #92400e;
+  line-height: 1.5;
+}

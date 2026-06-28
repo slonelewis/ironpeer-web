@@ -484,10 +484,15 @@ class EditListingWizard extends Component {
       (hasRequirements(stripeAccountData, 'past_due') ||
         hasRequirements(stripeAccountData, 'currently_due'));
 
+    // IronPeer: skip Stripe payout modal until Stripe Connect is configured at go-live.
+    // Controlled by REACT_APP_SKIP_STRIPE_PAYOUT env var.
+    const skipStripeModal = process.env.REACT_APP_SKIP_STRIPE_PAYOUT === 'true';
+
     if (
       isInquiryProcess ||
       !isPayoutDetailsRequired ||
-      (stripeConnected && !stripeRequirementsMissing)
+      (stripeConnected && !stripeRequirementsMissing) ||
+      skipStripeModal
     ) {
       onPublishListingDraft(id);
     } else {

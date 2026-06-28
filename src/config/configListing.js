@@ -138,39 +138,7 @@ export const listingFields = [
       isRequired: false,
     },
   },
-  {
-    key: 'deliveryAvailable',
-    scope: 'public',
-    schemaType: 'boolean',
-    showConfig: { label: 'Delivery available', isDetail: true },
-    saveConfig: {
-      label: 'Delivery available',
-      isRequired: true,
-      requiredMessage: 'Please indicate if delivery is available.',
-    },
-  },
-  {
-    key: 'deliveryRadius',
-    scope: 'public',
-    schemaType: 'long',
-    showConfig: { label: 'Delivery radius (miles)', isDetail: true },
-    saveConfig: {
-      label: 'Delivery radius (miles)',
-      placeholderMessage: 'e.g. 25',
-      isRequired: false,
-    },
-  },
-  {
-    key: 'deliveryFee',
-    scope: 'public',
-    schemaType: 'long',
-    showConfig: { label: 'Delivery fee ($)', isDetail: true },
-    saveConfig: {
-      label: 'Delivery fee (dollars)',
-      placeholderMessage: 'e.g. 75',
-      isRequired: false,
-    },
-  },
+  // Delivery fields removed from Details — handled in the dedicated Delivery tab
   {
     key: 'dailyHoursLimit',
     scope: 'public',

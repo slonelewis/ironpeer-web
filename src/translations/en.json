@@ -355,6 +355,7 @@
   "EditListingWizard.default-booking.new.saveProtection": "Save & continue",
   "EditListingWizard.default-booking.edit.saveProtection": "Save changes",
   "EditListingWizard.default-booking.new.saveDetails": "Next",
+  "EditListingWizard.default-booking.new.saveDelivery": "Next",
   "EditListingWizard.default-booking.new.saveLocation": "Next",
   "EditListingWizard.default-booking.new.savePhotos": "Next",
   "EditListingWizard.default-booking.new.savePricing": "Next",

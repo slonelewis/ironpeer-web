@@ -244,7 +244,7 @@
   "EditListingDeliveryForm.shippingAdditionalItemsLabel": "Shipping fee for additional items",
   "EditListingDeliveryForm.shippingAdditionalItemsPlaceholder": "Set the fee for additional items",
   "EditListingDeliveryForm.shippingAdditionalItemsRequired": "Shipping fee for additional items required.",
-  "EditListingDeliveryForm.shippingLabel": "Shipping",
+  "EditListingDeliveryForm.shippingLabel": "Enable delivery",
   "EditListingDeliveryForm.shippingOneItemLabel": "Shipping fee for one item",
   "EditListingDeliveryForm.shippingOneItemPlaceholder": "Set the fee for shipping one item",
   "EditListingDeliveryForm.shippingOneItemRequired": "Shipping fee for one item required.",

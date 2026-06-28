@@ -341,6 +341,7 @@ export const EditListingDeliveryForm = props => (
               </div>
             )}
 
+            {/* IronPeer: standard Sharetribe shipping fee fields hidden — delivery pricing handled above */}
             <FieldCurrencyInput
               id={
                 formId
@@ -348,6 +349,7 @@ export const EditListingDeliveryForm = props => (
                   : 'shippingPriceInSubunitsOneItem'
               }
               name="shippingPriceInSubunitsOneItem"
+              style={{ display: 'none' }}
               className={css.input}
               label={intl.formatMessage({
                 id: 'EditListingDeliveryForm.shippingOneItemLabel',
@@ -384,6 +386,7 @@ export const EditListingDeliveryForm = props => (
                     : 'shippingPriceInSubunitsAdditionalItems'
                 }
                 name="shippingPriceInSubunitsAdditionalItems"
+                style={{ display: 'none' }}
                 className={css.input}
                 label={intl.formatMessage({
                   id: 'EditListingDeliveryForm.shippingAdditionalItemsLabel',

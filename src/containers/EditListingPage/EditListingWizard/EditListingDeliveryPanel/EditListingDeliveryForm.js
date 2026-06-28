@@ -341,7 +341,8 @@ export const EditListingDeliveryForm = props => (
               </div>
             )}
 
-            {/* IronPeer: standard Sharetribe shipping fee fields hidden — delivery pricing handled above */}
+            {/* IronPeer: shipping fee fields hidden — delivery pricing handled by IronPeer's own fields above.
+                Validation removed so these hidden fields don't block form submission. */}
             <FieldCurrencyInput
               id={
                 formId
@@ -358,24 +359,10 @@ export const EditListingDeliveryForm = props => (
                 id: 'EditListingDeliveryForm.shippingOneItemPlaceholder',
               })}
               currencyConfig={currencyConfig}
-              disabled={!shippingEnabled}
-              validate={
-                shippingEnabled
-                  ? required(
-                      intl.formatMessage({
-                        id: 'EditListingDeliveryForm.shippingOneItemRequired',
-                      })
-                    )
-                  : null
-              }
-              hideErrorMessage={!shippingEnabled}
-              // Whatever parameters are being used to calculate
-              // the validation function need to be combined in such
-              // a way that, when they change, this key prop
-              // changes, thus reregistering this field (and its
-              // validation function) with Final Form.
-              // See example: https://codesandbox.io/s/changing-field-level-validators-zc8ei
-              key={shippingEnabled ? 'oneItemValidation' : 'noOneItemValidation'}
+              disabled
+              validate={null}
+              hideErrorMessage
+              key="oneItemHidden"
             />
 
             {allowOrdersOfMultipleItems ? (
@@ -395,24 +382,10 @@ export const EditListingDeliveryForm = props => (
                   id: 'EditListingDeliveryForm.shippingAdditionalItemsPlaceholder',
                 })}
                 currencyConfig={currencyConfig}
-                disabled={!shippingEnabled}
-                validate={
-                  shippingEnabled
-                    ? required(
-                        intl.formatMessage({
-                          id: 'EditListingDeliveryForm.shippingAdditionalItemsRequired',
-                        })
-                      )
-                    : null
-                }
-                hideErrorMessage={!shippingEnabled}
-                // Whatever parameters are being used to calculate
-                // the validation function need to be combined in such
-                // a way that, when they change, this key prop
-                // changes, thus reregistering this field (and its
-                // validation function) with Final Form.
-                // See example: https://codesandbox.io/s/changing-field-level-validators-zc8ei
-                key={shippingEnabled ? 'additionalItemsValidation' : 'noAdditionalItemsValidation'}
+                disabled
+                validate={null}
+                hideErrorMessage
+                key="additionalItemsHidden"
               />
             ) : null}
           </div>

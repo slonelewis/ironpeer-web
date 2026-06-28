@@ -1214,6 +1214,38 @@ const ProfileCompletionPage = () => {
   const isComplete = currentStep.id === 'complete';
   const isFirstStep = currentStepIndex === 0;
 
+  // ---- Email verification hard gate ----
+  if (currentUser && !emailVerified) {
+    return (
+      <Page title="Verify your email - IronPeer" scrollingDisabled={false}>
+        <TopbarContainer />
+        <div className={css.root}>
+          <div className={css.card}>
+            <div className={css.header}>
+              <div className={css.headerBadge}>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <circle cx="10" cy="10" r="10" fill="#E8450A" fillOpacity="0.12" />
+                  <path d="M6 10h8M10 6v8" stroke="#E8450A" strokeWidth="1.8" strokeLinecap="round" />
+                </svg>
+                <span>IronPeer Setup</span>
+              </div>
+            </div>
+            <div className={css.stepContent} style={{ textAlign: 'center', padding: '40px 24px' }}>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>📧</div>
+              <h2 className={css.stepTitle}>Verify your email to continue</h2>
+              <p className={css.stepSubtitle}>
+                We sent a verification link to <strong>{currentUser?.attributes?.email}</strong>. Please check your inbox and click the link before continuing.
+              </p>
+              <p style={{ marginTop: 16, fontSize: 13, color: '#6b7280' }}>
+                Already verified? <button style={{ background: 'none', border: 'none', color: '#E8450A', cursor: 'pointer', fontWeight: 600 }} onClick={() => window.location.reload()}>Refresh this page</button>
+              </p>
+            </div>
+          </div>
+        </div>
+      </Page>
+    );
+  }
+
   return (
     <Page title="Complete your profile - IronPeer" scrollingDisabled={false}>
       <TopbarContainer />

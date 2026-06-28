@@ -242,16 +242,21 @@ const EditListingWizardTab = props => {
           onFetchExceptions={onFetchExceptions}
           onAddAvailabilityException={onAddAvailabilityException}
           onDeleteAvailabilityException={onDeleteAvailabilityException}
-          onNextTab={() =>
-            redirectAfterDraftUpdate(
-              listing.id,
-              params,
-              tab,
-              marketplaceTabs,
-              history,
-              routeConfiguration
-            )
-          }
+          onNextTab={() => {
+            const isLastTab = tab === marketplaceTabs[marketplaceTabs.length - 1];
+            if (isLastTab) {
+              handlePublishListing(listing.id);
+            } else {
+              redirectAfterDraftUpdate(
+                listing.id,
+                params,
+                tab,
+                marketplaceTabs,
+                history,
+                routeConfiguration
+              );
+            }
+          }}
           config={config}
           history={history}
           routeConfiguration={routeConfiguration}

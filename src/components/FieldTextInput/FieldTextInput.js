@@ -1,4 +1,4 @@
-import React, { Component, useState, useCallback } from 'react';
+import React, { Component, useState, useCallback, useRef } from 'react';
 import { Field } from 'react-final-form';
 import classNames from 'classnames';
 import { ValidationError, ExpandingTextarea, HelpText } from '../../components';
@@ -35,10 +35,22 @@ const EyeIcon = ({ open }) => (
 
 const PasswordInput = ({ inputProps }) => {
   const [show, setShow] = useState(false);
-  const toggle = useCallback(() => setShow(v => !v), []);
+  const inputRef = useRef(null);
+  const toggle = useCallback(() => {
+    const input = inputRef.current;
+    const start = input?.selectionStart;
+    const end = input?.selectionEnd;
+    setShow(v => !v);
+    requestAnimationFrame(() => {
+      if (input) {
+        input.focus();
+        try { input.setSelectionRange(start, end); } catch (_) {}
+      }
+    });
+  }, []);
   return (
     <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <input {...inputProps} type={show ? 'text' : 'password'} style={{ paddingRight: '2.5rem', width: '100%' }} />
+      <input ref={inputRef} {...inputProps} type={show ? 'text' : 'password'} style={{ paddingRight: '2.5rem', width: '100%' }} />
       <button
         type="button"
         onMouseDown={e => e.preventDefault()} // prevent input blur before toggle fires

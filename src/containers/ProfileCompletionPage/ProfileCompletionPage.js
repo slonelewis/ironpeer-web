@@ -899,6 +899,7 @@ const ProfileCompletionPage = () => {
     state => state.ProfileCompletionPage || {}
   );
 
+  const emailVerified = currentUser?.attributes?.emailVerified;
   const profile = currentUser?.attributes?.profile || {};
   const publicData = profile.publicData || {};
   const protectedData = profile.protectedData || {};
@@ -921,6 +922,7 @@ const ProfileCompletionPage = () => {
     bio: profile.bio || '',
   });
   const [basicInfoErrors, setBasicInfoErrors] = useState({});
+  const [emailGateError, setEmailGateError] = useState(null);
 
   // ---- Photo state ----
   const [photoPreview, setPhotoPreview] = useState(null);
@@ -1108,7 +1110,14 @@ const ProfileCompletionPage = () => {
       }
       setRoleError(null);
     }
-    if (currentStep.id === 'basicInfo' && !validateBasicInfo()) return;
+    if (currentStep.id === 'basicInfo') {
+      if (!validateBasicInfo()) return;
+      if (!emailVerified) {
+        setEmailGateError('Please verify your email address before continuing. Check your inbox for the verification link.');
+        return;
+      }
+      setEmailGateError(null);
+    }
     if (currentStep.id === 'photo') {
       if (!uploadedImageId) {
         setPhotoError('A profile photo is required. Please upload a photo to continue.');
@@ -1149,11 +1158,18 @@ const ProfileCompletionPage = () => {
         );
       case 'basicInfo':
         return (
-          <BasicInfoStep
-            values={basicInfo}
-            onChange={setBasicInfo}
-            errors={basicInfoErrors}
-          />
+          <div>
+            <BasicInfoStep
+              values={basicInfo}
+              onChange={setBasicInfo}
+              errors={basicInfoErrors}
+            />
+            {emailGateError && (
+              <div style={{ marginTop: 16, padding: '12px 16px', background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: 8, color: '#b91c1c', fontSize: 14 }}>
+                <strong>Email not verified.</strong> {emailGateError}
+              </div>
+            )}
+          </div>
         );
       case 'photo':
         return (

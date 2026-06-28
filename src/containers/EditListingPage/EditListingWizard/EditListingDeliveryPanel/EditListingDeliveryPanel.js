@@ -149,7 +149,10 @@ const EditListingDeliveryPanel = props => {
 
   const classes = classNames(rootClassName || css.root, className);
   const isPublished = listing?.id && listing?.attributes.state !== LISTING_STATE_DRAFT;
-  const priceCurrencyValid = listing?.attributes?.price?.currency === marketplaceCurrency;
+  // Only check currency mismatch if a price has already been set.
+  // On new drafts, price is null (Pricing tab comes later), so treat as valid.
+  const listingPrice = listing?.attributes?.price;
+  const priceCurrencyValid = !listingPrice || listingPrice.currency === marketplaceCurrency;
   const listingType = listing?.attributes?.publicData?.listingType;
   const listingTypeConfig = listingTypes.find(conf => conf.listingType === listingType);
   const allowOrdersOfMultipleItems = [STOCK_MULTIPLE_ITEMS, STOCK_INFINITE_MULTIPLE_ITEMS].includes(

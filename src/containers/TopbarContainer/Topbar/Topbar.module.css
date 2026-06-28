@@ -43,11 +43,12 @@
   width: 100%;
   height: var(--topbarHeight);
 
-  /* Layout: hamburger | logo (flex-grow) | right actions */
+  /* Layout: hamburger left, logo absolutely centered, right actions right */
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
+  position: relative;
 
   /* fill */
   background-color: var(--colorWhite);
@@ -62,6 +63,17 @@
   @media (--viewportLarge) {
     display: none;
   }
+}
+
+/* Absolutely centered logo in mobile topbar */
+.mobileLogo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  pointer-events: auto;
 }
 
 .mobileRight {

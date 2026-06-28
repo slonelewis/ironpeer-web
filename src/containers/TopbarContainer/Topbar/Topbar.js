@@ -361,6 +361,7 @@ const TopbarComponent = props => {
         </Button>
         <LinkedLogo
           id="logo-topbar-mobile"
+          rootClassName={css.mobileLogo}
           layout={'mobile'}
           alt={intl.formatMessage({ id: 'Topbar.logoIcon' })}
           linkToExternalSite={config?.topbar?.logoLink}

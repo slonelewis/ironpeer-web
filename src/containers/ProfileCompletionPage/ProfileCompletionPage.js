@@ -42,13 +42,27 @@ const US_STATES = [
 // ================ Hauler constants ================ //
 
 const CDL_THRESHOLD = 26000; // lbs - CDL required above this max tow capacity
+const TODAY = new Date().toISOString().split('T')[0];
 
-const HITCH_OPTIONS = [
-  { value: 'bumper-pull',  label: 'Bumper pull' },
-  { value: 'pole',         label: 'Pole trailer' },
-  { value: 'gooseneck',    label: 'Gooseneck' },
-  { value: 'kingpin',      label: 'Kingpin (5th wheel)' },
-  { value: 'pintle',       label: 'Pintle hitch' },
+const NON_CDL_HITCH_OPTIONS = [
+  { value: 'bumper-pull',   label: 'Bumper pull' },
+  { value: 'gooseneck',     label: 'Gooseneck' },
+  { value: 'kingpin-ncdl', label: 'Kingpin (5th wheel)' },
+  { value: 'pintle-ncdl',  label: 'Pintle hitch' },
+  { value: 'other-ncdl',   label: 'Other' },
+];
+
+const CDL_HITCH_OPTIONS = [
+  { value: 'kingpin-cdl', label: 'Kingpin (5th wheel)' },
+  { value: 'pintle-cdl', label: 'Pintle hitch' },
+  { value: 'other-cdl',  label: 'Other' },
+];
+
+const BUSINESS_TYPES = [
+  { value: 'sole-proprietorship', label: 'Sole Proprietorship' },
+  { value: 'llc',                 label: 'LLC' },
+  { value: 's-corp',              label: 'S-Corp' },
+  { value: 'c-corp',              label: 'C-Corp' },
 ];
 
 // ================ Step builder ================ //
@@ -68,6 +82,7 @@ const buildSteps = (selectedRoles = []) => {
   if (selectedRoles.includes('hauler')) {
     steps.push({ id: 'hauler', label: 'Hauler Details' });
   }
+  steps.push({ id: 'stripe', label: 'Stripe Setup' });
   steps.push({ id: 'complete', label: 'All Set!' });
   return steps;
 };
@@ -338,9 +353,69 @@ const RenterStep = () => (
   </div>
 );
 
+// ================ Step: Stripe Setup ================ //
+
+const StripeStep = ({ onSkip }) => (
+  <div>
+    <h2 className={css.stepTitle}>Set up Stripe</h2>
+    <p className={css.stepSubtitle}>
+      Connect your bank account to receive payments and payouts. You can skip this now and set it up later before your first transaction.
+    </p>
+    <div className={css.infoCard}>
+      <div className={css.infoCardIcon}>
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <rect x="3" y="6" width="22" height="16" rx="3" stroke="#E8450A" strokeWidth="1.8" />
+          <path d="M3 11h22" stroke="#E8450A" strokeWidth="1.6" />
+          <rect x="6" y="15" width="5" height="3" rx="1" fill="#E8450A" />
+        </svg>
+      </div>
+      <div>
+        <p className={css.infoCardTitle}>Stripe Connect — Coming Soon</p>
+        <p className={css.infoCardBody}>
+          Payout and payment setup via Stripe will be available when IronPeer goes live. We'll prompt you to complete this before your first transaction. No action needed now!
+        </p>
+      </div>
+    </div>
+    <p className={css.skipNote} style={{ marginTop: 16, color: '#6b7280', fontSize: 13 }}>
+      This step is optional — click <strong>Next</strong> to continue.
+    </p>
+  </div>
+);
+
+// ================ Doc Upload Helper ================ //
+
+const DocUpload = ({ label, required, preview, onFileChange, hint }) => {
+  const ref = useRef(null);
+  return (
+    <div className={css.docUploadField}>
+      <label className={css.label}>{label}{required ? ' *' : ' (optional)'}</label>
+      {hint && <p className={css.fieldsetHint}>{hint}</p>}
+      <div className={css.docUploadRow}>
+        <button
+          type="button"
+          className={css.docUploadBtn}
+          onClick={() => ref.current?.click()}
+        >
+          {preview ? '✓ Uploaded — Change' : '📎 Upload photo'}
+        </button>
+        {preview && (
+          <img src={preview} alt={label} className={css.docPreviewThumb} />
+        )}
+      </div>
+      <input
+        ref={ref}
+        type="file"
+        accept="image/*"
+        className={css.fileInput}
+        onChange={onFileChange}
+      />
+    </div>
+  );
+};
+
 // ================ Step: Hauler Setup ================ //
 
-const HaulerStep = ({ values, onChange, errors }) => {
+const HaulerStep = ({ values, onChange, errors, docPreviews, onDocChange }) => {
   const requiresCDL = parseInt(values.maxTowCapacity || 0, 10) > CDL_THRESHOLD;
 
   const toggleHitch = val => {
@@ -350,6 +425,9 @@ const HaulerStep = ({ values, onChange, errors }) => {
       : [...current, val];
     onChange({ ...values, hitchTypes: next });
   };
+
+  const hasOtherNonCDL = (values.hitchTypes || []).includes('other-ncdl');
+  const hasOtherCDL = (values.hitchTypes || []).includes('other-cdl');
 
   return (
     <div>
@@ -373,6 +451,7 @@ const HaulerStep = ({ values, onChange, errors }) => {
                   ...values,
                   accountType: opt.value,
                   businessName: opt.value === 'individual' ? '' : values.businessName,
+                  businessType: opt.value === 'individual' ? '' : values.businessType,
                 })}
               />
               {opt.label}
@@ -381,16 +460,32 @@ const HaulerStep = ({ values, onChange, errors }) => {
         </div>
 
         {values.accountType === 'business' && (
-          <div className={classNames(css.field, css.narrowField)} style={{ marginTop: 14 }}>
-            <label className={css.label}>Business name *</label>
-            <input
-              className={classNames(css.input, { [css.inputError]: errors.businessName })}
-              type="text"
-              value={values.businessName || ''}
-              onChange={e => onChange({ ...values, businessName: e.target.value })}
-              placeholder="Acme Hauling LLC"
-            />
-            {errors.businessName && <p className={css.errorMsg}>{errors.businessName}</p>}
+          <div className={css.fieldRow} style={{ marginTop: 14, flexWrap: 'wrap' }}>
+            <div className={classNames(css.field, css.narrowField)}>
+              <label className={css.label}>Business name *</label>
+              <input
+                className={classNames(css.input, { [css.inputError]: errors.businessName })}
+                type="text"
+                value={values.businessName || ''}
+                onChange={e => onChange({ ...values, businessName: e.target.value })}
+                placeholder="Acme Hauling LLC"
+              />
+              {errors.businessName && <p className={css.errorMsg}>{errors.businessName}</p>}
+            </div>
+            <div className={classNames(css.field, css.narrowField)}>
+              <label className={css.label}>Business type *</label>
+              <select
+                className={classNames(css.select, { [css.inputError]: errors.businessType })}
+                value={values.businessType || ''}
+                onChange={e => onChange({ ...values, businessType: e.target.value })}
+              >
+                <option value="">Select...</option>
+                {BUSINESS_TYPES.map(bt => (
+                  <option key={bt.value} value={bt.value}>{bt.label}</option>
+                ))}
+              </select>
+              {errors.businessType && <p className={css.errorMsg}>{errors.businessType}</p>}
+            </div>
           </div>
         )}
       </fieldset>
@@ -398,19 +493,18 @@ const HaulerStep = ({ values, onChange, errors }) => {
       {/* Driver's License */}
       <fieldset className={css.fieldset}>
         <legend className={css.fieldsetLegend}>Driver's License</legend>
-        <div className={css.fieldRow}>
-          <div className={classNames(css.field, css.fieldMd)}>
-            <label className={css.label}>License number *</label>
-            <input
-              className={classNames(css.input, { [css.inputError]: errors.licenseNumber })}
-              type="text"
-              value={values.licenseNumber}
-              onChange={e => onChange({ ...values, licenseNumber: e.target.value })}
-              placeholder="A1234567"
-              style={{ width: '160px' }}
-            />
-            {errors.licenseNumber && <p className={css.errorMsg}>{errors.licenseNumber}</p>}
-          </div>
+        <div className={css.field} style={{ maxWidth: 220 }}>
+          <label className={css.label}>License number *</label>
+          <input
+            className={classNames(css.input, { [css.inputError]: errors.licenseNumber })}
+            type="text"
+            value={values.licenseNumber}
+            onChange={e => onChange({ ...values, licenseNumber: e.target.value })}
+            placeholder="A1234567"
+          />
+          {errors.licenseNumber && <p className={css.errorMsg}>{errors.licenseNumber}</p>}
+        </div>
+        <div className={css.fieldRow} style={{ flexWrap: 'wrap', marginTop: 10 }}>
           <div className={classNames(css.field, css.fieldSm)}>
             <label className={css.label}>State *</label>
             <select
@@ -431,6 +525,7 @@ const HaulerStep = ({ values, onChange, errors }) => {
               className={classNames(css.input, { [css.inputError]: errors.licenseExpiry })}
               type="date"
               value={values.licenseExpiry}
+              min={TODAY}
               onChange={e => onChange({ ...values, licenseExpiry: e.target.value })}
             />
             {errors.licenseExpiry && <p className={css.errorMsg}>{errors.licenseExpiry}</p>}
@@ -441,7 +536,7 @@ const HaulerStep = ({ values, onChange, errors }) => {
       {/* Tow vehicle */}
       <fieldset className={css.fieldset}>
         <legend className={css.fieldsetLegend}>Tow vehicle</legend>
-        <div className={css.fieldRow}>
+        <div className={css.fieldRow} style={{ flexWrap: 'wrap' }}>
           <div className={classNames(css.field, css.fieldXS)}>
             <label className={css.label}>Year *</label>
             <input
@@ -480,29 +575,127 @@ const HaulerStep = ({ values, onChange, errors }) => {
         </div>
       </fieldset>
 
-      {/* What do you haul with — hitch types */}
+      {/* Vehicle registration + insurance uploads */}
       <fieldset className={css.fieldset}>
-        <legend className={css.fieldsetLegend}>What do you haul with? *</legend>
+        <legend className={css.fieldsetLegend}>Documents</legend>
+        <div className={css.fieldRow} style={{ flexWrap: 'wrap', gap: 20 }}>
+          <DocUpload
+            label="Vehicle registration"
+            required={true}
+            preview={docPreviews.registration}
+            onFileChange={e => onDocChange('registration', e)}
+            hint="Upload a photo of your current registration."
+          />
+          <div className={css.docUploadField}>
+            <label className={css.label}>Insurance card *</label>
+            <p className={css.fieldsetHint}>Upload a photo of your current insurance card.</p>
+            <div className={css.docUploadRow}>
+              <button
+                type="button"
+                className={css.docUploadBtn}
+                onClick={() => document.getElementById('insuranceUpload')?.click()}
+              >
+                {docPreviews.insurance ? '✓ Uploaded — Change' : '📎 Upload photo'}
+              </button>
+              {docPreviews.insurance && (
+                <img src={docPreviews.insurance} alt="Insurance" className={css.docPreviewThumb} />
+              )}
+            </div>
+            <input
+              id="insuranceUpload"
+              type="file"
+              accept="image/*"
+              className={css.fileInput}
+              onChange={e => onDocChange('insurance', e)}
+            />
+            {errors.insuranceDoc && <p className={css.errorMsg}>{errors.insuranceDoc}</p>}
+          </div>
+        </div>
+        {errors.registrationDoc && <p className={css.errorMsg}>{errors.registrationDoc}</p>}
+        <div className={css.fieldRow} style={{ flexWrap: 'wrap', marginTop: 14 }}>
+          <div className={classNames(css.field, css.fieldSm)}>
+            <label className={css.label}>Insurance expiry date *</label>
+            <input
+              className={classNames(css.input, { [css.inputError]: errors.insuranceExpiry })}
+              type="date"
+              value={values.insuranceExpiry || ''}
+              min={TODAY}
+              onChange={e => onChange({ ...values, insuranceExpiry: e.target.value })}
+            />
+            {errors.insuranceExpiry && <p className={css.errorMsg}>{errors.insuranceExpiry}</p>}
+          </div>
+        </div>
+      </fieldset>
+
+      {/* How do you haul? — hitch types (two columns) */}
+      <fieldset className={css.fieldset}>
+        <legend className={css.fieldsetLegend}>How do you haul? *</legend>
         <p className={css.fieldsetHint}>Select all that apply.</p>
         {errors.hitchTypes && <p className={css.errorMsg}>{errors.hitchTypes}</p>}
-        <div className={css.checkboxGroup}>
-          {HITCH_OPTIONS.map(opt => (
-            <label key={opt.value} className={css.checkboxLabel}>
-              <input
-                type="checkbox"
-                checked={(values.hitchTypes || []).includes(opt.value)}
-                onChange={() => toggleHitch(opt.value)}
-              />
-              {opt.label}
-            </label>
-          ))}
+        <div className={css.hitchColumns}>
+          <div className={css.hitchColumn}>
+            <div className={css.hitchColumnHeader}>Non-CDL</div>
+            {NON_CDL_HITCH_OPTIONS.map(opt => (
+              <div key={opt.value}>
+                <label className={css.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={(values.hitchTypes || []).includes(opt.value)}
+                    onChange={() => toggleHitch(opt.value)}
+                  />
+                  {opt.label}
+                </label>
+                {opt.value === 'other-ncdl' && hasOtherNonCDL && (
+                  <input
+                    className={classNames(css.input, { [css.inputError]: errors.hitchTypeOtherNonCDL })}
+                    type="text"
+                    value={values.hitchTypeOtherNonCDL || ''}
+                    onChange={e => onChange({ ...values, hitchTypeOtherNonCDL: e.target.value })}
+                    placeholder="Describe your hitch type..."
+                    style={{ marginTop: 6, width: '100%' }}
+                  />
+                )}
+                {opt.value === 'other-ncdl' && errors.hitchTypeOtherNonCDL && (
+                  <p className={css.errorMsg}>{errors.hitchTypeOtherNonCDL}</p>
+                )}
+              </div>
+            ))}
+          </div>
+          <div className={css.hitchColumn}>
+            <div className={css.hitchColumnHeader}>CDL</div>
+            {CDL_HITCH_OPTIONS.map(opt => (
+              <div key={opt.value}>
+                <label className={css.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={(values.hitchTypes || []).includes(opt.value)}
+                    onChange={() => toggleHitch(opt.value)}
+                  />
+                  {opt.label}
+                </label>
+                {opt.value === 'other-cdl' && hasOtherCDL && (
+                  <input
+                    className={classNames(css.input, { [css.inputError]: errors.hitchTypeOtherCDL })}
+                    type="text"
+                    value={values.hitchTypeOtherCDL || ''}
+                    onChange={e => onChange({ ...values, hitchTypeOtherCDL: e.target.value })}
+                    placeholder="Describe your hitch type..."
+                    style={{ marginTop: 6, width: '100%' }}
+                  />
+                )}
+                {opt.value === 'other-cdl' && errors.hitchTypeOtherCDL && (
+                  <p className={css.errorMsg}>{errors.hitchTypeOtherCDL}</p>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </fieldset>
 
       {/* Tow capacity range */}
       <fieldset className={css.fieldset}>
         <legend className={css.fieldsetLegend}>Tow capacity range (lbs) *</legend>
-        <div className={css.fieldRow} style={{ alignItems: 'flex-start' }}>
+        <div className={css.fieldRow} style={{ alignItems: 'flex-start', flexWrap: 'wrap' }}>
           <div className={css.field}>
             <label className={css.label}>Minimum *</label>
             <input
@@ -541,18 +734,22 @@ const HaulerStep = ({ values, onChange, errors }) => {
         <fieldset className={css.fieldset}>
           <legend className={css.fieldsetLegend}>Commercial Driver's License (CDL)</legend>
           <p className={css.fieldsetHint}>Your max capacity exceeds {CDL_THRESHOLD.toLocaleString()} lbs - a CDL is required to haul at this weight.</p>
-          <div className={css.fieldRow}>
-            <div className={css.field} style={{ maxWidth: 200 }}>
-              <label className={css.label}>CDL number *</label>
-              <input
-                className={classNames(css.input, { [css.inputError]: errors.cdlNumber })}
-                type="text"
-                value={values.cdlNumber || ''}
-                onChange={e => onChange({ ...values, cdlNumber: e.target.value })}
-                placeholder="CDL number"
-              />
-              {errors.cdlNumber && <p className={css.errorMsg}>{errors.cdlNumber}</p>}
-            </div>
+
+          {/* CDL number — own line */}
+          <div className={css.field} style={{ maxWidth: 220 }}>
+            <label className={css.label}>CDL number *</label>
+            <input
+              className={classNames(css.input, { [css.inputError]: errors.cdlNumber })}
+              type="text"
+              value={values.cdlNumber || ''}
+              onChange={e => onChange({ ...values, cdlNumber: e.target.value })}
+              placeholder="CDL number"
+            />
+            {errors.cdlNumber && <p className={css.errorMsg}>{errors.cdlNumber}</p>}
+          </div>
+
+          {/* Class, state, expiry — in a row */}
+          <div className={css.fieldRow} style={{ flexWrap: 'wrap', marginTop: 10 }}>
             <div className={css.field} style={{ maxWidth: 120 }}>
               <label className={css.label}>Class *</label>
               <select
@@ -587,29 +784,39 @@ const HaulerStep = ({ values, onChange, errors }) => {
                 className={classNames(css.input, { [css.inputError]: errors.cdlExpiry })}
                 type="date"
                 value={values.cdlExpiry || ''}
+                min={TODAY}
                 onChange={e => onChange({ ...values, cdlExpiry: e.target.value })}
               />
               {errors.cdlExpiry && <p className={css.errorMsg}>{errors.cdlExpiry}</p>}
             </div>
           </div>
-          <div className={css.field} style={{ marginTop: 12 }}>
-            <label className={css.label}>Do you have a current medical examiner's certificate (med card)? *</label>
-            <div className={css.radioGroup}>
-              {[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }].map(opt => (
-                <label key={opt.value} className={css.radioLabel}>
-                  <input
-                    type="radio"
-                    name="hasMedCard"
-                    value={opt.value}
-                    checked={values.hasMedCard === opt.value}
-                    onChange={() => onChange({ ...values, hasMedCard: opt.value })}
-                  />
-                  {opt.label}
-                </label>
-              ))}
+
+          {/* Med card — expiry + upload */}
+          <fieldset className={css.fieldset} style={{ marginTop: 16, border: 'none', padding: 0 }}>
+            <legend className={css.fieldsetLegend}>Medical Examiner's Certificate (med card) *</legend>
+            <p className={css.fieldsetHint}>CDL drivers operating commercially are required to carry a valid FMCSA medical examiner's certificate.</p>
+            <div className={css.fieldRow} style={{ flexWrap: 'wrap', alignItems: 'flex-start', gap: 16 }}>
+              <div className={classNames(css.field, css.fieldSm)}>
+                <label className={css.label}>Expiry date *</label>
+                <input
+                  className={classNames(css.input, { [css.inputError]: errors.medCardExpiry })}
+                  type="date"
+                  value={values.medCardExpiry || ''}
+                  min={TODAY}
+                  onChange={e => onChange({ ...values, medCardExpiry: e.target.value })}
+                />
+                {errors.medCardExpiry && <p className={css.errorMsg}>{errors.medCardExpiry}</p>}
+              </div>
+              <DocUpload
+                label="Med card photo"
+                required={true}
+                preview={docPreviews.medCard}
+                onFileChange={e => onDocChange('medCard', e)}
+                hint="Upload a photo of your current med card."
+              />
             </div>
-            {errors.hasMedCard && <p className={css.errorMsg}>{errors.hasMedCard}</p>}
-          </div>
+            {errors.medCardDoc && <p className={css.errorMsg}>{errors.medCardDoc}</p>}
+          </fieldset>
         </fieldset>
       )}
     </div>
@@ -724,9 +931,11 @@ const ProfileCompletionPage = () => {
   const [haulerDetails, setHaulerDetails] = useState({
     accountType: 'individual',
     businessName: '',
+    businessType: '',
     licenseNumber: '',
     licenseState: '',
     licenseExpiry: '',
+    insuranceExpiry: '',
     vehicleYear: '',
     vehicleMake: '',
     vehicleModel: '',
@@ -739,9 +948,18 @@ const ProfileCompletionPage = () => {
     cdlClass: '',
     cdlState: '',
     cdlExpiry: '',
-    hasMedCard: '',
+    medCardExpiry: '',
   });
   const [haulerErrors, setHaulerErrors] = useState({});
+
+  // ---- Document upload previews (registration, insurance, medCard) ----
+  const [docPreviews, setDocPreviews] = useState({ registration: null, insurance: null, medCard: null });
+
+  const handleDocChange = (docKey, e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setDocPreviews(prev => ({ ...prev, [docKey]: URL.createObjectURL(file) }));
+  };
 
   // ---- Validation ----
   const validateBasicInfo = () => {
@@ -755,17 +973,38 @@ const ProfileCompletionPage = () => {
 
   const validateHauler = () => {
     const errs = {};
+    const today = TODAY;
     // Required base fields
     ['licenseNumber', 'licenseState', 'licenseExpiry', 'vehicleYear', 'vehicleMake', 'vehicleModel'].forEach(f => {
       if (!haulerDetails[f]) errs[f] = 'Required';
     });
-    // Business name required if business
-    if (haulerDetails.accountType === 'business' && !haulerDetails.businessName?.trim()) {
-      errs.businessName = 'Business name is required';
+    // Expiry dates must be in the future
+    if (haulerDetails.licenseExpiry && haulerDetails.licenseExpiry < today) {
+      errs.licenseExpiry = 'Expiry date must be today or later';
+    }
+    if (haulerDetails.insuranceExpiry && haulerDetails.insuranceExpiry < today) {
+      errs.insuranceExpiry = 'Expiry date must be today or later';
+    }
+    // Insurance expiry required
+    if (!haulerDetails.insuranceExpiry) errs.insuranceExpiry = 'Required';
+    // Doc uploads required
+    if (!docPreviews.registration) errs.registrationDoc = 'Vehicle registration photo is required';
+    if (!docPreviews.insurance) errs.insuranceDoc = 'Insurance card photo is required';
+    // Business fields
+    if (haulerDetails.accountType === 'business') {
+      if (!haulerDetails.businessName?.trim()) errs.businessName = 'Business name is required';
+      if (!haulerDetails.businessType) errs.businessType = 'Business type is required';
     }
     // At least one hitch type
     if (!haulerDetails.hitchTypes?.length) {
       errs.hitchTypes = 'Select at least one hitch type';
+    }
+    // Other hitch descriptions required when selected
+    if ((haulerDetails.hitchTypes || []).includes('other-ncdl') && !haulerDetails.hitchTypeOtherNonCDL?.trim()) {
+      errs.hitchTypeOtherNonCDL = 'Please describe your hitch type';
+    }
+    if ((haulerDetails.hitchTypes || []).includes('other-cdl') && !haulerDetails.hitchTypeOtherCDL?.trim()) {
+      errs.hitchTypeOtherCDL = 'Please describe your hitch type';
     }
     // Tow capacity range
     if (haulerDetails.minTowCapacity === '' || haulerDetails.minTowCapacity === undefined) {
@@ -781,7 +1020,14 @@ const ProfileCompletionPage = () => {
       ['cdlNumber', 'cdlClass', 'cdlState', 'cdlExpiry'].forEach(f => {
         if (!haulerDetails[f]) errs[f] = 'Required';
       });
-      if (!haulerDetails.hasMedCard) errs.hasMedCard = 'Required';
+      if (haulerDetails.cdlExpiry && haulerDetails.cdlExpiry < today) {
+        errs.cdlExpiry = 'Expiry date must be today or later';
+      }
+      if (!haulerDetails.medCardExpiry) errs.medCardExpiry = 'Required';
+      if (haulerDetails.medCardExpiry && haulerDetails.medCardExpiry < today) {
+        errs.medCardExpiry = 'Expiry date must be today or later';
+      }
+      if (!docPreviews.medCard) errs.medCardDoc = 'Med card photo is required';
     }
     setHaulerErrors(errs);
     return Object.keys(errs).length === 0;
@@ -923,12 +1169,16 @@ const ProfileCompletionPage = () => {
         return <OwnerStep />;
       case 'renter':
         return <RenterStep />;
+      case 'stripe':
+        return <StripeStep />;
       case 'hauler':
         return (
           <HaulerStep
             values={haulerDetails}
             onChange={setHaulerDetails}
             errors={haulerErrors}
+            docPreviews={docPreviews}
+            onDocChange={handleDocChange}
           />
         );
       case 'complete':

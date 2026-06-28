@@ -731,3 +731,43 @@
   color: #6b7280;
   line-height: 1.4;
 }
+
+/* ---- Document upload ---- */
+.docUploadField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+}
+
+.docUploadRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.docUploadBtn {
+  background: none;
+  border: 1.5px solid #E8450A;
+  color: #E8450A;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+
+.docUploadBtn:hover {
+  background: #E8450A;
+  color: #fff;
+}
+
+.docPreviewThumb {
+  width: 56px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}

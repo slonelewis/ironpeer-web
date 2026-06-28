@@ -1,0 +1,9 @@
+# Railway/nixpacks build configuration for IronPeer
+# We need devDependencies (webpack, react-scripts, etc.) installed during the
+# build phase, then the production Express server runs from the compiled output.
+
+[phases.install]
+cmds = ["yarn install --frozen-lockfile --production=false"]
+
+[phases.build]
+cmds = ["yarn build"]

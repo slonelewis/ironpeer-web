@@ -416,7 +416,8 @@ const DocUpload = ({ label, required, preview, onFileChange, hint }) => {
 // ================ Step: Hauler Setup ================ //
 
 const HaulerStep = ({ values, onChange, errors, docPreviews, onDocChange }) => {
-  const requiresCDL = parseInt(values.maxTowCapacity || 0, 10) > CDL_THRESHOLD;
+  const hasCDLHitchSelected = (values.hitchTypes || []).some(h => h.endsWith('-cdl'));
+  const requiresCDL = parseInt(values.maxTowCapacity || 0, 10) > CDL_THRESHOLD || hasCDLHitchSelected;
 
   const toggleHitch = val => {
     const current = values.hitchTypes || [];
@@ -724,7 +725,7 @@ const HaulerStep = ({ values, onChange, errors, docPreviews, onDocChange }) => {
         </div>
         {requiresCDL && (
           <div className={css.cdlAlert}>
-            <strong>⚠️ CDL may be required</strong> - hauling above {CDL_THRESHOLD.toLocaleString()} lbs typically requires a Commercial Driver's License. Please fill in your CDL details below.
+            <strong>⚠️ CDL required</strong> - {hasCDLHitchSelected ? 'you selected a CDL hitch type.' : `hauling above ${CDL_THRESHOLD.toLocaleString()} lbs requires a CDL.`} Please fill in your CDL details below.
           </div>
         )}
       </fieldset>
@@ -733,7 +734,7 @@ const HaulerStep = ({ values, onChange, errors, docPreviews, onDocChange }) => {
       {requiresCDL && (
         <fieldset className={css.fieldset}>
           <legend className={css.fieldsetLegend}>Commercial Driver's License (CDL)</legend>
-          <p className={css.fieldsetHint}>Your max capacity exceeds {CDL_THRESHOLD.toLocaleString()} lbs - a CDL is required to haul at this weight.</p>
+          <p className={css.fieldsetHint}>{hasCDLHitchSelected ? 'You selected a CDL hitch type — please provide your CDL details.' : `Your max capacity exceeds ${CDL_THRESHOLD.toLocaleString()} lbs — a CDL is required to haul at this weight.`}</p>
 
           {/* CDL number — own line */}
           <div className={css.field} style={{ maxWidth: 220 }}>

@@ -154,8 +154,7 @@ const routeConfiguration = (layoutConfig, accessControlConfig) => {
     {
       path: '/l/:slug/:id/:variant',
       name: 'ListingPageVariant',
-      auth: true,
-      authPage: 'LoginPage',
+      ...authForPrivateMarketplace,
       component: ListingPage,
       loadData: pageDataLoadingAPI.ListingPage.loadData,
       prioritizeLibraryLoading: {

@@ -82,7 +82,6 @@ const buildSteps = (selectedRoles = []) => {
   if (selectedRoles.includes('hauler')) {
     steps.push({ id: 'hauler', label: 'Hauler Details' });
   }
-  steps.push({ id: 'stripe', label: 'Stripe Setup' });
   steps.push({ id: 'complete', label: 'All Set!' });
   return steps;
 };
@@ -1198,8 +1197,7 @@ const ProfileCompletionPage = () => {
         return <OwnerStep />;
       case 'renter':
         return <RenterStep />;
-      case 'stripe':
-        return <StripeStep />;
+
       case 'hauler':
         return (
           <HaulerStep

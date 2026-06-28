@@ -221,11 +221,11 @@ export const EditListingDeliveryForm = props => (
                           onChange={e => form.change('trailerPlugType', e.target.value)}
                         >
                           <option value="">Select plug type...</option>
-                          <option value="7pin-round">7-pin round (most common)</option>
-                          <option value="4pin-flat">4-pin flat</option>
-                          <option value="7pin-flat">7-pin flat blade</option>
-                          <option value="5pin-flat">5-pin flat</option>
-                          <option value="none">No plug / N/A</option>
+                          <option value="7pin-flat">7-pin flat blade (most common — modern trucks)</option>
+                          <option value="4pin-flat">4-pin flat (small/light trailers, lights only)</option>
+                          <option value="7pin-round">7-pin round (older &amp; heavy-duty trucks)</option>
+                          <option value="5pin-flat">5-pin flat (mid-size trailers w/ brakes)</option>
+                          <option value="none">No electrical plug</option>
                         </select>
                       </div>
                     </div>

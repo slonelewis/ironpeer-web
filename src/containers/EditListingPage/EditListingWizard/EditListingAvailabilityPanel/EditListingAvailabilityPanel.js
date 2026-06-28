@@ -182,6 +182,7 @@ const EditListingAvailabilityPanel = props => {
   // Hooks
   const [isEditExceptionsModalOpen, setIsEditExceptionsModalOpen] = useState(false);
   const [valuesFromLastSubmit, setValuesFromLastSubmit] = useState(null);
+  const [nextInProgress, setNextInProgress] = useState(false);
 
   const firstDayOfWeek = config.localization.firstDayOfWeek;
   const classes = classNames(rootClassName || css.root, className);
@@ -217,6 +218,21 @@ const EditListingAvailabilityPanel = props => {
     return onSubmit(createAvailabilityPlan(values)).catch(e => {
       // Keep form open on error
     });
+  };
+
+  // Auto-save the plan (with current/default values) then advance
+  const handleNextTab = async () => {
+    if (!hasAvailabilityPlan) {
+      setNextInProgress(true);
+      try {
+        await handlePlanSubmit(initialPlanValues);
+      } catch (e) {
+        setNextInProgress(false);
+        return;
+      }
+      setNextInProgress(false);
+    }
+    onNextTab();
   };
 
   const sortedAvailabilityExceptions = allExceptions;
@@ -336,8 +352,9 @@ const EditListingAvailabilityPanel = props => {
       {!isPublished ? (
         <Button
           className={css.goToNextTabButton}
-          onClick={onNextTab}
-          disabled={!hasAvailabilityPlan}
+          onClick={handleNextTab}
+          inProgress={nextInProgress}
+          disabled={nextInProgress}
         >
           {submitButtonText}
         </Button>

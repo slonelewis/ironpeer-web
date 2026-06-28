@@ -225,7 +225,6 @@ export const EditListingDeliveryForm = props => (
                           <option value="4pin-flat">4-pin flat (small/light trailers, lights only)</option>
                           <option value="7pin-round">7-pin round (older &amp; heavy-duty trucks)</option>
                           <option value="5pin-flat">5-pin flat (mid-size trailers w/ brakes)</option>
-                          <option value="none">No electrical plug</option>
                         </select>
                       </div>
                     </div>

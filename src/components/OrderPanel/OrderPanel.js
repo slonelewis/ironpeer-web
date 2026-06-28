@@ -539,7 +539,7 @@ const OrderPanel = props => {
                       'pintle': 'Pintle hitch',
                       'fifth-wheel': '5th wheel / kingpin',
                     }[hitchRequired] || hitchRequired}</strong></span>}
-                    {trailerPlugType && trailerPlugType !== 'none' && <span>Plug: <strong>{{
+                    {trailerPlugType && <span>Plug: <strong>{{
                       '7pin-flat': '7-pin flat blade',
                       '4pin-flat': '4-pin flat',
                       '7pin-round': '7-pin round',

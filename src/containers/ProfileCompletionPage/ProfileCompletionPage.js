@@ -222,15 +222,16 @@ const BasicInfoStep = ({ values, onChange, errors }) => (
 
 // ================ Step: Photo Upload ================ //
 
-const PhotoStep = ({ preview, onFileChange, uploadInProgress, uploadError }) => {
+const PhotoStep = ({ preview, onFileChange, uploadInProgress, uploadError, photoError }) => {
   const fileInputRef = useRef(null);
 
   return (
     <div>
       <h2 className={css.stepTitle}>Add a profile photo</h2>
       <p className={css.stepSubtitle}>
-        A photo helps build trust with other members. You can always update it later.
+        A profile photo is required to continue. It helps build trust with other members.
       </p>
+      {photoError && <p className={css.errorMsg}>{photoError}</p>}
 
       <div className={css.photoUploadArea}>
         <div
@@ -278,7 +279,7 @@ const PhotoStep = ({ preview, onFileChange, uploadInProgress, uploadError }) => 
         )}
       </div>
 
-      <p className={css.skipNote}>You can skip this step and add a photo later.</p>
+
     </div>
   );
 };
@@ -717,6 +718,7 @@ const ProfileCompletionPage = () => {
   // ---- Photo state ----
   const [photoPreview, setPhotoPreview] = useState(null);
   const [uploadedImageId, setUploadedImageId] = useState(null);
+  const [photoError, setPhotoError] = useState(null);
 
   // ---- Hauler form state ----
   const [haulerDetails, setHaulerDetails] = useState({
@@ -861,6 +863,13 @@ const ProfileCompletionPage = () => {
       setRoleError(null);
     }
     if (currentStep.id === 'basicInfo' && !validateBasicInfo()) return;
+    if (currentStep.id === 'photo') {
+      if (!uploadedImageId) {
+        setPhotoError('A profile photo is required. Please upload a photo to continue.');
+        return;
+      }
+      setPhotoError(null);
+    }
     if (currentStep.id === 'hauler' && !validateHauler()) return;
 
     const isLastDataStep = currentStepIndex === steps.length - 2;
@@ -907,6 +916,7 @@ const ProfileCompletionPage = () => {
             onFileChange={handlePhotoChange}
             uploadInProgress={uploadInProgress}
             uploadError={uploadError}
+            photoError={photoError}
           />
         );
       case 'owner':

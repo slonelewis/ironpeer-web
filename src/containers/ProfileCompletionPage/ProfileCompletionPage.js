@@ -1154,7 +1154,7 @@ const ProfileCompletionPage = () => {
   };
 
   const handleGoHome = () => {
-    history.push('/');
+    history.push('/profile-settings');
   };
 
   // ---- Render current step content ----

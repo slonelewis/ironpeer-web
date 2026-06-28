@@ -1171,7 +1171,25 @@ const ProfileCompletionPage = () => {
       setRoleError(null);
     }
     if (currentStep.id === 'basicInfo') {
-      if (!validateBasicInfo()) return;
+      if (!validateBasicInfo()) {
+        // Build error summary for basicInfo
+        const fieldLabels = {
+          firstName: 'First name',
+          lastName: 'Last name',
+          phone: 'Phone number',
+        };
+        const errs = {};
+        if (!basicInfo.firstName.trim()) errs.firstName = true;
+        if (!basicInfo.lastName.trim()) errs.lastName = true;
+        if (!basicInfo.phone?.trim()) errs.phone = true;
+        setErrorSummary(Object.keys(errs).map(k => fieldLabels[k] || k));
+        setTimeout(() => {
+          const banner = document.getElementById('validation-error-banner');
+          if (banner) banner.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 50);
+        return;
+      }
+      setErrorSummary([]);
       if (!emailVerified) {
         setEmailGateError('Please verify your email address before continuing. Check your inbox for the verification link.');
         return;

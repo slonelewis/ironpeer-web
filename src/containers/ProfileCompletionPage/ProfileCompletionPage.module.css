@@ -468,6 +468,34 @@
   padding: 8px 0;
 }
 
+.completeActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 4px;
+}
+
+.secondaryBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  color: #6b7280;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.15s;
+}
+
+.secondaryBtn:hover {
+  color: #111827;
+}
+
 .completeIcon {
   margin-bottom: 16px;
 }

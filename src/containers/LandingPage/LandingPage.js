@@ -284,7 +284,8 @@ const MockListingCard = ({ listing }) => (
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 
 export const LandingPageComponent = props => {
-  const { realListings = [] } = props;
+  const { realListings = [], currentUser } = props;
+  const isLoggedIn = !!currentUser?.id;
   const [activeTab, setActiveTab] = useState('rent');
   const hasRealListings = realListings.length > 0;
   const featuredReal = realListings.slice(0, 6);
@@ -371,7 +372,10 @@ export const LandingPageComponent = props => {
           <div className={css.tabContent}>
             <div className={css.tabCta}>
               <p>Sign up today and earn money hauling trailers and equipment locally!</p>
-              <NamedLink name="SignupPage" className={css.ctaBtn}>
+              <NamedLink
+                name={isLoggedIn ? 'ProfileCompletionPage' : 'SignupPage'}
+                className={css.ctaBtn}
+              >
                 Become a hauler
               </NamedLink>
             </div>
@@ -503,7 +507,10 @@ export const LandingPageComponent = props => {
                 <li><span className={css.stepNum}>3</span> Pick up and deliver equipment</li>
                 <li><span className={css.stepNum}>4</span> Get paid per delivery</li>
               </ul>
-              <NamedLink name="SignupPage" className={`${css.roleBtn} ${css.roleBtnSecondary}`}>
+              <NamedLink
+                name={isLoggedIn ? 'ProfileCompletionPage' : 'SignupPage'}
+                className={`${css.roleBtn} ${css.roleBtnSecondary}`}
+              >
                 Become a hauler
               </NamedLink>
             </div>
@@ -555,8 +562,9 @@ const mapStateToProps = state => {
   const landingState = state.LandingPage || {};
   const listingIds = (landingState.listingIds || []).map(uuid => ({ uuid, type: 'UUID' }));
   const realListings = getListingsById(state, listingIds);
+  const currentUser = state.user?.currentUser || null;
 
-  return { pageAssetsData, inProgress, error, realListings };
+  return { pageAssetsData, inProgress, error, realListings, currentUser };
 };
 
 const mapDispatchToProps = () => ({});

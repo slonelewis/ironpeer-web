@@ -393,7 +393,7 @@ const StripeStep = ({ onSkip }) => (
 
 // ================ Doc Upload Helper ================ //
 
-const DocUpload = ({ label, required, preview, onFileChange, hint }) => {
+const DocUpload = ({ label, required, preview, onFileChange, hint, error }) => {
   const ref = useRef(null);
   return (
     <div className={css.docUploadField}>
@@ -418,6 +418,7 @@ const DocUpload = ({ label, required, preview, onFileChange, hint }) => {
         className={css.fileInput}
         onChange={onFileChange}
       />
+      {error && <p className={css.errorMsg}>{error}</p>}
     </div>
   );
 };
@@ -595,6 +596,7 @@ const HaulerStep = ({ values, onChange, errors, docPreviews, onDocChange }) => {
             preview={docPreviews.registration}
             onFileChange={e => onDocChange('registration', e)}
             hint="Upload a photo of your current registration."
+            error={errors.registrationDoc}
           />
           <div className={css.docUploadField}>
             <label className={css.label}>Insurance card *</label>
@@ -621,7 +623,6 @@ const HaulerStep = ({ values, onChange, errors, docPreviews, onDocChange }) => {
             {errors.insuranceDoc && <p className={css.errorMsg}>{errors.insuranceDoc}</p>}
           </div>
         </div>
-        {errors.registrationDoc && <p className={css.errorMsg}>{errors.registrationDoc}</p>}
         <div className={css.fieldRow} style={{ flexWrap: 'wrap', marginTop: 14 }}>
           <div className={classNames(css.field, css.fieldSm)}>
             <label className={css.label}>Insurance expiry date *</label>

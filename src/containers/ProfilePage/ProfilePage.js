@@ -260,6 +260,7 @@ export const MainContent = props => {
     userFieldConfig,
     intl,
     hideReviews,
+    isCurrentUser,
     userTypeRoles,
   } = props;
 
@@ -316,6 +317,13 @@ export const MainContent = props => {
               </li>
             ))}
           </ul>
+        </div>
+      ) : isCurrentUser ? (
+        <div className={css.emptyListingsState}>
+          <p className={css.emptyListingsText}>You haven't listed any equipment yet.</p>
+          <NamedLink name="NewListingPage" className={css.createListingButton}>
+            + Create a listing
+          </NamedLink>
         </div>
       ) : null}
       {hideReviews ? null : isMobileLayout ? (
@@ -484,6 +492,7 @@ export const ProfilePageComponent = props => {
           metadata={metadata}
           userFieldConfig={userFields}
           hideReviews={hasNoViewingRightsOnPrivateMarketplace}
+          isCurrentUser={isCurrentUser}
           intl={intl}
           userTypeRoles={userTypeRoles}
           {...rest}

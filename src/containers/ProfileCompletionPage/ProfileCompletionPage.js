@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import classNames from 'classnames';
 
 import { Page, IconSpinner, NamedLink } from '../../components';
@@ -82,6 +82,16 @@ const buildSteps = (selectedRoles = []) => {
   if (selectedRoles.includes('hauler')) {
     steps.push({ id: 'hauler', label: 'Hauler Details' });
   }
+  steps.push({ id: 'complete', label: 'All Set!' });
+  return steps;
+};
+
+// Steps for adding new roles to an existing profile (skips role/basicInfo/photo)
+const buildAddRoleSteps = (newRoles = []) => {
+  const steps = [];
+  if (newRoles.includes('owner')) steps.push({ id: 'owner', label: 'Payout Setup' });
+  if (newRoles.includes('renter')) steps.push({ id: 'renter', label: 'Verify Identity' });
+  if (newRoles.includes('hauler')) steps.push({ id: 'hauler', label: 'Hauler Details' });
   steps.push({ id: 'complete', label: 'All Set!' });
   return steps;
 };
@@ -825,7 +835,7 @@ const HaulerStep = ({ values, onChange, errors, docPreviews, onDocChange }) => {
 
 // ================ Step: Complete ================ //
 
-const CompleteStep = ({ userRoles, basicInfo, haulerDetails, onGoHome }) => {
+const CompleteStep = ({ userRoles, basicInfo, haulerDetails, onGoHome, isAddingRoles, addingRoles = [] }) => {
   const roleLabels = {
     owner: 'Equipment Owner',
     renter: 'Renter',
@@ -841,9 +851,15 @@ const CompleteStep = ({ userRoles, basicInfo, haulerDetails, onGoHome }) => {
           <path d="M19 28l6 6 12-12" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
-      <h2 className={css.completeTitle}>You're all set, {basicInfo.firstName || 'there'}!</h2>
+      <h2 className={css.completeTitle}>
+        {isAddingRoles
+          ? `${addingRoles.map(r => r.charAt(0).toUpperCase() + r.slice(1)).join(' & ')} setup complete!`
+          : `You're all set, ${basicInfo.firstName || 'there'}!`}
+      </h2>
       <p className={css.completeSubtitle}>
-        Your IronPeer profile is ready. Here's a summary of what you set up:
+        {isAddingRoles
+          ? 'Your new role has been added to your IronPeer profile.'
+          : "Your IronPeer profile is ready. Here's a summary of what you set up:"}
       </p>
 
       <div className={css.summaryCard}>
@@ -878,19 +894,27 @@ const CompleteStep = ({ userRoles, basicInfo, haulerDetails, onGoHome }) => {
       </div>
 
       <div className={css.completeActions}>
-        {userRoles.includes('owner') && (
-          <NamedLink name="NewListingPage" className={css.primaryBtn} style={{ textDecoration: 'none', textAlign: 'center', display: 'flex' }}>
-            Create your first listing →
-          </NamedLink>
+        {isAddingRoles ? (
+          <button className={css.primaryBtn} onClick={onGoHome}>
+            Back to my account →
+          </button>
+        ) : (
+          <>
+            {userRoles.includes('owner') && (
+              <NamedLink name="NewListingPage" className={css.primaryBtn} style={{ textDecoration: 'none', textAlign: 'center', display: 'flex' }}>
+                Create your first listing →
+              </NamedLink>
+            )}
+            {!userRoles.includes('owner') && userRoles.includes('renter') && (
+              <NamedLink name="SearchPage" className={css.primaryBtn} style={{ textDecoration: 'none', textAlign: 'center', display: 'flex' }}>
+                Browse listings →
+              </NamedLink>
+            )}
+            <button className={css.secondaryBtn} onClick={onGoHome}>
+              Go to my account
+            </button>
+          </>
         )}
-        {!userRoles.includes('owner') && userRoles.includes('renter') && (
-          <NamedLink name="SearchPage" className={css.primaryBtn} style={{ textDecoration: 'none', textAlign: 'center', display: 'flex' }}>
-            Browse listings →
-          </NamedLink>
-        )}
-        <button className={css.secondaryBtn} onClick={onGoHome}>
-          Go to my account
-        </button>
       </div>
     </div>
   );
@@ -905,6 +929,7 @@ const CompleteStep = ({ userRoles, basicInfo, haulerDetails, onGoHome }) => {
 const ProfileCompletionPage = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const location = useLocation();
 
   const currentUser = useSelector(state => state.user?.currentUser);
   const { updateInProgress, updateError, uploadInProgress, uploadError } = useSelector(
@@ -917,11 +942,17 @@ const ProfileCompletionPage = () => {
   const protectedData = profile.protectedData || {};
   const savedRoles = publicData.userRoles || [];
 
+  // ---- Detect "add role" mode (?newRoles=hauler,owner) ----
+  const searchParams = new URLSearchParams(location.search);
+  const newRolesParam = searchParams.get('newRoles');
+  const isAddingRoles = !!newRolesParam;
+  const addingRoles = newRolesParam ? newRolesParam.split(',').filter(Boolean) : [];
+
   // ---- Role selection state (step 0) ----
   const [selectedRoles, setSelectedRoles] = useState(savedRoles);
   const [roleError, setRoleError] = useState(null);
 
-  const steps = buildSteps(selectedRoles);
+  const steps = isAddingRoles ? buildAddRoleSteps(addingRoles) : buildSteps(selectedRoles);
 
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const currentStep = steps[currentStepIndex];
@@ -1061,22 +1092,37 @@ const ProfileCompletionPage = () => {
 
   // ---- Final save ----
   const handleFinalSave = useCallback(async () => {
-    const updatePayload = {
-      firstName: basicInfo.firstName.trim() || '',
-      lastName: basicInfo.lastName.trim() || '',
-      bio: basicInfo.bio || '',
-      publicData: {
-        userRoles: selectedRoles,
-        profileComplete: true,
-        ...(selectedRoles.includes('owner') ? { ownerSetupComplete: true } : {}),
-        ...(selectedRoles.includes('renter') ? { renterSetupComplete: true } : {}),
-      },
-      protectedData: {
-        phoneNumber: basicInfo.phone?.trim() || '',
-      },
-    };
+    // In add-role mode: savedRoles are already persisted; we only need to save
+    // role-specific data for the newly added roles.
+    const rolesForSave = isAddingRoles ? savedRoles : selectedRoles;
 
-    if (selectedRoles.includes('hauler')) {
+    const updatePayload = isAddingRoles
+      ? {
+          // Don't overwrite name/bio/phone — already set
+          publicData: {
+            userRoles: rolesForSave,
+            ...(addingRoles.includes('owner') ? { ownerSetupComplete: true } : {}),
+            ...(addingRoles.includes('renter') ? { renterSetupComplete: true } : {}),
+          },
+          protectedData: {},
+        }
+      : {
+          firstName: basicInfo.firstName.trim() || '',
+          lastName: basicInfo.lastName.trim() || '',
+          bio: basicInfo.bio || '',
+          publicData: {
+            userRoles: selectedRoles,
+            profileComplete: true,
+            ...(selectedRoles.includes('owner') ? { ownerSetupComplete: true } : {}),
+            ...(selectedRoles.includes('renter') ? { renterSetupComplete: true } : {}),
+          },
+          protectedData: {
+            phoneNumber: basicInfo.phone?.trim() || '',
+          },
+        };
+
+    const haulerCheck = isAddingRoles ? addingRoles.includes('hauler') : selectedRoles.includes('hauler');
+    if (haulerCheck) {
       const requiresCDL = parseInt(haulerDetails.maxTowCapacity || 0, 10) > CDL_THRESHOLD;
       updatePayload.protectedData = {
         haulerDetails: {
@@ -1103,7 +1149,7 @@ const ProfileCompletionPage = () => {
       };
     }
 
-    if (uploadedImageId) {
+    if (uploadedImageId && !isAddingRoles) {
       updatePayload.profileImageId = uploadedImageId;
     }
 
@@ -1111,7 +1157,7 @@ const ProfileCompletionPage = () => {
     if (!result.error) {
       setCurrentStepIndex(prev => prev + 1);
     }
-  }, [dispatch, basicInfo, haulerDetails, uploadedImageId, selectedRoles, profile]);
+  }, [dispatch, basicInfo, haulerDetails, uploadedImageId, selectedRoles, savedRoles, isAddingRoles, addingRoles, profile]);
 
   // ---- Navigation ----
   const handleNext = useCallback(async () => {
@@ -1211,10 +1257,12 @@ const ProfileCompletionPage = () => {
       case 'complete':
         return (
           <CompleteStep
-            userRoles={selectedRoles}
+            userRoles={isAddingRoles ? savedRoles : selectedRoles}
             basicInfo={basicInfo}
             haulerDetails={haulerDetails}
             onGoHome={handleGoHome}
+            isAddingRoles={isAddingRoles}
+            addingRoles={addingRoles}
           />
         );
       default:

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 
@@ -137,9 +138,28 @@ export const ProfileSettingsPageComponent = props => {
     );
   };
 
+  const history = useHistory();
+
   const handleRolesSave = () => {
     if (pendingRoles.length === 0) return;
     const newPrimaryType = ROLE_PRIORITY.find(r => pendingRoles.includes(r)) || pendingRoles[0];
+
+    // Detect roles being added that require a dedicated onboarding flow
+    const addedRoles = pendingRoles.filter(r => !userRoles.includes(r));
+    const rolesNeedingOnboarding = addedRoles.filter(r => ['owner', 'renter', 'hauler'].includes(r));
+
+    if (rolesNeedingOnboarding.length > 0) {
+      // Save the primary type + full role list first so it's persisted,
+      // then send the user through the role-specific onboarding steps.
+      onUpdateProfile({
+        publicData: { userType: newPrimaryType, userRoles: pendingRoles },
+      });
+      setEditingRoles(false);
+      history.push(`/profile-completion?newRoles=${rolesNeedingOnboarding.join(',')}`);
+      return;
+    }
+
+    // No onboarding needed — save directly
     onUpdateProfile({
       publicData: { userType: newPrimaryType, userRoles: pendingRoles },
     });

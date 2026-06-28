@@ -42,6 +42,7 @@ const EditListingProtectionPanel = props => {
   // If this is a trailer/hauler category, it is always road-legal — lock it
   const publicData = listing?.attributes?.publicData || {};
   const isTrailerCategory = publicData.categoryLevel1 === 'Haulers_and_trailers';
+  const isTrailerReady = publicData.trailerReady === true;
 
   // Pull existing values from privateData
   const privateData = listing?.attributes?.privateData || {};
@@ -65,6 +66,18 @@ const EditListingProtectionPanel = props => {
   const [insExpiry, setInsExpiry] = useState(existingInsExpiry);
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(existingDisclaimer);
 
+  // Trailer-specific docs (only when trailerReady)
+  const [trailerRegFileName, setTrailerRegFileName] = useState(privateData.trailerRegistration?.fileName || '');
+  const [trailerRegExpiry, setTrailerRegExpiry] = useState(privateData.trailerRegistration?.expiresAt?.slice(0, 10) || '');
+  const [trailerHasInsurance, setTrailerHasInsurance] = useState(
+    privateData.trailerHasInsurance !== undefined ? privateData.trailerHasInsurance : null
+  );
+  const [trailerInsFileName, setTrailerInsFileName] = useState(privateData.trailerInsurance?.fileName || '');
+  const [trailerInsExpiry, setTrailerInsExpiry] = useState(privateData.trailerInsurance?.expiresAt?.slice(0, 10) || '');
+  const [trailerInsuranceSamePolicy, setTrailerInsuranceSamePolicy] = useState(
+    privateData.trailerInsuranceSamePolicy !== undefined ? privateData.trailerInsuranceSamePolicy : null
+  );
+
   const [submitError, setSubmitError] = useState(null);
 
   const handleFileChange = (setter) => (e) => {
@@ -82,6 +95,13 @@ const EditListingProtectionPanel = props => {
       return 'You must accept the IronPeer protection disclaimer to continue.';
     }
     if (hasInsurance && !insExpiry) return 'Please enter the insurance expiration date.';
+    // Trailer-specific validation
+    if (isTrailerReady) {
+      if (!trailerRegExpiry) return 'Please enter the trailer registration expiration date.';
+      if (trailerHasInsurance === null) return 'Please indicate whether your trailer is covered by insurance.';
+      if (trailerHasInsurance && trailerInsuranceSamePolicy === null) return 'Please indicate whether the trailer is on the same policy as your equipment.';
+      if (trailerHasInsurance && !trailerInsuranceSamePolicy && !trailerInsExpiry) return 'Please enter the trailer insurance expiration date.';
+    }
     return null;
   };
 
@@ -115,12 +135,26 @@ const EditListingProtectionPanel = props => {
           insuranceDisclaimerAccepted: disclaimerAccepted,
         };
 
+    const trailerDocsMaybe = isTrailerReady ? {
+      trailerRegistration: {
+        fileName: trailerRegFileName || null,
+        expiresAt: trailerRegExpiry ? new Date(trailerRegExpiry).toISOString() : null,
+      },
+      trailerHasInsurance,
+      trailerInsuranceSamePolicy: trailerHasInsurance ? trailerInsuranceSamePolicy : null,
+      trailerInsurance: trailerHasInsurance && !trailerInsuranceSamePolicy ? {
+        fileName: trailerInsFileName || null,
+        expiresAt: trailerInsExpiry ? new Date(trailerInsExpiry).toISOString() : null,
+      } : null,
+    } : {};
+
     onSubmit({
       privateData: {
         isRoadLegal,
         hasInsurance,
         ...registrationMaybe,
         ...insuranceMaybe,
+        ...trailerDocsMaybe,
       },
     });
   };
@@ -282,6 +316,109 @@ const EditListingProtectionPanel = props => {
             </span>
           </label>
         </div>
+      )}
+
+      {/* ── TRAILER DOCS (trailer-ready listings only) ── */}
+      {isTrailerReady && (
+        <>
+          <hr style={{ margin: '1.5rem 0', border: 'none', borderTop: '1px solid #e5e7eb' }} />
+          <div className={css.sectionTitle}>🚛 Trailer Documentation</div>
+          <p style={{ fontSize: '0.875rem', color: '#666', marginBottom: '1rem' }}>
+            Since this listing includes a trailer, we need documentation for the trailer separately from the equipment.
+          </p>
+
+          <strong style={{ fontSize: '0.875rem' }}>Trailer Registration</strong>
+          <p style={{ fontSize: '0.875rem', color: '#666', margin: '0.35rem 0 0.75rem' }}>
+            Upload a photo of the trailer registration. Listing will be suspended automatically if registration lapses.
+          </p>
+          <div className={css.uploadField}>
+            <label className={css.uploadLabel}>Upload trailer registration</label>
+            <input
+              type="file"
+              className={css.fileInput}
+              accept=".pdf,.jpg,.jpeg,.png"
+              onChange={e => { const f = e.target.files?.[0]; if (f) setTrailerRegFileName(f.name); }}
+            />
+            {trailerRegFileName && <p style={{ fontSize: '0.8rem', color: '#2e7d32' }}>✓ {trailerRegFileName}</p>}
+          </div>
+          <label className={css.uploadLabel}>Trailer registration expiration date *</label>
+          <input
+            type="date"
+            className={css.dateInput}
+            value={trailerRegExpiry}
+            min={today}
+            onChange={e => setTrailerRegExpiry(e.target.value)}
+          />
+
+          <div className={css.sectionTitle} style={{ marginTop: '1.25rem' }}>Trailer Insurance</div>
+          <p style={{ fontSize: '0.875rem', color: '#666', marginBottom: '0.75rem' }}>
+            Is your trailer covered by an insurance policy?
+          </p>
+          <div className={css.buttonGroup}>
+            <button type="button"
+              className={trailerHasInsurance === true ? css.optionButtonActive : css.optionButton}
+              onClick={() => setTrailerHasInsurance(true)}>
+              Yes — it&apos;s insured
+            </button>
+            <button type="button"
+              className={trailerHasInsurance === false ? css.optionButtonActive : css.optionButton}
+              onClick={() => setTrailerHasInsurance(false)}>
+              No
+            </button>
+          </div>
+
+          {trailerHasInsurance === true && (
+            <div className={css.subSection}>
+              <p style={{ fontSize: '0.875rem', color: '#555', marginBottom: '0.75rem' }}>
+                Is the trailer on the same policy as your equipment?
+              </p>
+              <div className={css.buttonGroup}>
+                <button type="button"
+                  className={trailerInsuranceSamePolicy === true ? css.optionButtonActive : css.optionButton}
+                  onClick={() => setTrailerInsuranceSamePolicy(true)}>
+                  Yes — same policy
+                </button>
+                <button type="button"
+                  className={trailerInsuranceSamePolicy === false ? css.optionButtonActive : css.optionButton}
+                  onClick={() => setTrailerInsuranceSamePolicy(false)}>
+                  No — separate policy
+                </button>
+              </div>
+              {trailerInsuranceSamePolicy === false && (
+                <div style={{ marginTop: '0.75rem' }}>
+                  <div className={css.uploadField}>
+                    <label className={css.uploadLabel}>Upload trailer proof of insurance</label>
+                    <input
+                      type="file"
+                      className={css.fileInput}
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      onChange={e => { const f = e.target.files?.[0]; if (f) setTrailerInsFileName(f.name); }}
+                    />
+                    {trailerInsFileName && <p style={{ fontSize: '0.8rem', color: '#2e7d32' }}>✓ {trailerInsFileName}</p>}
+                  </div>
+                  <label className={css.uploadLabel}>Trailer insurance expiration date *</label>
+                  <input
+                    type="date"
+                    className={css.dateInput}
+                    value={trailerInsExpiry}
+                    min={today}
+                    onChange={e => setTrailerInsExpiry(e.target.value)}
+                  />
+                </div>
+              )}
+              {trailerInsuranceSamePolicy === true && (
+                <p style={{ fontSize: '0.8rem', color: '#2e7d32', marginTop: '0.5rem' }}>
+                  ✓ Trailer coverage confirmed under same policy as equipment.
+                </p>
+              )}
+            </div>
+          )}
+          {trailerHasInsurance === false && (
+            <p style={{ fontSize: '0.875rem', color: '#666', marginTop: '0.5rem', padding: '0.75rem', background: '#f5f5f5', borderRadius: '6px' }}>
+              IronPeer Rental Protection covers your equipment during rentals but does not extend to the trailer itself. We recommend adding your trailer to your auto or commercial policy.
+            </p>
+          )}
+        </>
       )}
 
       {submitError && <p className={css.errorMessage}>{submitError}</p>}

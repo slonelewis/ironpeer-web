@@ -51,6 +51,10 @@ const getInitialValues = props => {
     equipmentWidthFt,
     equipmentHeightFt,
     haulerNotes,
+    trailerReady,
+    trailerIncluded,
+    hitchRequired,
+    minTowRatingLbs,
   } = publicData;
   const deliveryOptions = [];
 
@@ -103,6 +107,10 @@ const getInitialValues = props => {
     equipmentWidthFt: equipmentWidthFt || '',
     equipmentHeightFt: equipmentHeightFt || '',
     haulerNotes: haulerNotes || '',
+    trailerReady: trailerReady !== undefined ? trailerReady : null,
+    trailerIncluded: trailerIncluded !== undefined ? trailerIncluded : null,
+    hitchRequired: hitchRequired || '',
+    minTowRatingLbs: minTowRatingLbs || '',
   };
 };
 
@@ -203,6 +211,10 @@ const EditListingDeliveryPanel = props => {
               equipmentWidthFt,
               equipmentHeightFt,
               haulerNotes,
+              trailerReady,
+              trailerIncluded,
+              hitchRequired,
+              minTowRatingLbs,
             } = values;
 
             const shippingEnabled = deliveryOptions.includes('shipping');
@@ -245,6 +257,21 @@ const EditListingDeliveryPanel = props => {
               : {};
 
             // New values for listing attributes
+            const trailerDataMaybe = pickupEnabled
+              ? {
+                  trailerReady: trailerReady === true,
+                  ...(trailerReady === true ? {
+                    trailerIncluded: trailerIncluded === true,
+                    hitchRequired: hitchRequired || null,
+                    minTowRatingLbs: minTowRatingLbs ? parseInt(minTowRatingLbs, 10) : null,
+                  } : {
+                    trailerIncluded: null,
+                    hitchRequired: null,
+                    minTowRatingLbs: null,
+                  }),
+                }
+              : { trailerReady: false, trailerIncluded: null, hitchRequired: null, minTowRatingLbs: null };
+
             const updateValues = {
               geolocation: origin,
               publicData: {
@@ -253,6 +280,7 @@ const EditListingDeliveryPanel = props => {
                 shippingEnabled,
                 ...shippingDataMaybe,
                 ...ironpeerDeliveryData,
+                ...trailerDataMaybe,
               },
             };
 

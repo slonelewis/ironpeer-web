@@ -153,6 +153,78 @@ export const EditListingDeliveryForm = props => (
               </p>
             ) : null}
 
+            {/* IronPeer: Trailer-ready pickup option */}
+            {pickupEnabled && (
+              <div className={css.trailerReadySection}>
+                <p className={css.deliveryMethodLabel}>🚛 Trailer-ready pickup</p>
+                <p className={css.trailerReadyHint}>
+                  Does this equipment come pre-loaded on a trailer, ready for someone to hook up and go?
+                </p>
+                <div className={css.buttonGroup}>
+                  <button
+                    type="button"
+                    className={values.trailerReady === true ? css.optionButtonActive : css.optionButton}
+                    onClick={() => form.change('trailerReady', true)}
+                  >
+                    Yes — pre-loaded &amp; ready to haul
+                  </button>
+                  <button
+                    type="button"
+                    className={values.trailerReady === false ? css.optionButtonActive : css.optionButton}
+                    onClick={() => form.change('trailerReady', false)}
+                  >
+                    No — standard pickup
+                  </button>
+                </div>
+
+                {values.trailerReady === true && (
+                  <div className={css.trailerSubFields}>
+                    <p className={css.deliveryMethodLabel}>Is the trailer included in the rental?</p>
+                    <div className={css.buttonGroup}>
+                      <button
+                        type="button"
+                        className={values.trailerIncluded === true ? css.optionButtonActive : css.optionButton}
+                        onClick={() => form.change('trailerIncluded', true)}
+                      >
+                        Yes — renter just needs a truck
+                      </button>
+                      <button
+                        type="button"
+                        className={values.trailerIncluded === false ? css.optionButtonActive : css.optionButton}
+                        onClick={() => form.change('trailerIncluded', false)}
+                      >
+                        No — renter brings their own trailer
+                      </button>
+                    </div>
+
+                    <p className={css.deliveryMethodLabel} style={{ marginTop: '1rem' }}>Hitch required</p>
+                    <select
+                      className={css.selectInput}
+                      value={values.hitchRequired || ''}
+                      onChange={e => form.change('hitchRequired', e.target.value)}
+                    >
+                      <option value="">Select hitch type...</option>
+                      <option value="ball-2in">2&quot; ball</option>
+                      <option value="ball-2-5-16in">2-5/16&quot; ball</option>
+                      <option value="gooseneck">Gooseneck</option>
+                      <option value="pintle">Pintle hitch</option>
+                      <option value="fifth-wheel">5th wheel / kingpin</option>
+                    </select>
+
+                    <FieldTextInput
+                      className={css.input}
+                      type="number"
+                      name="minTowRatingLbs"
+                      id={`${formId}.minTowRatingLbs`}
+                      label="Minimum tow rating required (lbs)"
+                      placeholder="e.g. 10000"
+                      min="1"
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
             <FieldLocationAutocompleteInput
               disabled={!pickupEnabled}
               rootClassName={css.input}

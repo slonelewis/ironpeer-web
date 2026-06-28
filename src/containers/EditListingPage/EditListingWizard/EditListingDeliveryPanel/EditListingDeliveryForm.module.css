@@ -153,3 +153,74 @@
   color: #92400e;
   line-height: 1.5;
 }
+
+.trailerReadySection {
+  margin: 1.25rem 0;
+  padding: 1rem;
+  background: #fff8f0;
+  border: 1px solid #fed7aa;
+  border-radius: 10px;
+}
+
+.trailerReadyHint {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0.25rem 0 0.75rem;
+}
+
+.trailerSubFields {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #fed7aa;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.optionButton {
+  padding: 0.5rem 1rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  color: #374151;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.optionButton:hover {
+  border-color: #E8450A;
+}
+
+.optionButtonActive {
+  padding: 0.5rem 1rem;
+  border: 2px solid #E8450A;
+  border-radius: 8px;
+  background: #fff8f5;
+  color: #E8450A;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.selectInput {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: #374151;
+  background: #fff;
+  margin-top: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.selectInput:focus {
+  outline: none;
+  border-color: #E8450A;
+}

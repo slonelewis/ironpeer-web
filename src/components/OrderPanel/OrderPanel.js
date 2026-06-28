@@ -381,7 +381,7 @@ const OrderPanel = props => {
   const supportedProcessesInfo = getSupportedProcessesInfo();
   const isKnownProcess = supportedProcessesInfo.map(info => info.name).includes(processName);
 
-  const { pickupEnabled, shippingEnabled } = listing?.attributes?.publicData || {};
+  const { pickupEnabled, shippingEnabled, trailerReady, trailerIncluded, hitchRequired, minTowRatingLbs } = listing?.attributes?.publicData || {};
 
   const listingTypeConfig = validListingTypes.find(conf => conf.listingType === listingType);
   const displayShipping = displayDeliveryShipping(listingTypeConfig);
@@ -512,6 +512,38 @@ const OrderPanel = props => {
         {isBooking ? (
           <>
             <ProtectionBadge />
+            {trailerReady && (
+              <div style={{
+                background: '#fff8f0',
+                border: '1.5px solid #E8450A',
+                borderRadius: '10px',
+                padding: '0.75rem 1rem',
+                margin: '0.75rem 0',
+                fontSize: '0.875rem',
+                color: '#374151',
+              }}>
+                <div style={{ fontWeight: 700, color: '#E8450A', marginBottom: '0.35rem' }}>
+                  🚛 Trailer-Ready Pickup
+                </div>
+                <div style={{ lineHeight: 1.5 }}>
+                  {trailerIncluded
+                    ? 'Equipment is pre-loaded on the owner’s trailer — just bring a truck and hook up.'
+                    : 'Equipment is pre-loaded and ready — bring your own trailer.'}
+                </div>
+                {(hitchRequired || minTowRatingLbs) && (
+                  <div style={{ marginTop: '0.5rem', color: '#6b7280', fontSize: '0.8rem' }}>
+                    {hitchRequired && <span style={{ marginRight: '1rem' }}>Hitch: <strong>{{
+                      'ball-2in': '2” ball',
+                      'ball-2-5-16in': '2-5/16” ball',
+                      'gooseneck': 'Gooseneck',
+                      'pintle': 'Pintle hitch',
+                      'fifth-wheel': '5th wheel / kingpin',
+                    }[hitchRequired] || hitchRequired}</strong></span>}
+                    {minTowRatingLbs && <span>Min tow rating: <strong>{minTowRatingLbs.toLocaleString()} lbs</strong></span>}
+                  </div>
+                )}
+              </div>
+            )}
             <SecurityDepositNotice listingPrice={price} compact />
             <CancellationPolicyBox compact />
           </>

@@ -96,14 +96,20 @@ export const ManageAccountPageComponent = props => {
     // Get password from form, use it to delete the user account
     const { currentPassword } = values;
 
-    return onSubmitDeleteAccount(currentPassword).then(() => {
-      const path = pathByRouteName('LandingPage', routeConfiguration);
+    return onSubmitDeleteAccount(currentPassword)
+      .then(() => {
+        const path = pathByRouteName('LandingPage', routeConfiguration);
 
-      // Enforce full page load against LandingPage route
-      if (typeof window !== 'undefined') {
-        window.location = path;
-      }
-    });
+        // Enforce full page load against LandingPage route
+        if (typeof window !== 'undefined') {
+          window.location = path;
+        }
+      })
+      .catch(() => {
+        // Error is already stored in Redux as deleteAccountError.
+        // Catching here prevents it from becoming an unhandled promise
+        // rejection that triggers the [object Object] error overlay.
+      });
   };
 
   const title = intl.formatMessage({ id: 'ManageAccountPage.title' });

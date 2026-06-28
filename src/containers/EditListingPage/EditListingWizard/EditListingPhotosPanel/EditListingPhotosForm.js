@@ -222,7 +222,7 @@ export const EditListingPhotosForm = props => {
               <FieldArray
                 name="images"
                 validate={images => {
-                  if (!images || images.length < 5) {
+                  if (!images || images.length < 1) {
                     return intl.formatMessage({ id: 'EditListingPhotosForm.imageRequired' });
                   }
                 }}

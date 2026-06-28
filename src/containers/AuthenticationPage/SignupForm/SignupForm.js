@@ -23,7 +23,7 @@ const SignupFormComponent = props => (
   <FinalForm
     {...props}
     mutators={{ ...arrayMutators }}
-    initialValues={{ fname: 'New', lname: 'Member', userRoles: [] }}
+    initialValues={{ fname: '', lname: '', userRoles: [] }}
     render={formRenderProps => {
       const {
         rootClassName,
@@ -65,9 +65,30 @@ const SignupFormComponent = props => (
 
       return (
         <Form className={classes} onSubmit={handleSubmit}>
-          {/* Hidden — required by Sharetribe API; real values collected in ProfileCompletionPage */}
-          <Field name="fname" render={() => null} />
-          <Field name="lname" render={() => null} />
+          {/* Name fields — collected here so users don't show up as 'New Member' */}
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <FieldTextInput
+              type="text"
+              id={formId ? `${formId}.fname` : 'fname'}
+              name="fname"
+              autoComplete="given-name"
+              label={intl.formatMessage({ id: 'SignupForm.firstNameLabel' }) + ' *'}
+              placeholder={intl.formatMessage({ id: 'SignupForm.firstNamePlaceholder' })}
+              validate={validators.required(intl.formatMessage({ id: 'SignupForm.firstNameRequired' }))}
+              style={{ flex: 1 }}
+            />
+            <FieldTextInput
+              type="text"
+              id={formId ? `${formId}.lname` : 'lname'}
+              name="lname"
+              autoComplete="family-name"
+              label={intl.formatMessage({ id: 'SignupForm.lastNameLabel' }) + ' *'}
+              placeholder={intl.formatMessage({ id: 'SignupForm.lastNamePlaceholder' })}
+              validate={validators.required(intl.formatMessage({ id: 'SignupForm.lastNameRequired' }))}
+              style={{ flex: 1 }}
+            />
+          </div>
+
           <Field name="userRoles" render={() => null} />
 
           <FieldTextInput

@@ -171,6 +171,26 @@ const EditListingPricingPanel = props => {
       <H3 as="h1">
         <FormattedMessage id={panelHeadingProps.id} values={{ ...panelHeadingProps.values }} />
       </H3>
+      {!isPublished && (
+        <div style={{
+          background: '#FFF8F0',
+          border: '1px solid #F6B87A',
+          borderRadius: '8px',
+          padding: '12px 16px',
+          marginBottom: '24px',
+          display: 'flex',
+          gap: '10px',
+          alignItems: 'flex-start',
+          fontSize: '14px',
+        }}>
+          <span style={{ fontSize: '18px', lineHeight: 1 }}>💳</span>
+          <div>
+            <strong>You\'ll need Stripe payouts to get paid.</strong>{' '}
+            After publishing your listing, you\'ll be prompted to connect your bank account via Stripe.
+            Renters can\'t pay you until payouts are set up.
+          </div>
+        </div>
+      )}
       {priceCurrencyValid ? (
         <EditListingPricingForm
           className={css.form}

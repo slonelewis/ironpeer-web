@@ -80,7 +80,14 @@ module.exports = (req, res) => {
         .end();
     })
     .catch(e => {
-      const options = e.message === HAS_INCOMPLETE_TRANSACTIONS ? { skipErrorLogging: true } : {};
+      const isExpectedError = e.message === HAS_INCOMPLETE_TRANSACTIONS;
+      const options = isExpectedError ? { skipErrorLogging: true } : {};
+      // Ensure the error has proper status/statusText so handleError routes it correctly
+      if (!e.status && !isExpectedError) {
+        e.status = 500;
+        e.statusText = e.message || 'Internal Server Error';
+        e.data = {};
+      }
       handleError(res, e, options);
     });
 };

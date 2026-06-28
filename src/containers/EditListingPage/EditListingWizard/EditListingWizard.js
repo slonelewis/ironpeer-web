@@ -99,7 +99,7 @@ const tabsForListingType = (processName, listingTypeConfig) => {
   // Note 3: The first tab creates a draft listing and title is mandatory attribute for it.
   //         Details tab asks for "title" and is therefore the first tab in the wizard flow.
   const tabs = {
-    ['default-booking']: [DETAILS, PROTECTION, ...locationMaybe, PRICING, AVAILABILITY, ...styleOrPhotosTab],
+    ['default-booking']: [DETAILS, PROTECTION, ...locationMaybe, PRICING, ...styleOrPhotosTab, AVAILABILITY],
     ['default-purchase']: [DETAILS, PRICING_AND_STOCK, ...deliveryMaybe, ...styleOrPhotosTab],
     ['default-negotiation']: [DETAILS, ...locationMaybe, ...pricingMaybe, ...styleOrPhotosTab],
     ['default-inquiry']: [DETAILS, ...locationMaybe, ...pricingMaybe, ...styleOrPhotosTab],
@@ -280,7 +280,7 @@ const tabCompleted = (tab, listing, config) => {
     case AVAILABILITY:
       return !!availabilityPlan;
     case PHOTOS:
-      return images && images.length >= 5;
+      return images && images.length >= 1;
     case STYLE:
       return !!cardStyle;
     default:

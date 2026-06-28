@@ -198,10 +198,11 @@ const CATEGORIES = [
   { icon: <DumpTrailerIcon />, name: 'Hauling & Trailers', categoryId: 'Haulers_and_trailers' },
   { icon: '🚜', name: 'Farm & Agriculture', categoryId: 'Farm_and_agriculture' },
   { icon: '🏗️', name: 'Construction', categoryId: 'Construction' },
-  { icon: '🌿', name: 'Lawn & Landscaping', categoryId: 'Lawn_and_landscaping' },
   { icon: '⚡', name: 'Power & Lighting', categoryId: 'Power_and_lighting' },
-  { icon: '❄️', name: 'Snow Removal', categoryId: 'Snow_removal' },
-  { icon: '🔩', name: 'Other', categoryId: 'Other' },
+  { icon: '❄️', name: 'Seasonal', categoryId: 'Seasonal' },
+  { icon: <ZeroTurnMowerIcon />, name: 'Lawn & Landscaping', categoryId: 'Lawn_and_landscaping' },
+  { icon: '🔩', name: 'Attachments', categoryId: 'Attachments' },
+  { icon: '🔧', name: 'Other', categoryId: 'Other' },
 ];
 
 // ─── LISTING CARD ─────────────────────────────────────────────────────────────
@@ -245,7 +246,7 @@ const RealListingCard = ({ listing, index }) => {
           <div className={css.listingName}>{title}</div>
           {geolocation && (
             <div className={css.listingLocation}>
-              {listing.attributes?.publicData?.locationAddress || 'Location not specified'}
+              {listing.attributes?.publicData?.location?.address || 'Location not specified'}
             </div>
           )}
           {formattedPrice && (

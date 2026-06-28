@@ -183,6 +183,18 @@ export const listingFields = [
       helpText: 'Max engine hours the renter can run per day. Overage is billed at your hourly rate. Leave blank for no limit.',
     },
   },
+  {
+    key: 'damageDeposit',
+    scope: 'public',
+    schemaType: 'long',
+    showConfig: { label: 'Damage deposit ($)', isDetail: true },
+    saveConfig: {
+      label: 'Damage deposit (dollars)',
+      placeholderMessage: 'e.g. 500',
+      isRequired: false,
+      helpText: 'Refundable deposit charged at booking. Returned after inspection with no damage. Recommended for high-value equipment.',
+    },
+  },
   // {
   //   "scope": "public",
   //   "label": "Gears",

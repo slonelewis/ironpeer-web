@@ -997,6 +997,7 @@ const ProfileCompletionPage = () => {
     medCardExpiry: '',
   });
   const [haulerErrors, setHaulerErrors] = useState({});
+  const [errorSummary, setErrorSummary] = useState([]);
 
   // ---- Document upload previews (registration, insurance, medCard) ----
   const [docPreviews, setDocPreviews] = useState({ registration: null, insurance: null, medCard: null });
@@ -1185,13 +1186,54 @@ const ProfileCompletionPage = () => {
       setPhotoError(null);
     }
     if (currentStep.id === 'hauler' && !validateHauler()) {
-      // Scroll to first visible error
+      // Build human-readable error summary
+      const fieldLabels = {
+        licenseNumber: 'Driver\'s license number',
+        licenseState: 'License state',
+        licenseExpiry: 'License expiry date',
+        vehicleYear: 'Vehicle year',
+        vehicleMake: 'Vehicle make',
+        vehicleModel: 'Vehicle model',
+        registrationDoc: 'Vehicle registration photo',
+        insuranceDoc: 'Insurance card photo',
+        insuranceExpiry: 'Insurance expiry date',
+        hitchTypes: 'Hitch type (how you haul)',
+        hitchTypeOtherNonCDL: 'Non-CDL hitch description',
+        hitchTypeOtherCDL: 'CDL hitch description',
+        minTowCapacity: 'Minimum tow capacity',
+        maxTowCapacity: 'Maximum tow capacity',
+        cdlNumber: 'CDL number',
+        cdlClass: 'CDL class',
+        cdlState: 'CDL state',
+        cdlExpiry: 'CDL expiry date',
+        medCardExpiry: 'Medical card expiry date',
+        medCardDoc: 'Medical card photo',
+        businessName: 'Business name',
+        businessType: 'Business type',
+      };
+      // Pull errors from the just-updated state via validateHauler's return
+      // Re-read haulerErrors after setHaulerErrors (will be stale here — compute inline)
+      const currentErrs = {};
+      const today = TODAY;
+      ['licenseNumber','licenseState','licenseExpiry','vehicleYear','vehicleMake','vehicleModel'].forEach(f => {
+        if (!haulerDetails[f]) currentErrs[f] = true;
+      });
+      if (!haulerDetails.insuranceExpiry || haulerDetails.insuranceExpiry < today) currentErrs.insuranceExpiry = true;
+      if (!docPreviews.registration) currentErrs.registrationDoc = true;
+      if (!docPreviews.insurance) currentErrs.insuranceDoc = true;
+      if (!haulerDetails.hitchTypes?.length) currentErrs.hitchTypes = true;
+      if (!haulerDetails.minTowCapacity && haulerDetails.minTowCapacity !== 0) currentErrs.minTowCapacity = true;
+      if (!haulerDetails.maxTowCapacity) currentErrs.maxTowCapacity = true;
+      const summary = Object.keys(currentErrs).map(k => fieldLabels[k] || k);
+      setErrorSummary(summary);
+      // Scroll to error summary banner
       setTimeout(() => {
-        const firstError = document.querySelector('[class*="errorMsg"], [class*="inputError"]');
-        if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const banner = document.getElementById('validation-error-banner');
+        if (banner) banner.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 50);
       return;
     }
+    setErrorSummary([]);
 
     const isLastDataStep = currentStepIndex === steps.length - 2;
     if (isLastDataStep) {
@@ -1332,6 +1374,16 @@ const ProfileCompletionPage = () => {
           {/* Step indicator */}
           {!isComplete && (
             <StepIndicator steps={steps} currentIndex={currentStepIndex} />
+          )}
+
+          {/* Validation error summary banner */}
+          {errorSummary.length > 0 && (
+            <div id="validation-error-banner" className={css.errorBanner}>
+              <strong>⚠️ Please fix the following before continuing:</strong>
+              <ul className={css.errorBannerList}>
+                {errorSummary.map(msg => <li key={msg}>{msg}</li>)}
+              </ul>
+            </div>
           )}
 
           {/* Step content */}

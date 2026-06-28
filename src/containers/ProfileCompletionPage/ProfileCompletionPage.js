@@ -879,16 +879,16 @@ const CompleteStep = ({ userRoles, basicInfo, haulerDetails, onGoHome }) => {
 
       <div className={css.completeActions}>
         {userRoles.includes('owner') && (
-          <NamedLink name="NewListingPage" className={css.primaryBtn} style={{ marginTop: 32, display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>
+          <NamedLink name="NewListingPage" className={css.primaryBtn} style={{ textDecoration: 'none', textAlign: 'center', display: 'flex' }}>
             Create your first listing →
           </NamedLink>
         )}
         {!userRoles.includes('owner') && userRoles.includes('renter') && (
-          <NamedLink name="SearchPage" className={css.primaryBtn} style={{ marginTop: 32, display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}>
+          <NamedLink name="SearchPage" className={css.primaryBtn} style={{ textDecoration: 'none', textAlign: 'center', display: 'flex' }}>
             Browse listings →
           </NamedLink>
         )}
-        <button className={css.secondaryBtn} onClick={onGoHome} style={{ marginTop: 12 }}>
+        <button className={css.secondaryBtn} onClick={onGoHome}>
           Go to my account
         </button>
       </div>

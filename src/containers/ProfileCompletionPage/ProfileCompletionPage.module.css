@@ -406,7 +406,6 @@
   cursor: pointer;
   transition: background 0.15s ease, transform 0.1s ease;
   min-width: 120px;
-  margin-left: auto;
 }
 
 .primaryBtn:hover:not(:disabled) {
@@ -471,9 +470,10 @@
 .completeActions {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   width: 100%;
   gap: 4px;
+  margin-top: 32px;
 }
 
 .secondaryBtn {

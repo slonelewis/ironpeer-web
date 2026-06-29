@@ -194,9 +194,16 @@ export const EditListingDeliveryForm = props => (
                       <option value="">Select trailer type...</option>
                       <option value="bumper-pull-flatbed">Bumper pull flatbed</option>
                       <option value="gooseneck-flatbed">Gooseneck flatbed</option>
-                      <option value="lowboy">Lowboy / low deck</option>
                       <option value="tilt-deck">Tilt deck</option>
                       <option value="enclosed">Enclosed trailer</option>
+                      <option value="dump-trailer">Dump trailer</option>
+                      <option value="car-hauler">Car hauler</option>
+                      <option value="equipment-trailer">Equipment trailer</option>
+                      <option value="tank-trailer">Tank trailer</option>
+                      <option value="livestock-trailer">Livestock trailer</option>
+                      <option value="utility-trailer">Utility trailer</option>
+                      <option value="lowboy">Lowboy / low deck</option>
+                      <option value="other">Other</option>
                     </select>
 
                     <div className={css.hitchPlugRow}>
@@ -212,6 +219,7 @@ export const EditListingDeliveryForm = props => (
                           <option value="gooseneck">Gooseneck</option>
                           <option value="fifth-wheel">Fifth wheel</option>
                           <option value="pintle">Pintle hitch</option>
+                          <option value="other">Other</option>
                         </select>
                       </div>
                       <div className={css.hitchPlugField}>

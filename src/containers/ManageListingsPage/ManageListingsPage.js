@@ -70,12 +70,17 @@ const Heading = props => {
   const hasNoResults = listingsAreLoaded && pagination.totalItems === 0;
 
   return hasResults ? (
-    <H3 as="h1" className={css.heading}>
-      <FormattedMessage
-        id="ManageListingsPage.youHaveListings"
-        values={{ count: pagination.totalItems }}
-      />
-    </H3>
+    <div className={css.headingRow}>
+      <H3 as="h1" className={css.heading}>
+        <FormattedMessage
+          id="ManageListingsPage.youHaveListings"
+          values={{ count: pagination.totalItems }}
+        />
+      </H3>
+      <NamedLink name="NewListingPage" className={css.createListingButton}>
+        + Create listing
+      </NamedLink>
+    </div>
   ) : hasNoResults ? (
     <EmptyState />
   ) : null;

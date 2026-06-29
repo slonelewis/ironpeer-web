@@ -205,3 +205,40 @@
     margin: auto 36px 0 36px;
   }
 }
+
+.headingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+
+  @media (--viewportMedium) {
+    margin-bottom: 32px;
+  }
+}
+
+.headingRow .heading {
+  margin-bottom: 0;
+}
+
+.createListingButton {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #E8450A;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: #c73a08;
+    text-decoration: none;
+    color: #fff;
+  }
+}

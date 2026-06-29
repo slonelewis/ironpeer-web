@@ -301,6 +301,7 @@ export const ListingPageComponent = props => {
                   {publicData.trailerLengthFt && <span>Length: <strong>{publicData.trailerLengthFt} ft</strong></span>}
                   {publicData.trailerGVWR && <span>GVWR: <strong>{Number(publicData.trailerGVWR).toLocaleString()} lbs</strong></span>}
                   {publicData.hitchRequired && <span>Hitch: <strong>{{
+                    'bumper-pull': 'Bumper pull',
                     'ball-2in': '2" ball',
                     'ball-2-5-16in': '2-5/16" ball',
                     'gooseneck': 'Gooseneck',

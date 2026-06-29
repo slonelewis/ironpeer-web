@@ -528,7 +528,7 @@ const OrderPanel = props => {
                   Trailer-Ready
                 </div>
                 <div style={{ lineHeight: 1.5, marginBottom: '0.5rem' }}>
-                  Pre-loaded on the owner’s trailer and ready to go. Pick it up yourself, or request delivery.
+                  Pre-loaded on the owner's trailer and ready to go. Pick it up yourself, or request delivery.
                 </div>
                 <div style={{ color: '#6b7280', fontSize: '0.8rem', display: 'flex', flexWrap: 'wrap', gap: '0.6rem 1.25rem' }}>
                   {trailerType && <span>Type: <strong>{{
@@ -541,8 +541,9 @@ const OrderPanel = props => {
                   {trailerLengthFt && <span>Length: <strong>{trailerLengthFt} ft</strong></span>}
                   {trailerGVWR && <span>GVWR: <strong>{trailerGVWR.toLocaleString()} lbs</strong></span>}
                   {hitchRequired && <span>Hitch: <strong>{{
-                    'ball-2in': '2” ball',
-                    'ball-2-5-16in': '2-5/16” ball',
+                    'bumper-pull': 'Bumper pull',
+                    'ball-2in': '2" ball',
+                    'ball-2-5-16in': '2-5/16" ball',
                     'gooseneck': 'Gooseneck',
                     'pintle': 'Pintle hitch',
                     'fifth-wheel': '5th wheel / kingpin',

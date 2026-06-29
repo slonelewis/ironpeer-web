@@ -192,18 +192,12 @@ export const EditListingDeliveryForm = props => (
                       onChange={e => form.change('trailerType', e.target.value)}
                     >
                       <option value="">Select trailer type...</option>
-                      <option value="bumper-pull-flatbed">Bumper pull flatbed</option>
-                      <option value="gooseneck-flatbed">Gooseneck flatbed</option>
-                      <option value="tilt-deck">Tilt deck</option>
-                      <option value="enclosed">Enclosed trailer</option>
-                      <option value="dump-trailer">Dump trailer</option>
-                      <option value="car-hauler">Car hauler</option>
-                      <option value="equipment-trailer">Equipment trailer</option>
-                      <option value="tank-trailer">Tank trailer</option>
-                      <option value="livestock-trailer">Livestock trailer</option>
-                      <option value="utility-trailer">Utility trailer</option>
-                      <option value="lowboy">Lowboy / low deck</option>
-                      <option value="other">Other</option>
+                      <option value="Dump-trailers">Dump trailers</option>
+                      <option value="Enclosed">Enclosed</option>
+                      <option value="Tilt-deck">Tilt deck</option>
+                      <option value="Livestock">Livestock</option>
+                      <option value="Car-hauler">Car hauler</option>
+                      <option value="Other">Other</option>
                     </select>
 
                     <div className={css.hitchPlugRow}>

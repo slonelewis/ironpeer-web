@@ -292,6 +292,13 @@ export const ListingPageComponent = props => {
                 </div>
                 <div style={{ color: '#6b7280', fontSize: '0.8rem', display: 'flex', flexWrap: 'wrap', gap: '0.4rem 1.25rem' }}>
                   {publicData.trailerType && <span>Type: <strong>{{
+                    'Dump-trailers': 'Dump trailers',
+                    'Enclosed': 'Enclosed',
+                    'Tilt-deck': 'Tilt deck',
+                    'Livestock': 'Livestock',
+                    'Car-hauler': 'Car hauler',
+                    'Other': 'Other',
+                    // legacy values
                     'bumper-pull-flatbed': 'Bumper pull flatbed',
                     'gooseneck-flatbed': 'Gooseneck flatbed',
                     'lowboy': 'Lowboy',

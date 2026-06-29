@@ -192,7 +192,8 @@ export const EditListingDeliveryForm = props => (
                       onChange={e => form.change('trailerType', e.target.value)}
                     >
                       <option value="">Select trailer type...</option>
-                      <option value="Dump-trailers">Dump trailers</option>
+                      <option value="Flat-deck">Flat deck</option>
+                      <option value="Dump-trailer">Dump trailer</option>
                       <option value="Enclosed">Enclosed</option>
                       <option value="Tilt-deck">Tilt deck</option>
                       <option value="Car-hauler">Car hauler</option>

@@ -532,6 +532,8 @@ const OrderPanel = props => {
                 </div>
                 <div style={{ color: '#6b7280', fontSize: '0.8rem', display: 'flex', flexWrap: 'wrap', gap: '0.6rem 1.25rem' }}>
                   {trailerType && <span>Type: <strong>{{
+                    'Flat-deck': 'Flat deck',
+                    'Dump-trailer': 'Dump trailer',
                     'Dump-trailers': 'Dump trailers',
                     'Enclosed': 'Enclosed',
                     'Tilt-deck': 'Tilt deck',

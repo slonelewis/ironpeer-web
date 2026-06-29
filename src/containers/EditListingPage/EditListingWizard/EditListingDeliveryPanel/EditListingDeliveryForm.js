@@ -189,7 +189,21 @@ export const EditListingDeliveryForm = props => (
                     <select
                       className={css.selectInput}
                       value={values.trailerType || ''}
-                      onChange={e => form.change('trailerType', e.target.value)}
+                      onChange={e => {
+                        const t = e.target.value;
+                        form.change('trailerType', t);
+                        // Auto-fill hitch based on trailer type
+                        const hitchDefaults = {
+                          'bumper-pull-flatbed': 'ball-2in',
+                          'tilt-deck': 'ball-2in',
+                          'enclosed': 'ball-2in',
+                          'gooseneck-flatbed': 'gooseneck',
+                          'lowboy': 'gooseneck',
+                        };
+                        if (hitchDefaults[t]) {
+                          form.change('hitchRequired', hitchDefaults[t]);
+                        }
+                      }}
                     >
                       <option value="">Select trailer type...</option>
                       <option value="bumper-pull-flatbed">Bumper pull flatbed</option>
@@ -202,18 +216,40 @@ export const EditListingDeliveryForm = props => (
                     <div className={css.hitchPlugRow}>
                       <div className={css.hitchPlugField}>
                         <p className={css.deliveryMethodLabel}>Hitch required</p>
-                        <select
-                          className={css.selectInput}
-                          value={values.hitchRequired || ''}
-                          onChange={e => form.change('hitchRequired', e.target.value)}
-                        >
-                          <option value="">Select hitch type...</option>
-                          <option value="ball-2in">2&quot; ball</option>
-                          <option value="ball-2-5-16in">2-5/16&quot; ball</option>
-                          <option value="gooseneck">Gooseneck</option>
-                          <option value="pintle">Pintle hitch</option>
-                          <option value="fifth-wheel">5th wheel / kingpin</option>
-                        </select>
+                        {/* Gooseneck trailers lock to gooseneck; bumper pull lets owner pick ball size */}
+                        {values.trailerType === 'gooseneck-flatbed' ? (
+                          <div className={css.hitchLockedDisplay}>
+                            <span>Gooseneck ball</span>
+                            <span className={css.hitchLockedNote}>(set by trailer type)</span>
+                          </div>
+                        ) : (
+                          <select
+                            className={css.selectInput}
+                            value={values.hitchRequired || ''}
+                            onChange={e => form.change('hitchRequired', e.target.value)}
+                          >
+                            <option value="">Select hitch type...</option>
+                            {(values.trailerType === 'bumper-pull-flatbed' || values.trailerType === 'tilt-deck' || values.trailerType === 'enclosed') ? (
+                              <>
+                                <option value="ball-2in">2&quot; ball</option>
+                                <option value="ball-2-5-16in">2-5/16&quot; ball</option>
+                              </>
+                            ) : values.trailerType === 'lowboy' ? (
+                              <>
+                                <option value="gooseneck">Gooseneck</option>
+                                <option value="fifth-wheel">5th wheel / kingpin</option>
+                              </>
+                            ) : (
+                              <>
+                                <option value="ball-2in">2&quot; ball</option>
+                                <option value="ball-2-5-16in">2-5/16&quot; ball</option>
+                                <option value="gooseneck">Gooseneck</option>
+                                <option value="pintle">Pintle hitch</option>
+                                <option value="fifth-wheel">5th wheel / kingpin</option>
+                              </>
+                            )}
+                          </select>
+                        )}
                       </div>
                       <div className={css.hitchPlugField}>
                         <p className={css.deliveryMethodLabel}>Trailer plug type</p>

@@ -7,70 +7,81 @@ import React, { useState, useRef, useEffect } from 'react';
 
 // ─── SVG diagrams ────────────────────────────────────────────────────────────
 
-// 7-pin round: circular housing, 6 round pins around perimeter + 1 center
+// ─── 7-pin ROUND: circular housing + 7 filled CIRCLE pins ───────────────────
+// Round pins = solid circles. 6 around edge + 1 center.
 const SevenPinRoundSvg = () => (
-  <svg viewBox="0 0 54 54" width="54" height="54" aria-hidden="true">
-    {/* Housing face */}
-    <circle cx="27" cy="27" r="25" fill="#e8e8e8" stroke="#555" strokeWidth="1.5" />
-    {/* 6 outer pins evenly spaced on r=16 */}
-    <circle cx="27"    cy="11"   r="4" fill="#333" />
-    <circle cx="40.9"  cy="19"   r="4" fill="#333" />
-    <circle cx="40.9"  cy="35"   r="4" fill="#333" />
-    <circle cx="27"    cy="43"   r="4" fill="#333" />
-    <circle cx="13.1"  cy="35"   r="4" fill="#333" />
-    <circle cx="13.1"  cy="19"   r="4" fill="#333" />
-    {/* Center pin */}
-    <circle cx="27" cy="27" r="4" fill="#333" />
+  <svg viewBox="0 0 64 74" width="64" height="74" aria-hidden="true">
+    {/* Circular housing */}
+    <circle cx="32" cy="32" r="30" fill="#ddd" stroke="#444" strokeWidth="2" />
+    {/* 6 outer ROUND pins at r=19 */}
+    <circle cx="32"   cy="13"  r="5" fill="#222" />  {/* top */}
+    <circle cx="48.5" cy="22"  r="5" fill="#222" />  {/* top-right */}
+    <circle cx="48.5" cy="42"  r="5" fill="#222" />  {/* bottom-right */}
+    <circle cx="32"   cy="51"  r="5" fill="#222" />  {/* bottom */}
+    <circle cx="15.5" cy="42"  r="5" fill="#222" />  {/* bottom-left */}
+    <circle cx="15.5" cy="22"  r="5" fill="#222" />  {/* top-left */}
+    {/* Center ROUND pin */}
+    <circle cx="32" cy="32" r="5" fill="#222" />
+    {/* Label */}
+    <text x="32" y="70" textAnchor="middle" fontSize="9" fill="#555" fontFamily="sans-serif">round pins</text>
   </svg>
 );
 
-// 7-pin flat blade: round housing, 7 flat blade contacts (standard SAE layout)
+// ─── 7-pin FLAT BLADE: circular housing + 7 FLAT BLADE contacts ─────────────
+// Same circular housing as round, but pins are flat rectangles (blades).
+// Pre-calculated positions for 6 blades on r=19 + 1 center blade.
 const SevenPinFlatSvg = () => (
-  <svg viewBox="0 0 54 54" width="54" height="54" aria-hidden="true">
-    {/* Housing face */}
-    <circle cx="27" cy="27" r="25" fill="#e8e8e8" stroke="#555" strokeWidth="1.5" />
-    {/* 6 outer blade pins (flat rectangles) on r=16 — rotated to point toward center */}
-    {/* Top */}
-    <rect x="24" y="9" width="6" height="10" rx="1" fill="#333" />
-    {/* Top-right */}
-    <rect x="37" y="15" width="6" height="10" rx="1" fill="#333" transform="rotate(60 40 20)" />
-    {/* Bottom-right */}
-    <rect x="37" y="29" width="6" height="10" rx="1" fill="#333" transform="rotate(120 40 34)" />
-    {/* Bottom */}
-    <rect x="24" y="35" width="6" height="10" rx="1" fill="#333" />
-    {/* Bottom-left */}
-    <rect x="11" y="29" width="6" height="10" rx="1" fill="#333" transform="rotate(-120 14 34)" />
-    {/* Top-left */}
-    <rect x="11" y="15" width="6" height="10" rx="1" fill="#333" transform="rotate(-60 14 20)" />
-    {/* Center blade (ground — larger) */}
-    <rect x="23" y="22" width="8" height="10" rx="1" fill="#333" />
+  <svg viewBox="0 0 64 74" width="64" height="74" aria-hidden="true">
+    {/* Circular housing */}
+    <circle cx="32" cy="32" r="30" fill="#ddd" stroke="#444" strokeWidth="2" />
+    {/* 6 outer FLAT BLADE pins — rectangles centered at same positions as round variant */}
+    {/* top (0°) */}
+    <rect x="28.5" y="10" width="7" height="11" rx="1" fill="#222" />
+    {/* top-right (60°) — centered at 48.5,22 */}
+    <rect x="45" y="19" width="7" height="11" rx="1" fill="#222" />
+    {/* bottom-right (120°) — centered at 48.5,42 */}
+    <rect x="45" y="39" width="7" height="11" rx="1" fill="#222" />
+    {/* bottom (180°) */}
+    <rect x="28.5" y="46" width="7" height="11" rx="1" fill="#222" />
+    {/* bottom-left (240°) — centered at 15.5,42 */}
+    <rect x="12" y="39" width="7" height="11" rx="1" fill="#222" />
+    {/* top-left (300°) — centered at 15.5,22 */}
+    <rect x="12" y="19" width="7" height="11" rx="1" fill="#222" />
+    {/* Center FLAT BLADE (wider — ground pin) */}
+    <rect x="27" y="27" width="10" height="10" rx="1" fill="#222" />
+    {/* Label */}
+    <text x="32" y="70" textAnchor="middle" fontSize="9" fill="#555" fontFamily="sans-serif">flat blades</text>
   </svg>
 );
 
-// 4-pin flat: small rectangular housing, 4 flat pins in a row
+// ─── 4-pin FLAT: rectangular housing + 4 flat blade pins in a row ────────────
 const FourPinFlatSvg = () => (
-  <svg viewBox="0 0 70 32" width="70" height="32" aria-hidden="true">
-    {/* Housing */}
-    <rect x="1" y="1" width="68" height="30" rx="4" fill="#e8e8e8" stroke="#555" strokeWidth="1.5" />
+  <svg viewBox="0 0 80 50" width="80" height="50" aria-hidden="true">
+    {/* Rectangular housing */}
+    <rect x="1" y="1" width="78" height="36" rx="5" fill="#ddd" stroke="#444" strokeWidth="2" />
     {/* 4 flat blade pins */}
-    <rect x="7"  y="8" width="11" height="16" rx="1.5" fill="#333" />
-    <rect x="21" y="8" width="11" height="16" rx="1.5" fill="#333" />
-    <rect x="38" y="8" width="11" height="16" rx="1.5" fill="#333" />
-    <rect x="52" y="8" width="11" height="16" rx="1.5" fill="#333" />
+    <rect x="8"  y="8" width="13" height="22" rx="2" fill="#222" />
+    <rect x="24" y="8" width="13" height="22" rx="2" fill="#222" />
+    <rect x="43" y="8" width="13" height="22" rx="2" fill="#222" />
+    <rect x="59" y="8" width="13" height="22" rx="2" fill="#222" />
+    {/* Label */}
+    <text x="40" y="47" textAnchor="middle" fontSize="9" fill="#555" fontFamily="sans-serif">flat blades</text>
   </svg>
 );
 
-// 5-pin flat: rectangular housing, 5 flat pins in a row
+// ─── 5-pin FLAT: rectangular housing + 5 flat blade pins in a row ────────────
 const FivePinFlatSvg = () => (
-  <svg viewBox="0 0 82 32" width="82" height="32" aria-hidden="true">
-    {/* Housing */}
-    <rect x="1" y="1" width="80" height="30" rx="4" fill="#e8e8e8" stroke="#555" strokeWidth="1.5" />
+  <svg viewBox="0 0 96 50" width="96" height="50" aria-hidden="true">
+    {/* Rectangular housing */}
+    <rect x="1" y="1" width="94" height="36" rx="5" fill="#ddd" stroke="#444" strokeWidth="2" />
     {/* 5 flat blade pins */}
-    <rect x="5"  y="8" width="11" height="16" rx="1.5" fill="#333" />
-    <rect x="20" y="8" width="11" height="16" rx="1.5" fill="#333" />
-    <rect x="35" y="8" width="11" height="16" rx="1.5" fill="#333" />
-    <rect x="50" y="8" width="11" height="16" rx="1.5" fill="#333" />
-    <rect x="65" y="8" width="11" height="16" rx="1.5" fill="#333" />
+    <rect x="6"  y="8" width="13" height="22" rx="2" fill="#222" />
+    <rect x="22" y="8" width="13" height="22" rx="2" fill="#222" />
+    <rect x="41" y="8" width="13" height="22" rx="2" fill="#222" />
+    <rect x="57" y="8" width="13" height="22" rx="2" fill="#222" />
+    <rect x="76" y="8" width="13" height="22" rx="2" fill="#222" />
+    {/* Label */}
+    <text x="48" y="47" textAnchor="middle" fontSize="9" fill="#555" fontFamily="sans-serif">flat blades</text>
   </svg>
 );
 

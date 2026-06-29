@@ -195,7 +195,6 @@ export const EditListingDeliveryForm = props => (
                       <option value="Dump-trailers">Dump trailers</option>
                       <option value="Enclosed">Enclosed</option>
                       <option value="Tilt-deck">Tilt deck</option>
-                      <option value="Livestock">Livestock</option>
                       <option value="Car-hauler">Car hauler</option>
                       <option value="Other">Other</option>
                     </select>

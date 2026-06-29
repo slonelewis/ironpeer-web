@@ -324,21 +324,21 @@ export const EditListingDeliveryForm = props => (
             {/* IronPeer: delivery method */}
             {shippingEnabled && (
               <div className={css.deliveryMethodSection}>
-                <p className={css.deliveryMethodLabel}>How will you deliver it?</p>
-                <FieldRadioButton
+                <p className={css.deliveryMethodLabel}>Delivery options (select all that apply)</p>
+                <FieldCheckbox
                   id={`${formId}.deliveryMethod.self`}
-                  name="deliveryMethod"
+                  name="deliveryMethods"
                   label="I'll deliver it myself"
                   value="self"
                 />
-                <FieldRadioButton
+                <FieldCheckbox
                   id={`${formId}.deliveryMethod.hauler`}
-                  name="deliveryMethod"
-                  label="I need a hauler to deliver it"
+                  name="deliveryMethods"
+                  label="Available for hauler pickup"
                   value="hauler"
                 />
 
-                {values.deliveryMethod === 'self' && (
+                {values.deliveryMethods?.includes('self') && (
                   <div className={css.deliverySubFields}>
                     <FieldTextInput
                       className={css.input}
@@ -393,7 +393,7 @@ export const EditListingDeliveryForm = props => (
                   </div>
                 )}
 
-                {values.deliveryMethod === 'hauler' && (
+                {values.deliveryMethods?.includes('hauler') && (
                   <div className={css.deliverySubFields}>
                     <div className={css.infoBox}>
                       <FlatbedTrailerIcon width={20} height={12} style={{ marginRight: '6px', flexShrink: 0 }} /><strong>Hauler network coming soon</strong> — we'll match your listing with a qualified hauler when the network launches. Fill in your equipment details below so we're ready.

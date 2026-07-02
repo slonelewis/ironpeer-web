@@ -349,6 +349,9 @@
   font-size: 13px;
   font-weight: 600;
   line-height: 1.3;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 /* ── HOW IT WORKS ── */
@@ -496,6 +499,62 @@
   text-decoration: none;
 }
 
+/* ── MOCK LISTINGS BANNER (Bug 4 fix) ── */
+.mockListingsBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: #FEF3EE;
+  border: 1.5px solid #FBCDB3;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.mockListingsBannerIcon {
+  font-size: 28px;
+  flex-shrink: 0;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.mockListingsBannerLink {
+  color: var(--marketplaceColor);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.mockListingsBannerLink:hover {
+  text-decoration: underline;
+  color: var(--marketplaceColor);
+}
+
+/* Sample badge on mock listing cards */
+.listingBadgeSample {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 100px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.listingCardMock {
+  opacity: 0.88;
+}
+
+.listingCardMock:hover {
+  opacity: 1;
+}
+
 /* ── TRUST STRIP ── */
 .trustStripWrapper {
   padding: 48px 24px;
@@ -535,22 +594,40 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
+  /* Bug 2 fix: stack search inputs cleanly, remove broken horizontal dividers */
   .searchBar {
     border-radius: 16px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+
+  .searchField {
+    flex: none;
+    width: 100%;
+    box-sizing: border-box;
+    border-bottom: 1px solid #E5E7EB;
+    padding: 16px 20px;
+    min-width: 0;
+  }
+
+  .searchLocationWrap {
+    flex: none;
+    width: 100%;
+    border-bottom: 1px solid #E5E7EB;
+    min-width: 0;
   }
 
   .searchDivider {
-    width: 90%;
-    height: 1px;
-    margin: 0 auto;
+    display: none;
   }
 
   .searchBtn {
-    width: calc(100% - 16px);
+    width: 100%;
     justify-content: center;
-    border-radius: 10px;
-    margin: 0 8px 8px;
+    border-radius: 0 0 14px 14px;
+    margin: 0;
+    padding: 15px 24px;
   }
 
   .trustStrip {
@@ -573,5 +650,27 @@
 @media (max-width: 480px) {
   .listingsGrid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Bug 3 fix: 1-column category grid on very small screens */
+@media (max-width: 400px) {
+  .categoryGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .categoryCard {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+
+  .categoryIcon {
+    font-size: 32px;
+    min-height: auto;
+    margin-bottom: 0;
+    flex-shrink: 0;
   }
 }

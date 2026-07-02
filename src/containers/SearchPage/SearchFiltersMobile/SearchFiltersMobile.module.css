@@ -28,6 +28,36 @@
 
 .buttons {
   display: flex;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+/* Bug 5 fix: prominent orange filter button with icon on mobile */
+.filterOpenerBtn {
+  background-color: #E8450A !important;
+  color: #ffffff !important;
+  border-color: #E8450A !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  padding: 0 16px !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  white-space: nowrap;
+}
+
+.filterOpenerBtn:hover,
+.filterOpenerBtn:focus {
+  background-color: #C93A08 !important;
+  border-color: #C93A08 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(232, 69, 10, 0.35) !important;
+}
+
+.filterIcon {
+  flex-shrink: 0;
 }
 
 .mapIcon {

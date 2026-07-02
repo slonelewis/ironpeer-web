@@ -20,9 +20,27 @@
   display: flex;
   flex-direction: column;
 
+  /* Needed for the right-fade scroll indicator overlay on mobile */
+  position: relative;
+
   @media (--viewportLarge) {
     flex-direction: row;
     justify-content: center;
+  }
+
+  /* Right-side fade gradient — visual cue that the tab bar scrolls horizontally */
+  @media (max-width: 1023px) {
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 56px;
+      height: 50px; /* covers the mobile horizontal tab bar */
+      background: linear-gradient(to right, transparent, var(--colorWhite) 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
   }
 }
 
@@ -36,6 +54,17 @@
   box-shadow: var(--boxShadowLight);
   border-top: 1px solid var(--colorGrey100);
   overflow-x: scroll;
+
+  /* Smooth momentum scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+
+  /* Hide scrollbar — the ::after fade is the visual cue */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   @media (--viewportLarge) {
     padding: 72px 0 82px 36px;

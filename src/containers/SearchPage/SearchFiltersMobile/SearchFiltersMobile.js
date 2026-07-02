@@ -108,11 +108,36 @@ class SearchFiltersMobileComponent extends Component {
           {searchInProgress ? loadingResults : null}
         </div>
         <div className={css.buttons}>
-          <PopupOpenerButton isSelected={selectedFiltersCount > 0} toggleOpen={this.openFilters}>
-            <FormattedMessage
-              id="SearchFiltersMobile.filtersButtonLabel"
-              className={css.mapIconText}
-            />
+          <PopupOpenerButton
+            isSelected={selectedFiltersCount > 0}
+            toggleOpen={this.openFilters}
+            className={css.filterOpenerBtn}
+          >
+            <svg
+              className={css.filterIcon}
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <line x1="4" y1="6" x2="20" y2="6" />
+              <line x1="8" y1="12" x2="16" y2="12" />
+              <line x1="11" y1="18" x2="13" y2="18" />
+            </svg>
+            {selectedFiltersCount > 0 ? (
+              <span>
+                <FormattedMessage id="SearchFiltersMobile.filtersButtonLabel" />
+                {' '}({selectedFiltersCount})
+              </span>
+            ) : (
+              <FormattedMessage id="SearchFiltersMobile.filtersButtonLabel" />
+            )}
           </PopupOpenerButton>
 
           {sortByComponent}

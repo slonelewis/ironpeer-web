@@ -15,7 +15,7 @@ import css from './PopupOpenerButton.module.css';
  * @returns {JSX.Element}
  */
 const PopupOpenerButton = props => {
-  const { isSelected = false, labelMaxWidth = null, toggleOpen, children, ...rest } = props;
+  const { isSelected = false, labelMaxWidth = null, toggleOpen, children, className: classNameProp, ...rest } = props;
 
   const labelStyles = isSelected ? css.labelSelected : css.label;
   const labelMaxWidthMaybe = labelMaxWidth ? { maxWidth: `${labelMaxWidth}px` } : {};
@@ -23,7 +23,7 @@ const PopupOpenerButton = props => {
 
   return (
     <button
-      className={classNames(labelStyles, labelMaxWidthStyles)}
+      className={classNames(labelStyles, labelMaxWidthStyles, classNameProp)}
       style={labelMaxWidthMaybe}
       onClick={() => toggleOpen()}
       {...rest}

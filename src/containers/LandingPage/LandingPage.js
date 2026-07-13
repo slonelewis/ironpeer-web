@@ -429,21 +429,19 @@ export const LandingPageComponent = props => {
       </section>
 
       {/* ── MORE LISTINGS ── */}
-      {(hasRealListings ? recentReal.length > 0 : true) && (
-        <section className={css.listingsMore}>
-          <div className={css.sectionLabel}>More near you</div>
-          <div className={css.sectionTitle}>Recently listed</div>
-          <div className={css.listingsGrid}>
-            {hasRealListings
-              ? recentReal.map((listing, i) => (
-                  <RealListingCard key={listing.id.uuid} listing={listing} index={i + 6} />
-                ))
-              : RECENT_LISTINGS.map((listing, i) => (
-                  <MockListingCard key={i} listing={listing} />
-                ))}
-          </div>
-        </section>
-      )}
+      <section className={css.listingsMore}>
+        <div className={css.sectionLabel}>More near you</div>
+        <div className={css.sectionTitle}>Recently listed</div>
+        <div className={css.listingsGrid}>
+          {recentReal.length > 0
+            ? recentReal.map((listing, i) => (
+                <RealListingCard key={listing.id.uuid} listing={listing} index={i + 6} />
+              ))
+            : RECENT_LISTINGS.map((listing, i) => (
+                <MockListingCard key={i} listing={listing} />
+              ))}
+        </div>
+      </section>
 
       {/* ── HOW IT WORKS ── */}
       <section className={css.howItWorks}>

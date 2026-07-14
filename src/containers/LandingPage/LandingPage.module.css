@@ -618,6 +618,10 @@
     min-width: 0;
   }
 
+  .searchFieldLocation {
+    padding-left: 38px;
+  }
+
   .searchDivider {
     display: none;
   }

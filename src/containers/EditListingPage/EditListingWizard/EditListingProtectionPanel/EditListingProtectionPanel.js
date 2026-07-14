@@ -164,7 +164,8 @@ const EditListingProtectionPanel = props => {
     if (error) { setSubmitError(error); return; }
     setSubmitError(null);
 
-    const insuredData = hasInsurance !== false ? {
+    const isOptOut = !insuranceRequired && hasInsurance === false;
+    const insuredData = !isOptOut ? {
       hasInsurance: true,
       insuranceCarrier: insuranceCarrier.trim(),
       insurancePolicyNumber: policyNumber.trim(),
@@ -189,6 +190,12 @@ const EditListingProtectionPanel = props => {
     };
 
     onSubmit({
+      publicData: {
+        uninsuredOptOut: isOptOut || false,
+        securityHoldAmount: isOptOut
+          ? Math.round(parseFloat(replacementValue) * 0.1)
+          : null,
+      },
       privateData: {
         isRoadLegal,
         isTrailer: isRoadLegal ? (isTrailer || false) : false,
@@ -410,19 +417,28 @@ const EditListingProtectionPanel = props => {
                 Estimated replacement value *
               </label>
               <p style={{ fontSize: '0.8rem', color: '#888', margin: '-0.15rem 0 0.5rem' }}>
-                Must be under $3,000 to opt out. This amount will be held from renters as a security deposit.
+                Must be under $3,000 to opt out. Renters will be held <strong>10% of this value</strong> as a security deposit.
               </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
                 <span style={{ fontSize: '1rem', fontWeight: 600 }}>$</span>
                 <input type="number" min="0" max="3000" step="1" placeholder="e.g. 800"
                   value={replacementValue} onChange={e => setReplacementValue(e.target.value)}
                   style={{ width: '160px', padding: '0.5rem 0.75rem', border: '1px solid #ccc', borderRadius: '6px', fontSize: '0.9rem' }} />
               </div>
+              {replacementValue && !isNaN(parseFloat(replacementValue)) && parseFloat(replacementValue) <= 3000 && parseFloat(replacementValue) > 0 && (
+                <p style={{ fontSize: '0.85rem', color: '#2e7d32', marginBottom: '0.5rem', fontWeight: 500 }}>
+                  ✓ Renter security hold: <strong>${Math.round(parseFloat(replacementValue) * 0.1)}</strong> (10% of ${parseFloat(replacementValue).toLocaleString()})
+                </p>
+              )}
               {parseFloat(replacementValue) > 3000 && (
                 <p style={{ color: '#c62828', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
                   Equipment valued over $3,000 requires an insurance policy.
                 </p>
               )}
+
+              <div style={{ background: '#fff8f5', border: '1px solid #E8450A33', borderRadius: '6px', padding: '0.75rem', marginTop: '0.75rem', fontSize: '0.8rem', color: '#555' }}>
+                ⏳ <strong>Admin review required.</strong> Uninsured listings are reviewed before going live. IronPeer will verify your equipment photos match your declared value. Listings that appear undervalued may be denied.
+              </div>
 
               <div className={css.disclaimer} style={{ marginTop: '0.75rem' }}>
                 <label className={css.checkboxLabel} style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
@@ -432,7 +448,7 @@ const EditListingProtectionPanel = props => {
                   <span className={css.checkboxText}>
                     I understand that I am listing this equipment without an insurance policy.
                     In the event of damage, IronPeer will only collect the security hold from the renter
-                    (equal to my declared replacement value). I am solely responsible for any damage
+                    (10% of my declared replacement value). I am solely responsible for any damage
                     costs beyond that amount. IronPeer is not liable for uninsured losses.
                   </span>
                 </label>

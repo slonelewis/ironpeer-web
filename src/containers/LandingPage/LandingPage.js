@@ -524,8 +524,8 @@ export const LandingPageComponent = props => {
             <div className={css.trustLabel}>Free to list</div>
           </div>
           <div className={css.trustItem}>
-            <div className={css.trustValue}>$50K</div>
-            <div className={css.trustLabel}>Equipment protection per rental</div>
+            <div className={css.trustValue}>Deductible</div>
+            <div className={css.trustLabel}>Covered per rental</div>
           </div>
           <div className={css.trustItem}>
             <div className={css.trustValue}>24/7</div>

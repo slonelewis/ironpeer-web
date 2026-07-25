@@ -191,3 +191,13 @@
   background: #f3f4f6;
   border-color: #d1d5db;
 }
+
+.dayOffSchedule {
+  background: #f9fafb;
+  border-color: #f3f4f6;
+  cursor: not-allowed;
+}
+
+.dayOffSchedule .dayNum {
+  color: #e5e7eb;
+}

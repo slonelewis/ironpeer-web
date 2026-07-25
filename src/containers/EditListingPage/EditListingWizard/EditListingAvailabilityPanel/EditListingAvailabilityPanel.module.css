@@ -113,3 +113,175 @@
 .calendarWrapper {
   margin-bottom: 32px;
 }
+
+/* ── Sections ── */
+.section {
+  margin-bottom: 40px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.section:last-of-type {
+  border-bottom: none;
+}
+
+.sectionTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 4px 0;
+}
+
+.sectionDesc {
+  font-size: 0.88rem;
+  color: #6b7280;
+  margin: 0 0 20px 0;
+  line-height: 1.5;
+}
+
+/* ── Presets ── */
+.presets {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.presetBtn {
+  padding: 6px 16px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 20px;
+  background: #fff;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.presetBtn:hover {
+  border-color: #E8450A;
+  color: #E8450A;
+}
+
+.presetBtnActive {
+  border-color: #E8450A;
+  background: #E8450A;
+  color: #fff;
+}
+
+.presetBtnActive:hover {
+  background: #d03d09;
+  border-color: #d03d09;
+  color: #fff;
+}
+
+/* ── Day toggles ── */
+.dayToggles {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.dayToggle {
+  width: 52px;
+  height: 44px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.dayToggle:hover {
+  border-color: #E8450A;
+  color: #E8450A;
+}
+
+.dayToggleActive {
+  border-color: #E8450A;
+  background: #E8450A;
+  color: #fff;
+}
+
+.dayToggleActive:hover {
+  background: #d03d09;
+  border-color: #d03d09;
+  color: #fff;
+}
+
+/* ── Time section ── */
+.timeSection {
+  margin-top: 4px;
+}
+
+.allDayLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: #374151;
+  cursor: pointer;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.allDayCheckbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #E8450A;
+  cursor: pointer;
+}
+
+.timeRange {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.timeField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.timeLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.timeSelect {
+  padding: 8px 12px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #111827;
+  background: #fff;
+  cursor: pointer;
+  min-width: 160px;
+}
+
+.timeSelect:focus {
+  outline: none;
+  border-color: #E8450A;
+}
+
+.timeSep {
+  font-size: 0.9rem;
+  color: #9ca3af;
+  padding-bottom: 10px;
+}
+
+.nodays {
+  font-size: 0.85rem;
+  color: #ef4444;
+  margin-top: 8px;
+}

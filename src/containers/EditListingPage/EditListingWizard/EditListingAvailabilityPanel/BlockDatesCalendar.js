@@ -83,6 +83,7 @@ const BlockDatesCalendar = props => {
     onAddAvailabilityException,
     onDeleteAvailabilityException,
     onFetchExceptions,
+    scheduledDays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
   } = props;
 
   const today = new Date();
@@ -197,19 +198,22 @@ const BlockDatesCalendar = props => {
           const isToday = isTodayDate(date);
           const isBlocked = !!blockedMap[dateStr];
           const isToggling = !!toggling[dateStr];
+          const DAY_NAMES = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+          const isOffSchedule = scheduledDays.length < 7 && !scheduledDays.includes(DAY_NAMES[date.getDay()]);
 
           return (
             <button
               key={dateStr}
               type="button"
               className={classNames(css.day, {
-                [css.dayPast]: isPast,
-                [css.dayToday]: isToday,
+                [css.dayPast]: isPast || isOffSchedule,
+                [css.dayToday]: isToday && !isOffSchedule,
                 [css.dayBlocked]: isBlocked,
+                [css.dayOffSchedule]: isOffSchedule,
                 [css.dayToggling]: isToggling,
               })}
               onClick={() => handleDayClick(date)}
-              disabled={isPast || isToggling}
+              disabled={isPast || isToggling || isOffSchedule}
               aria-label={`${dateStr}${isBlocked ? ' (blocked)' : ''}`}
             >
               <span className={css.dayNum}>{date.getDate()}</span>

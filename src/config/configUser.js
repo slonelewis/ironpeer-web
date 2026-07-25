@@ -26,6 +26,7 @@ export const userTypes = [
     userType: 'hauler',
     label: 'Haul',
     description: 'I want to haul and transport equipment for owners and renters.',
+    comingSoon: true,
   },
 ];
 

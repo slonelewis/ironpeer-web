@@ -101,7 +101,7 @@ const buildAddRoleSteps = (newRoles = []) => {
 const ROLE_OPTIONS = [
   { value: 'renter', label: 'Rent', description: 'Rent locally owned equipment near you.' },
   { value: 'owner',  label: 'List', description: 'List your equipment and start earning.' },
-  { value: 'hauler', label: 'Haul', description: 'Haul equipment and trailers for others.' },
+  { value: 'hauler', label: 'Haul', description: 'Haul equipment and trailers for others.', comingSoon: true },
 ];
 
 const RoleSelectionStep = ({ selectedRoles, onChange, error }) => {
@@ -121,11 +121,14 @@ const RoleSelectionStep = ({ selectedRoles, onChange, error }) => {
         {ROLE_OPTIONS.map(role => (
           <div
             key={role.value}
-            className={classNames(css.roleCard, { [css.roleCardSelected]: selectedRoles.includes(role.value) })}
-            onClick={() => toggle(role.value)}
+            className={classNames(css.roleCard, {
+              [css.roleCardSelected]: selectedRoles.includes(role.value),
+              [css.roleCardDisabled]: role.comingSoon,
+            })}
+            onClick={() => !role.comingSoon && toggle(role.value)}
             role="button"
-            tabIndex={0}
-            onKeyDown={e => e.key === 'Enter' && toggle(role.value)}
+            tabIndex={role.comingSoon ? -1 : 0}
+            onKeyDown={e => !role.comingSoon && e.key === 'Enter' && toggle(role.value)}
           >
             <div className={css.roleCardCheck}>
               {selectedRoles.includes(role.value) ? (
@@ -138,7 +141,12 @@ const RoleSelectionStep = ({ selectedRoles, onChange, error }) => {
               )}
             </div>
             <div className={css.roleCardContent}>
-              <div className={css.roleCardLabel}>{role.label}</div>
+              <div className={css.roleCardLabel}>
+                {role.label}
+                {role.comingSoon && (
+                  <span className={css.comingSoonBadge}>Coming Soon</span>
+                )}
+              </div>
               <div className={css.roleCardDesc}>{role.description}</div>
             </div>
           </div>

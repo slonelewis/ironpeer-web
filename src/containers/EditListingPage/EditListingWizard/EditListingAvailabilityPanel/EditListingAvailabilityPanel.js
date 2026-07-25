@@ -175,20 +175,6 @@ const EditListingAvailabilityPanel = props => {
         <h4 className={css.sectionTitle}>Set your schedule</h4>
         <p className={css.sectionDesc}>Choose which days and hours your equipment is available for pickup.</p>
 
-        {/* Presets */}
-        <div className={css.presets}>
-          {PRESETS.map(p => (
-            <button
-              key={p.label}
-              type="button"
-              className={classNames(css.presetBtn, { [css.presetBtnActive]: isPresetActive(p.days) })}
-              onClick={() => applyPreset(p.days)}
-            >
-              {p.label}
-            </button>
-          ))}
-        </div>
-
         {/* Day toggles */}
         <div className={css.dayToggles}>
           {WEEKDAYS.map(day => (

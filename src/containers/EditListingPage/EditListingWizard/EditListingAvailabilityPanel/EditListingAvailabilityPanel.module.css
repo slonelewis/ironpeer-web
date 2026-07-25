@@ -102,3 +102,14 @@
 .error {
   color: var(--colorFail);
 }
+
+.description {
+  font-size: 0.95rem;
+  color: #4b5563;
+  margin: 0 0 24px 0;
+  line-height: 1.6;
+}
+
+.calendarWrapper {
+  margin-bottom: 32px;
+}

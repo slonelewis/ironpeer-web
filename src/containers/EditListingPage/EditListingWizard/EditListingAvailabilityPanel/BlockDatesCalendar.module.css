@@ -1,0 +1,193 @@
+.calendar {
+  max-width: 480px;
+  margin: 0 auto;
+  font-family: inherit;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.monthLabel {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.navBtn {
+  background: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.navBtn:hover:not(:disabled) {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.navBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ── Week row ── */
+.weekRow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.weekLabel {
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 4px 0;
+}
+
+/* ── Grid ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  transition: opacity 0.2s;
+}
+
+.grid.loading {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.empty {
+  /* spacer cell */
+}
+
+/* ── Day button ── */
+.day {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+  padding: 0;
+  min-width: 0;
+}
+
+.day:hover:not(:disabled) {
+  border-color: #E8450A;
+  background: #fff8f6;
+}
+
+.day:disabled {
+  cursor: not-allowed;
+}
+
+.dayNum {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #111827;
+  line-height: 1;
+}
+
+/* Past dates */
+.dayPast .dayNum {
+  color: #d1d5db;
+}
+
+.dayPast {
+  background: #fafafa;
+  border-color: #f3f4f6;
+}
+
+/* Today */
+.dayToday {
+  border-color: #E8450A;
+  border-width: 2px;
+}
+
+.dayToday .dayNum {
+  color: #E8450A;
+  font-weight: 700;
+}
+
+/* Blocked */
+.dayBlocked {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.dayBlocked .dayNum {
+  color: #9ca3af;
+  text-decoration: line-through;
+}
+
+.blockX {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-size: 0.55rem;
+  color: #9ca3af;
+  line-height: 1;
+}
+
+/* Toggling (spinner state) */
+.dayToggling {
+  opacity: 0.5;
+}
+
+/* ── Legend ── */
+.legend {
+  display: flex;
+  gap: 20px;
+  margin-top: 16px;
+  justify-content: center;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.legendDot {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  border: 1.5px solid;
+  flex-shrink: 0;
+}
+
+.legendAvailable {
+  background: #fff;
+  border-color: #e5e7eb;
+}
+
+.legendBlocked {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}

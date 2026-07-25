@@ -162,7 +162,7 @@ const EditListingWizardTab = props => {
       .then(r => {
         // In Availability tab, the submitted data (plan) is inside a modal
         // We don't redirect provider immediately after plan is set
-        if (isNewListingFlow && tab !== AVAILABILITY) {
+        if (isNewListingFlow && tab !== AVAILABILITY && tab !== INSPECTION) {
           const listingId = r.data.data.id;
           automaticRedirectsForNewListingFlow(tab, listingId);
         }

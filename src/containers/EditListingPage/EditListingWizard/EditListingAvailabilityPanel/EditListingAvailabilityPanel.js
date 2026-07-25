@@ -39,7 +39,7 @@ const defaultTimeZone = () =>
 const parsePlan = availabilityPlan => {
   const entries = availabilityPlan?.entries || [];
   if (!entries.length) {
-    return { selectedDays: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'], allDay: true, startTime: '08:00', endTime: '00:00' };
+    return { selectedDays: [], allDay: true, startTime: '08:00', endTime: '00:00' };
   }
   const activeDays = [...new Set(entries.map(e => e.dayOfWeek))];
   const first = entries[0];

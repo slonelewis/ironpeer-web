@@ -56,6 +56,7 @@ import EditListingWizardTab, {
   DELIVERY,
   LOCATION,
   AVAILABILITY,
+  INSPECTION,
   PHOTOS,
   PROTECTION,
   STYLE,
@@ -99,7 +100,7 @@ const tabsForListingType = (processName, listingTypeConfig) => {
   // Note 3: The first tab creates a draft listing and title is mandatory attribute for it.
   //         Details tab asks for "title" and is therefore the first tab in the wizard flow.
   const tabs = {
-    ['default-booking']: [DETAILS, PRICING, ...locationMaybe, DELIVERY, ...styleOrPhotosTab, AVAILABILITY, PROTECTION],
+    ['default-booking']: [DETAILS, PRICING, ...locationMaybe, DELIVERY, ...styleOrPhotosTab, AVAILABILITY, INSPECTION, PROTECTION],
     ['default-purchase']: [DETAILS, PRICING_AND_STOCK, ...deliveryMaybe, ...styleOrPhotosTab],
     ['default-negotiation']: [DETAILS, ...locationMaybe, ...pricingMaybe, ...styleOrPhotosTab],
     ['default-inquiry']: [DETAILS, ...locationMaybe, ...pricingMaybe, ...styleOrPhotosTab],
@@ -146,6 +147,9 @@ const tabLabelAndSubmit = (intl, tab, isNewListingFlow, isPriceDisabled, process
   } else if (tab === AVAILABILITY) {
     labelKey = 'EditListingWizard.tabLabelAvailability';
     submitButtonKey = `EditListingWizard.${processNameString}${newOrEdit}.saveAvailability`;
+  } else if (tab === INSPECTION) {
+    labelKey = 'EditListingWizard.tabLabelInspection';
+    submitButtonKey = `EditListingWizard.${processNameString}${newOrEdit}.saveInspection`;
   } else if (tab === PHOTOS) {
     labelKey = 'EditListingWizard.tabLabelPhotos';
     submitButtonKey = `EditListingWizard.${processNameString}${newOrEdit}.savePhotos`;

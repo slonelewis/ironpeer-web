@@ -18,6 +18,7 @@ import EditListingPhotosPanel from './EditListingPhotosPanel/EditListingPhotosPa
 import EditListingPricingPanel from './EditListingPricingPanel/EditListingPricingPanel';
 import EditListingPricingAndStockPanel from './EditListingPricingAndStockPanel/EditListingPricingAndStockPanel';
 import EditListingStylePanel from './EditListingStylePanel/EditListingStylePanel';
+import EditListingInspectionPanel from './EditListingInspectionPanel/EditListingInspectionPanel';
 import EditListingProtectionPanel from './EditListingProtectionPanel/EditListingProtectionPanel';
 
 import css from './EditListingWizardTab.module.css';
@@ -30,6 +31,7 @@ export const LOCATION = 'location';
 export const AVAILABILITY = 'availability';
 export const PHOTOS = 'photos';
 export const STYLE = 'style';
+export const INSPECTION = 'inspection';
 export const PROTECTION = 'protection';
 
 // EditListingWizardTab component supports these tabs
@@ -41,6 +43,7 @@ export const SUPPORTED_TABS = [
   DELIVERY,
   LOCATION,
   AVAILABILITY,
+  INSPECTION,
   PHOTOS,
   STYLE,
 ];
@@ -281,6 +284,28 @@ const EditListingWizardTab = props => {
           {...panelProps(STYLE)}
           listingImageConfig={config.layout.listingImage}
           images={images}
+        />
+      );
+    }
+    case INSPECTION: {
+      return (
+        <EditListingInspectionPanel
+          {...panelProps(INSPECTION)}
+          onNextTab={() => {
+            const isLastTab = tab === marketplaceTabs[marketplaceTabs.length - 1];
+            if (isLastTab) {
+              handlePublishListing(listing.id);
+            } else {
+              redirectAfterDraftUpdate(
+                listing.id,
+                params,
+                tab,
+                marketplaceTabs,
+                history,
+                routeConfiguration
+              );
+            }
+          }}
         />
       );
     }

@@ -90,8 +90,8 @@ const EditListingInspectionPanel = props => {
     rootClassName,
     listing,
     onSubmit,
-    onNextTab,
     submitButtonText,
+    updateInProgress,
     errors,
     updatePageTitle: UpdatePageTitle,
   } = props;
@@ -103,7 +103,6 @@ const EditListingInspectionPanel = props => {
 
   const existingConfig = listingAttributes?.publicData?.inspectionConfig;
   const [config, setConfig] = useState(() => parseConfig(existingConfig));
-  const [saveInProgress, setSaveInProgress] = useState(false);
   const [saveError, setSaveError] = useState(null);
   const [editingPhotoId, setEditingPhotoId] = useState(null);
   const [newCustomItemText, setNewCustomItemText] = useState('');
@@ -156,17 +155,8 @@ const EditListingInspectionPanel = props => {
 
   // ── Save ──
 
-  const handleSave = async () => {
-    setSaveInProgress(true);
-    setSaveError(null);
-    try {
-      await onSubmit({ publicData: { inspectionConfig: config } });
-      if (!isPublished) onNextTab();
-    } catch (e) {
-      setSaveError('Could not save inspection settings. Please try again.');
-    } finally {
-      setSaveInProgress(false);
-    }
+  const handleSave = () => {
+    onSubmit({ publicData: { inspectionConfig: config } });
   };
 
   const panelTitle = isPublished
@@ -336,8 +326,8 @@ const EditListingInspectionPanel = props => {
       <Button
         className={css.submitBtn}
         onClick={handleSave}
-        inProgress={saveInProgress}
-        disabled={saveInProgress}
+        inProgress={updateInProgress}
+        disabled={updateInProgress}
       >
         {isPublished ? 'Save changes' : submitButtonText}
       </Button>

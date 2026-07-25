@@ -283,6 +283,10 @@ const tabCompleted = (tab, listing, config) => {
       return !!(geolocation && publicData?.location?.address);
     case AVAILABILITY:
       return !!availabilityPlan;
+    case INSPECTION:
+      // Considered complete once the owner has visited the tab and saved (inspectionConfig set),
+      // or if they click Next without changing anything (default config saved).
+      return true;
     case PHOTOS:
       return images && images.length >= 1;
     case STYLE:

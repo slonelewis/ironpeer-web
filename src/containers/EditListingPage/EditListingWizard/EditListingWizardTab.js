@@ -162,7 +162,7 @@ const EditListingWizardTab = props => {
       .then(r => {
         // In Availability tab, the submitted data (plan) is inside a modal
         // We don't redirect provider immediately after plan is set
-        if (isNewListingFlow && tab !== AVAILABILITY && tab !== INSPECTION) {
+        if (isNewListingFlow && tab !== AVAILABILITY) {
           const listingId = r.data.data.id;
           automaticRedirectsForNewListingFlow(tab, listingId);
         }
@@ -288,26 +288,7 @@ const EditListingWizardTab = props => {
       );
     }
     case INSPECTION: {
-      return (
-        <EditListingInspectionPanel
-          {...panelProps(INSPECTION)}
-          onNextTab={() => {
-            const isLastTab = tab === marketplaceTabs[marketplaceTabs.length - 1];
-            if (isLastTab) {
-              handlePublishListing(listing.id);
-            } else {
-              redirectAfterDraftUpdate(
-                listing.id,
-                params,
-                tab,
-                marketplaceTabs,
-                history,
-                routeConfiguration
-              );
-            }
-          }}
-        />
-      );
+      return <EditListingInspectionPanel {...panelProps(INSPECTION)} />;
     }
     case PROTECTION: {
       return <EditListingProtectionPanel {...panelProps(PROTECTION)} />;

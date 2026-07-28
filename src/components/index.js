@@ -12,6 +12,7 @@
 import loadable from '@loadable/component';
 
 // Icons
+export { default as IdentityVerificationModal } from './IdentityVerificationModal/IdentityVerificationModal';
 export { default as IconAdd } from './IconAdd/IconAdd';
 export { default as IconAlert } from './IconAlert/IconAlert';
 export { default as IconArrowHead } from './IconArrowHead/IconArrowHead';

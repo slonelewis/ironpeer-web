@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 
 // Import contexts and util modules
 import { FormattedMessage, intlShape } from '../../util/reactIntl';
@@ -21,7 +21,7 @@ import {
 } from '../../transactions/transaction';
 
 // Import shared components
-import { H3, H4, NamedLink, OrderBreakdown, Page, TopbarSimplified } from '../../components';
+import { H3, H4, IdentityVerificationModal, NamedLink, OrderBreakdown, Page, TopbarSimplified } from '../../components';
 
 import {
   bookingDatesMaybe,
@@ -419,6 +419,20 @@ export const CheckoutPageWithPayment = props => {
   const [stripe, setStripe] = useState(null);
   const [deliveryAddress, setDeliveryAddress] = useState({});
 
+  // ── Identity verification gate ──────────────────────────────────────────
+  // Renters must verify their identity before completing their first booking.
+  // We read identityVerified from Sharetribe user metadata (set by the
+  // stripe-identity-webhook after a successful Stripe Identity session).
+  // identityOverride is set optimistically after the Stripe UI returns success,
+  // so the payment form appears immediately without waiting for the webhook.
+  //
+  // TODO (future): road-legal equipment listings should also surface this gate
+  // on the ListingPage before the booking panel is shown.
+  const [identityOverride, setIdentityOverride] = useState(false);
+  const handleIdentityVerified = useCallback(() => {
+    setIdentityOverride(true);
+  }, []);
+
   const {
     scrollingDisabled,
     speculateTransactionError,
@@ -558,6 +572,12 @@ export const CheckoutPageWithPayment = props => {
   // This function validates the currency against the transaction process requirements and
   // ensures it is supported by Stripe, as indicated by the 'stripe' parameter.
   // If using a transaction process without any stripe actions, leave out the 'stripe' parameter.
+  // Resolve identity-verified status:
+  //   1. Check Sharetribe user metadata (set by webhook after verified event)
+  //   2. Fall back to optimistic override set after Stripe Identity UI success
+  const identityVerified =
+    currentUser?.attributes?.metadata?.identityVerified === true || identityOverride;
+
   const currency =
     existingTransaction?.attributes?.payinTotal?.currency || listing.attributes.price?.currency;
   const isStripeCompatibleCurrency = isValidCurrencyForTransactionProcess(
@@ -622,7 +642,18 @@ export const CheckoutPageWithPayment = props => {
             {errorMessages.retrievePaymentIntentErrorMessage}
             {errorMessages.paymentExpiredMessage}
 
-            {showPaymentForm ? (
+            {/* ── Identity verification gate ── */}
+            {/* Show identity modal if user is loaded but not yet verified.
+                This is additive — it does not affect error states or the
+                incompatible-currency path above. */}
+            {currentUser && !identityVerified ? (
+              <IdentityVerificationModal
+                stripePublishableKey={config.stripe.publishableKey}
+                onVerified={handleIdentityVerified}
+              />
+            ) : null}
+
+            {showPaymentForm && identityVerified ? (
               <StripePaymentForm
                 className={css.paymentForm}
                 onSubmit={values =>

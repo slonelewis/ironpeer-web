@@ -216,6 +216,20 @@ app.use(
 );
 app.use(cookieParser());
 
+// Raw body saver for Stripe webhook signature verification on the main server.
+// Must be registered BEFORE any other body-parsing middleware, so the raw
+// buffer is preserved on req.rawBody for the stripe-identity-webhook route only.
+app.use('/api/stripe-identity-webhook', (req, res, next) => {
+  let data = '';
+  req.setEncoding('utf8');
+  req.on('data', chunk => { data += chunk; });
+  req.on('end', () => {
+    req.rawBody = Buffer.from(data, 'utf8'); // Store as Buffer for Stripe.webhooks.constructEvent
+    req.body = JSON.parse(data); // Parse as JSON for subsequent middleware if any, but constructEvent uses rawBody
+    next();
+  });
+});
+
 // We don't serve favicon.ico from root. PNG images are used instead for icons through link elements.
 app.get('/favicon.ico', (req, res) => {
   res.status(404).send('favicon.ico not found.');

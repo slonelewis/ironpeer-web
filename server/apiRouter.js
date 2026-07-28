@@ -17,6 +17,8 @@ const initiatePrivileged = require('./api/initiate-privileged');
 const transitionPrivileged = require('./api/transition-privileged');
 const deleteAccount = require('./api/delete-account');
 const rentalProtectedData = require('./api/rental-protected-data');
+const createVerificationSession = require('./api/create-verification-session');
+const stripeIdentityWebhook = require('./api/stripe-identity-webhook');
 
 const createUserWithIdp = require('./api/auth/createUserWithIdp');
 
@@ -58,6 +60,10 @@ router.post('/initiate-privileged', initiatePrivileged);
 router.post('/transition-privileged', transitionPrivileged);
 router.post('/delete-account', deleteAccount);
 router.post('/rental-protected-data', rentalProtectedData);
+
+// Stripe Identity endpoints
+router.post('/create-verification-session', createVerificationSession);
+router.post('/stripe-identity-webhook', stripeIdentityWebhook);
 
 // Create user with identity provider (e.g. Facebook or Google)
 // This endpoint is called to create a new user after user has confirmed

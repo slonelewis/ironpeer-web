@@ -152,6 +152,26 @@ export const deleteUserAccount = body => {
   return post('/api/delete-account', body);
 };
 
+// Create a Stripe Identity VerificationSession.
+// Returns { clientSecret, sessionId } from the server.
+// The clientSecret is passed to stripe.verifyIdentity() in the browser.
+export const createVerificationSession = () => {
+  return window
+    .fetch('/api/create-verification-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+    })
+    .then(res => {
+      if (!res.ok) {
+        return res.json().then(err =>
+          Promise.reject(new Error(err.error || 'Failed to create verification session'))
+        );
+      }
+      return res.json();
+    });
+};
+
 // Save IronPeer rental flow data (check-in, check-out, mid-rental issues)
 // to transaction metadata via the server-side Integration API.
 //

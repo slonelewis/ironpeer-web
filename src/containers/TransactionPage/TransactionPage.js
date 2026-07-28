@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import classNames from 'classnames';
 
 import appSettings from '../../config/settings.js';
@@ -846,7 +846,10 @@ export const TransactionPageComponent = props => {
   const bookingStart = booking?.attributes?.start;
   const bookingEnd = booking?.attributes?.end;
   const now = new Date();
-  const rentalHasStarted = bookingStart && new Date(bookingStart) <= now;
+  // TEST BYPASS: ?forceCheckin=1 skips the date gate so we can test check-in before rental start
+  const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+  const forceCheckin = searchParams.get('forceCheckin') === '1';
+  const rentalHasStarted = forceCheckin || (bookingStart && new Date(bookingStart) <= now);
   const hoursUntilReturn = bookingEnd ? (new Date(bookingEnd) - now) / (1000 * 60 * 60) : null;
   const withinReturnWindow = hoursUntilReturn !== null && hoursUntilReturn <= 24;
 

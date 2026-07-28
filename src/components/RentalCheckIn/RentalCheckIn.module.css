@@ -240,3 +240,87 @@
   margin: 12px 0 0 0;
   text-align: right;
 }
+
+/* Pre-existing issue flag */
+.preExistingSection {
+  margin-bottom: 20px;
+}
+
+.preExistingToggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: 1px solid var(--colorGrey300);
+  border-radius: 6px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--colorGrey700);
+  font-weight: var(--fontWeightMedium);
+  width: 100%;
+  text-align: left;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+
+  &:hover {
+    border-color: var(--colorAttentionDark);
+    background-color: #fffbf0;
+  }
+}
+
+.preExistingToggleActive {
+  border-color: var(--colorAttentionDark);
+  background-color: #fffbf0;
+  color: var(--colorAttentionDark);
+}
+
+.preExistingIcon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.preExistingForm {
+  margin-top: 12px;
+  padding: 14px;
+  background-color: #fffbf0;
+  border: 1px solid var(--colorAttentionDark);
+  border-radius: 6px;
+}
+
+.preExistingHint {
+  font-size: 12px;
+  color: var(--colorGrey600);
+  margin: 8px 0 0 0;
+  line-height: 1.5;
+}
+
+/* Equipment confirmation checkbox */
+.checkboxRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  accent-color: var(--marketplaceColor);
+  cursor: pointer;
+}
+
+.checkboxLabel {
+  font-size: 14px;
+  color: var(--colorGrey800);
+  line-height: 1.4;
+  font-weight: var(--fontWeightMedium);
+}
+
+.confirmRequirement {
+  font-size: 13px;
+  color: var(--colorAttentionDark);
+  margin: 0 0 12px 0;
+}

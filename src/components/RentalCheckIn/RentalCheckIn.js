@@ -15,7 +15,7 @@ const PHOTO_SLOTS = [
  *
  * @component
  * @param {Object} props
- * @param {Function} props.onConfirmCheckIn - Called with { photos, note } when confirmed
+ * @param {Function} props.onConfirmCheckIn - Called with { photos, note, preExistingIssue, equipmentConfirmed }
  * @param {boolean} [props.inProgress] - Submit in progress
  * @param {string} [props.error] - Submit error message
  * @param {Object} [props.existingCheckIn] - Already-submitted check-in data (read-only mode)
@@ -26,6 +26,9 @@ const RentalCheckIn = props => {
 
   const [photos, setPhotos] = useState({ front: null, back: null, left: null, right: null });
   const [note, setNote] = useState('');
+  const [equipmentConfirmed, setEquipmentConfirmed] = useState(false);
+  const [showPreExistingForm, setShowPreExistingForm] = useState(false);
+  const [preExistingIssue, setPreExistingIssue] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const fileInputRefs = useRef({});
 
@@ -51,14 +54,20 @@ const RentalCheckIn = props => {
   };
 
   const allPhotosProvided = PHOTO_SLOTS.every(slot => photos[slot.id] !== null);
+  const canSubmit = allPhotosProvided && equipmentConfirmed && !inProgress;
 
   const handleSubmit = () => {
-    if (!allPhotosProvided || inProgress) return;
+    if (!canSubmit) return;
     const photoData = PHOTO_SLOTS.reduce((acc, slot) => {
       acc[slot.id] = { name: photos[slot.id].name, url: photos[slot.id].url };
       return acc;
     }, {});
-    onConfirmCheckIn({ photos: photoData, note });
+    onConfirmCheckIn({
+      photos: photoData,
+      note,
+      preExistingIssue: showPreExistingForm && preExistingIssue.trim() ? preExistingIssue.trim() : null,
+      equipmentConfirmed: true,
+    });
     setSubmitted(true);
   };
 
@@ -187,15 +196,67 @@ const RentalCheckIn = props => {
           />
         </div>
 
+        {/* Pre-existing issue flag */}
+        <div className={css.preExistingSection}>
+          <button
+            type="button"
+            className={classNames(css.preExistingToggle, {
+              [css.preExistingToggleActive]: showPreExistingForm,
+            })}
+            onClick={() => setShowPreExistingForm(v => !v)}
+          >
+            <span className={css.preExistingIcon}>⚠</span>
+            <span>{showPreExistingForm ? 'Cancel pre-existing issue flag' : 'Flag a pre-existing issue'}</span>
+          </button>
+
+          {showPreExistingForm && (
+            <div className={css.preExistingForm}>
+              <label htmlFor="preExistingIssue" className={css.noteLabel}>
+                Describe the pre-existing issue
+              </label>
+              <textarea
+                id="preExistingIssue"
+                className={css.noteTextarea}
+                value={preExistingIssue}
+                onChange={e => setPreExistingIssue(e.target.value)}
+                placeholder="This will be noted before your rental begins..."
+                rows={3}
+              />
+              <p className={css.preExistingHint}>
+                This documents an issue that existed before your rental, protecting you from being held responsible.
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Equipment confirmation checkbox — required to submit */}
+        <label className={css.checkboxRow}>
+          <input
+            type="checkbox"
+            className={css.checkbox}
+            checked={equipmentConfirmed}
+            onChange={e => setEquipmentConfirmed(e.target.checked)}
+          />
+          <span className={css.checkboxLabel}>
+            I confirm the equipment matches the listing description
+          </span>
+        </label>
+
+        {!equipmentConfirmed && allPhotosProvided && (
+          <p className={css.confirmRequirement}>
+            Please confirm the equipment matches the listing before proceeding
+          </p>
+        )}
+
         {error && <p className={css.errorMessage}>{error}</p>}
 
         <button
           type="button"
           className={classNames(css.confirmButton, {
-            [css.confirmButtonDisabled]: !allPhotosProvided || inProgress,
+            [css.confirmButtonDisabled]: !canSubmit,
           })}
           onClick={handleSubmit}
-          disabled={!allPhotosProvided || inProgress}
+          disabled={!canSubmit}
         >
           {inProgress ? 'Saving...' : 'Confirm Pickup'}
         </button>

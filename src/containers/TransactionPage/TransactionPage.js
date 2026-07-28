@@ -86,11 +86,13 @@ import {
   saveRentalCheckOut,
   saveReleaseDeposit,
   saveReportDamage,
+  saveRentalMidIssue,
 } from './TransactionPage.duck';
 
 import RentalCheckIn from '../../components/RentalCheckIn/RentalCheckIn';
 import RentalCheckOut from '../../components/RentalCheckOut/RentalCheckOut';
 import RentalDamageReview from '../../components/RentalDamageReview/RentalDamageReview';
+import MidRentalIssueReport from '../../components/MidRentalIssueReport/MidRentalIssueReport';
 import css from './TransactionPage.module.css';
 
 const MAX_MOBILE_SCREEN_WIDTH = 1023;
@@ -364,6 +366,7 @@ export const TransactionPageComponent = props => {
     fileUploadsDisabled,
     onSaveCheckIn,
     onSaveCheckOut,
+    onSaveMidIssue,
     onReleaseDeposit,
     onReportDamage,
     rentalFlowInProgress,
@@ -819,15 +822,26 @@ export const TransactionPageComponent = props => {
   // ── Rental Flow ───────────────────────────────────────────────────────────
   // Determine which rental flow component to show, if any.
   // Only relevant for booking-process transactions (rentals).
+  //
+  // Rental flow data is saved in transaction.attributes.metadata via the
+  // Integration API (see /api/rental-protected-data). We also fall back to
+  // protectedData for backwards-compat with any previously saved records.
+  const txMetadata = transaction?.attributes?.metadata || {};
   const txProtectedData = transaction?.attributes?.protectedData || {};
+  const rentalData = { ...txProtectedData, ...txMetadata }; // metadata wins over protectedData
   const {
     checkInPhotos,
     checkInNote,
+    checkInPreExistingIssue,
+    checkInEquipmentConfirmed,
     checkOutPhotos,
     checkOutNote,
+    checkOutDamageReported,
+    checkOutDamageDescription,
     depositReleased,
     damageDispute,
-  } = txProtectedData;
+    midRentalIssues,
+  } = rentalData;
 
   const bookingStart = booking?.attributes?.start;
   const bookingEnd = booking?.attributes?.end;
@@ -836,43 +850,77 @@ export const TransactionPageComponent = props => {
   const hoursUntilReturn = bookingEnd ? (new Date(bookingEnd) - now) / (1000 * 60 * 60) : null;
   const withinReturnWindow = hoursUntilReturn !== null && hoursUntilReturn <= 24;
 
+  // Pre-fill checkout damage from a mid-rental damage report (if any)
+  const midRentalDamageReport = Array.isArray(midRentalIssues)
+    ? midRentalIssues.find(i => i.issueType === 'damage')
+    : null;
+  const preFilledDamage = midRentalDamageReport
+    ? { damageReported: true, description: midRentalDamageReport.description }
+    : null;
+
   let rentalFlowSection = null;
   if (isDataAvailable && isBookingProcess(processName)) {
     if (isCustomerRole && rentalHasStarted && !checkInPhotos) {
       // Renter needs to document pickup
       rentalFlowSection = (
         <RentalCheckIn
-          onConfirmCheckIn={({ photos, note }) =>
-            onSaveCheckIn(transaction.id, photos, note)
+          onConfirmCheckIn={({ photos, note, preExistingIssue, equipmentConfirmed }) =>
+            onSaveCheckIn(transaction.id, photos, note, preExistingIssue, equipmentConfirmed)
           }
           inProgress={rentalFlowInProgress}
           error={rentalFlowError?.message}
         />
       );
     } else if (isCustomerRole && checkInPhotos && !checkOutPhotos) {
-      // Show completed check-in (read-only) always once check-in is done
+      // Rental in progress: show check-in summary + mid-rental issue reporter
       const showCheckOut = withinReturnWindow;
       if (showCheckOut) {
         // Renter needs to document return
         rentalFlowSection = (
-          <RentalCheckOut
-            onConfirmReturn={({ photos, note }) =>
-              onSaveCheckOut(transaction.id, photos, note)
-            }
-            inProgress={rentalFlowInProgress}
-            error={rentalFlowError?.message}
-          />
+          <>
+            <RentalCheckIn
+              existingCheckIn={{
+                photos: checkInPhotos,
+                note: checkInNote,
+                confirmedAt: rentalData.checkInConfirmedAt,
+              }}
+            />
+            <RentalCheckOut
+              onConfirmReturn={({ photos, damageReported, damageDescription }) =>
+                onSaveCheckOut(transaction.id, photos, damageReported, damageDescription)
+              }
+              inProgress={rentalFlowInProgress}
+              error={rentalFlowError?.message}
+              preFilledDamage={preFilledDamage}
+            />
+          </>
         );
       } else {
-        // Show completed check-in summary (return window not yet open)
+        // Show completed check-in summary + mid-rental issue reporter (return window not yet open)
         rentalFlowSection = (
-          <RentalCheckIn
-            existingCheckIn={{
-              photos: checkInPhotos,
-              note: checkInNote,
-              confirmedAt: txProtectedData.checkInConfirmedAt,
-            }}
-          />
+          <>
+            <RentalCheckIn
+              existingCheckIn={{
+                photos: checkInPhotos,
+                note: checkInNote,
+                confirmedAt: rentalData.checkInConfirmedAt,
+              }}
+            />
+            <MidRentalIssueReport
+              onReportIssue={({ issueType, description, photoUrl }) =>
+                onSaveMidIssue(
+                  transaction.id,
+                  issueType,
+                  description,
+                  photoUrl,
+                  midRentalIssues || []
+                )
+              }
+              inProgress={rentalFlowInProgress}
+              error={rentalFlowError?.message}
+              existingIssues={midRentalIssues || []}
+            />
+          </>
         );
       }
     } else if (isCustomerRole && checkInPhotos && checkOutPhotos) {
@@ -882,7 +930,7 @@ export const TransactionPageComponent = props => {
           existingCheckOut={{
             photos: checkOutPhotos,
             note: checkOutNote,
-            confirmedAt: txProtectedData.checkOutConfirmedAt,
+            confirmedAt: rentalData.checkOutConfirmedAt,
           }}
         />
       );
@@ -1296,11 +1344,18 @@ const TransactionPage = props => {
     [dispatch]
   );
   const onSaveCheckIn = useCallback(
-    (txId, photos, note) => dispatch(saveRentalCheckIn(txId, photos, note)),
+    (txId, photos, note, preExistingIssue, equipmentConfirmed) =>
+      dispatch(saveRentalCheckIn(txId, photos, note, preExistingIssue, equipmentConfirmed)),
     [dispatch]
   );
   const onSaveCheckOut = useCallback(
-    (txId, photos, note) => dispatch(saveRentalCheckOut(txId, photos, note)),
+    (txId, photos, damageReported, damageDescription) =>
+      dispatch(saveRentalCheckOut(txId, photos, damageReported, damageDescription)),
+    [dispatch]
+  );
+  const onSaveMidIssue = useCallback(
+    (txId, issueType, description, photoUrl, existingIssues) =>
+      dispatch(saveRentalMidIssue(txId, issueType, description, photoUrl, existingIssues)),
     [dispatch]
   );
   const onReleaseDeposit = useCallback(
@@ -1353,6 +1408,7 @@ const TransactionPage = props => {
       onDownloadFile={onDownloadFile}
       onSaveCheckIn={onSaveCheckIn}
       onSaveCheckOut={onSaveCheckOut}
+      onSaveMidIssue={onSaveMidIssue}
       onReleaseDeposit={onReleaseDeposit}
       onReportDamage={onReportDamage}
       rentalFlowInProgress={rentalFlowInProgress}

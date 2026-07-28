@@ -11,7 +11,7 @@ import {
   stringifyDateToISO8601,
 } from '../../util/dates';
 import { isTransactionsTransitionInvalidTransition, storableError } from '../../util/errors';
-import { transactionLineItems, transitionPrivileged } from '../../util/api';
+import { transactionLineItems, transitionPrivileged, updateRentalFlowData } from '../../util/api';
 import * as log from '../../util/log';
 import {
   updatedEntities,
@@ -917,27 +917,35 @@ export const fetchTransactionLineItems = ({ orderData, listingId, isOwnListing }
 };
 
 // ================ Rental Flow ================ //
-// These thunks save check-in/check-out photos and damage review data to transaction protectedData.
-// They use sdk.transactions.transition with IronPeer-specific transition names.
-// Ensure these transitions exist in your Sharetribe process graph.
+// These thunks save check-in/check-out photos and damage review data to transaction metadata
+// via the server-side Integration API endpoint (/api/rental-protected-data).
+// No custom transitions are required in the Sharetribe process graph.
 
+// Legacy transition name exports kept for reference / future use
 export const TRANSITION_CHECK_IN = 'transition/check-in';
 export const TRANSITION_CHECK_OUT = 'transition/check-out';
 export const TRANSITION_RELEASE_DEPOSIT = 'transition/release-deposit';
 export const TRANSITION_REPORT_DAMAGE = 'transition/report-damage';
+export const TRANSITION_REPORT_ISSUE = 'transition/report-issue';
 
-const saveRentalFlowPayloadCreator = async ({ txId, transitionName, protectedDataParams }, thunkAPI) => {
+/**
+ * Core thunk: saves arbitrary metadata to a transaction via the server-side
+ * Integration API endpoint, then re-fetches the transaction from the
+ * Marketplace SDK so the Redux store stays current.
+ */
+const saveRentalFlowPayloadCreator = async ({ txId, metadata }, thunkAPI) => {
   const sdk = thunkAPI.extra;
+  const txIdStr = txId?.uuid || txId;
+
   try {
-    const params = { protectedData: protectedDataParams };
-    const response = await sdk.transactions.transition(
-      { id: txId, transition: transitionName, params },
-      { expand: true }
-    );
-    thunkAPI.dispatch(addMarketplaceEntities(response));
-    return response;
+    await updateRentalFlowData(txIdStr, metadata);
+
+    // Re-fetch the transaction so the Redux store reflects the new metadata.
+    const txResponse = await sdk.transactions.show({ id: txId }, { expand: true });
+    thunkAPI.dispatch(addMarketplaceEntities(txResponse));
+    return txResponse;
   } catch (e) {
-    log.error(e, `rental-flow-transition-failed`, { transitionName });
+    log.error(e, 'rental-flow-save-failed', { txId: txIdStr });
     return thunkAPI.rejectWithValue(storableError(e));
   }
 };
@@ -948,40 +956,45 @@ export const saveRentalFlowThunk = createAsyncThunk(
 );
 
 /**
- * Save check-in photos and note. Called when renter confirms pickup.
+ * Save check-in data. Called when renter confirms pickup.
  * @param {string|UUID} txId
  * @param {Object} photos - { front, back, left, right } keyed photo data
  * @param {string} note - optional damage note
+ * @param {string|null} preExistingIssue - optional pre-existing issue description
+ * @param {boolean} equipmentConfirmed - whether renter confirmed equipment matches listing
  */
-export const saveRentalCheckIn = (txId, photos, note) => dispatch => {
+export const saveRentalCheckIn = (txId, photos, note, preExistingIssue, equipmentConfirmed) => dispatch => {
   return dispatch(
     saveRentalFlowThunk({
       txId,
-      transitionName: TRANSITION_CHECK_IN,
-      protectedDataParams: {
+      metadata: {
         checkInPhotos: photos,
         checkInNote: note || '',
         checkInConfirmedAt: new Date().toISOString(),
+        checkInPreExistingIssue: preExistingIssue || null,
+        checkInEquipmentConfirmed: equipmentConfirmed !== false,
       },
     })
   );
 };
 
 /**
- * Save check-out photos and note. Called when renter confirms return.
+ * Save check-out data. Called when renter confirms return.
  * @param {string|UUID} txId
  * @param {Object} photos - { front, back, left, right } keyed photo data
- * @param {string} note - optional damage note
+ * @param {boolean} damageReported - whether renter is reporting damage
+ * @param {string|null} damageDescription - description of damage (if any)
  */
-export const saveRentalCheckOut = (txId, photos, note) => dispatch => {
+export const saveRentalCheckOut = (txId, photos, damageReported, damageDescription) => dispatch => {
   return dispatch(
     saveRentalFlowThunk({
       txId,
-      transitionName: TRANSITION_CHECK_OUT,
-      protectedDataParams: {
+      metadata: {
         checkOutPhotos: photos,
-        checkOutNote: note || '',
+        checkOutNote: damageDescription || '',
         checkOutConfirmedAt: new Date().toISOString(),
+        checkOutDamageReported: damageReported || false,
+        checkOutDamageDescription: damageDescription || null,
       },
     })
   );
@@ -995,8 +1008,7 @@ export const saveReleaseDeposit = txId => dispatch => {
   return dispatch(
     saveRentalFlowThunk({
       txId,
-      transitionName: TRANSITION_RELEASE_DEPOSIT,
-      protectedDataParams: { depositReleased: true, depositReleasedAt: new Date().toISOString() },
+      metadata: { depositReleased: true, depositReleasedAt: new Date().toISOString() },
     })
   );
 };
@@ -1011,14 +1023,40 @@ export const saveReportDamage = (txId, description, estimatedCost) => dispatch =
   return dispatch(
     saveRentalFlowThunk({
       txId,
-      transitionName: TRANSITION_REPORT_DAMAGE,
-      protectedDataParams: {
+      metadata: {
         damageDispute: {
           description,
           estimatedCost: estimatedCost != null ? estimatedCost : null,
           reportedAt: new Date().toISOString(),
         },
       },
+    })
+  );
+};
+
+/**
+ * Report a mid-rental issue. Appends to the midRentalIssues array in metadata.
+ * @param {string|UUID} txId
+ * @param {string} issueType
+ * @param {string} description
+ * @param {string|null} photoUrl
+ * @param {Array} existingIssues - current issues array from Redux state
+ */
+export const saveRentalMidIssue = (txId, issueType, description, photoUrl, existingIssues) => dispatch => {
+  const newIssue = {
+    issueType,
+    description,
+    photoUrl: photoUrl || null,
+    reportedAt: new Date().toISOString(),
+  };
+  const updatedIssues = Array.isArray(existingIssues)
+    ? [...existingIssues, newIssue]
+    : [newIssue];
+
+  return dispatch(
+    saveRentalFlowThunk({
+      txId,
+      metadata: { midRentalIssues: updatedIssues },
     })
   );
 };

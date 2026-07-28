@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import classNames from 'classnames';
 
 import css from './RentalCheckOut.module.css';
@@ -15,20 +15,42 @@ const PHOTO_SLOTS = [
  *
  * @component
  * @param {Object} props
- * @param {Function} props.onConfirmReturn - Called with { photos, note } when confirmed
+ * @param {Function} props.onConfirmReturn - Called with { photos, damageReported, damageDescription }
  * @param {boolean} [props.inProgress] - Submit in progress
  * @param {string} [props.error] - Submit error message
  * @param {Object} [props.existingCheckOut] - Already-submitted check-out data (read-only mode)
+ * @param {Object|null} [props.preFilledDamage] - Pre-fill damage from mid-rental report: { damageReported, description }
  * @param {string} [props.className]
  */
 const RentalCheckOut = props => {
-  const { onConfirmReturn, inProgress = false, error, existingCheckOut, className } = props;
+  const {
+    onConfirmReturn,
+    inProgress = false,
+    error,
+    existingCheckOut,
+    preFilledDamage,
+    className,
+  } = props;
 
   const [photos, setPhotos] = useState({ front: null, back: null, left: null, right: null });
-  const [note, setNote] = useState('');
+  // null = unanswered, true = damage occurred, false = no damage
+  const [damageReported, setDamageReported] = useState(
+    preFilledDamage?.damageReported != null ? preFilledDamage.damageReported : null
+  );
+  const [damageDescription, setDamageDescription] = useState(
+    preFilledDamage?.description || ''
+  );
   const [conditionConfirmed, setConditionConfirmed] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const fileInputRefs = useRef({});
+
+  // Apply pre-filled damage on mount if passed in (e.g. from a mid-rental damage report)
+  useEffect(() => {
+    if (preFilledDamage) {
+      setDamageReported(preFilledDamage.damageReported ?? null);
+      setDamageDescription(preFilledDamage.description || '');
+    }
+  }, []);  // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleFileChange = (slotId, e) => {
     const file = e.target.files[0];
@@ -52,7 +74,12 @@ const RentalCheckOut = props => {
   };
 
   const allPhotosProvided = PHOTO_SLOTS.every(slot => photos[slot.id] !== null);
-  const canSubmit = allPhotosProvided && conditionConfirmed && !inProgress;
+
+  // Determine submit readiness
+  const damageAnswered = damageReported !== null;
+  const noDamageReady = damageReported === false && conditionConfirmed;
+  const damageReady = damageReported === true && damageDescription.trim().length > 0;
+  const canSubmit = allPhotosProvided && damageAnswered && (noDamageReady || damageReady) && !inProgress;
 
   const handleSubmit = () => {
     if (!canSubmit) return;
@@ -60,7 +87,11 @@ const RentalCheckOut = props => {
       acc[slot.id] = { name: photos[slot.id].name, url: photos[slot.id].url };
       return acc;
     }, {});
-    onConfirmReturn({ photos: photoData, note });
+    onConfirmReturn({
+      photos: photoData,
+      damageReported: damageReported,
+      damageDescription: damageReported ? damageDescription.trim() : null,
+    });
     setSubmitted(true);
   };
 
@@ -179,31 +210,72 @@ const RentalCheckOut = props => {
           </p>
         )}
 
-        <div className={css.noteSection}>
-          <label htmlFor="checkOutNote" className={css.noteLabel}>
-            Note any damage to report (optional)
-          </label>
-          <textarea
-            id="checkOutNote"
-            className={css.noteTextarea}
-            value={note}
-            onChange={e => setNote(e.target.value)}
-            placeholder="Describe any damage that occurred during the rental..."
-            rows={3}
-          />
-        </div>
+        {/* Structured damage toggle */}
+        <div className={css.damageSection}>
+          <p className={css.damageSectionLabel}>Did any damage occur during the rental?</p>
 
-        <label className={css.checkboxRow}>
-          <input
-            type="checkbox"
-            className={css.checkbox}
-            checked={conditionConfirmed}
-            onChange={e => setConditionConfirmed(e.target.checked)}
-          />
-          <span className={css.checkboxLabel}>
-            I confirm this equipment has been returned in the same condition I received it
-          </span>
-        </label>
+          <div className={css.damageToggleRow}>
+            <button
+              type="button"
+              className={classNames(css.damageToggleBtn, {
+                [css.damageToggleBtnSelected]: damageReported === false,
+                [css.damageToggleBtnNone]: damageReported === false,
+              })}
+              onClick={() => {
+                setDamageReported(false);
+                setDamageDescription('');
+              }}
+            >
+              ✓ No damage
+            </button>
+            <button
+              type="button"
+              className={classNames(css.damageToggleBtn, {
+                [css.damageToggleBtnSelected]: damageReported === true,
+                [css.damageToggleBtnDamage]: damageReported === true,
+              })}
+              onClick={() => {
+                setDamageReported(true);
+                setConditionConfirmed(false);
+              }}
+            >
+              ⚠ Yes, damage occurred
+            </button>
+          </div>
+
+          {damageReported === false && (
+            <label className={css.checkboxRow}>
+              <input
+                type="checkbox"
+                className={css.checkbox}
+                checked={conditionConfirmed}
+                onChange={e => setConditionConfirmed(e.target.checked)}
+              />
+              <span className={css.checkboxLabel}>
+                I confirm this equipment has been returned in the same condition I received it
+              </span>
+            </label>
+          )}
+
+          {damageReported === true && (
+            <div className={css.damageDetails}>
+              <label htmlFor="damageDescription" className={css.noteLabel}>
+                Describe the damage <span className={css.required}>*</span>
+              </label>
+              <textarea
+                id="damageDescription"
+                className={css.noteTextarea}
+                value={damageDescription}
+                onChange={e => setDamageDescription(e.target.value)}
+                placeholder="Describe what happened and the extent of the damage..."
+                rows={4}
+              />
+              <p className={css.damageWarning}>
+                ⚠ The owner will be notified and may file a damage claim.
+              </p>
+            </div>
+          )}
+        </div>
 
         {error && <p className={css.errorMessage}>{error}</p>}
 

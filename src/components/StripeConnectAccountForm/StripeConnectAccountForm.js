@@ -313,9 +313,15 @@ const StripeConnectAccountForm = props => {
           ? intl.formatMessage({ id: 'StripeConnectAccountForm.buttonTitleLimitedAccess' })
           : null;
 
-        // Don't show the submit button while fetching the Stripe account data
+        // Don't show the submit button while fetching the Stripe account data.
+        // When Stripe is already connected and data is loaded, hide the submit button
+        // (it would be disabled/pristine anyway) and show a helper message instead.
         const submitButtonMaybe =
-          !stripeConnected || accountDataLoaded ? (
+          accountDataLoaded ? (
+            <p className={css.termsText}>
+              <FormattedMessage id="StripeConnectAccountForm.stripeAccountConnected" />
+            </p>
+          ) : !stripeConnected ? (
             <>
               <p className={css.termsText}>
                 <FormattedMessage

@@ -264,3 +264,81 @@
   margin: 12px 0 0 0;
   text-align: right;
 }
+
+/* Damage section */
+.damageSection {
+  margin-bottom: 20px;
+}
+
+.damageSectionLabel {
+  font-size: 15px;
+  font-weight: var(--fontWeightBold);
+  color: var(--colorGrey800);
+  margin: 0 0 12px 0;
+}
+
+.damageToggleRow {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.damageToggleBtn {
+  flex: 1;
+  padding: 12px 8px;
+  border: 2px solid var(--colorGrey200);
+  border-radius: 8px;
+  background-color: var(--colorWhite);
+  font-size: 14px;
+  font-weight: var(--fontWeightMedium);
+  color: var(--colorGrey600);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+
+  &:hover {
+    border-color: var(--colorGrey400);
+    color: var(--colorGrey800);
+  }
+}
+
+.damageToggleBtnSelected {
+  border-width: 2px;
+}
+
+.damageToggleBtnNone {
+  border-color: var(--colorSuccess, #2e7d32);
+  background-color: #f0f9f0;
+  color: var(--colorSuccess, #2e7d32);
+
+  &:hover {
+    border-color: var(--colorSuccess, #2e7d32);
+    color: var(--colorSuccess, #2e7d32);
+  }
+}
+
+.damageToggleBtnDamage {
+  border-color: var(--colorAttentionDark);
+  background-color: #fffbf0;
+  color: var(--colorAttentionDark);
+
+  &:hover {
+    border-color: var(--colorAttentionDark);
+    color: var(--colorAttentionDark);
+  }
+}
+
+.damageDetails {
+  margin-top: 4px;
+}
+
+.required {
+  color: var(--colorFail);
+}
+
+.damageWarning {
+  font-size: 13px;
+  color: var(--colorAttentionDark);
+  margin: 10px 0 0 0;
+  font-weight: var(--fontWeightMedium);
+}

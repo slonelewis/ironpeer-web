@@ -1083,6 +1083,7 @@
   "StripeConnectAccountForm.createStripeAccountLinkFailedWithStripeError": "Oops, something went wrong. Stripe returned an error message: \"{stripeMessage}\".",
   "StripeConnectAccountForm.individualAccount": "I'm an individual",
   "StripeConnectAccountForm.loadingStripeAccountData": "Fetching payout details…",
+  "StripeConnectAccountForm.stripeAccountConnected": "Your payout account is connected. Use \"Edit Stripe account\" above to make changes.",
   "StripeConnectAccountForm.missingStripeKey": "Oops, something went wrong. Please refresh the page and try again. If the problem persists, contact support.",
   "StripeConnectAccountForm.stripeConnectedAccountTermsLink": "Stripe Connected Account Agreement",
   "StripeConnectAccountForm.stripeToSText": "By moving forward in the process, you agree to the {stripeConnectedAccountTermsLink}.",

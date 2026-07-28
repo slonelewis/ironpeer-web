@@ -151,3 +151,24 @@ export const createUserWithIdp = body => {
 export const deleteUserAccount = body => {
   return post('/api/delete-account', body);
 };
+
+// Save IronPeer rental flow data (check-in, check-out, mid-rental issues)
+// to transaction metadata via the server-side Integration API.
+//
+// Body: { txId: string, metadata: object }
+// Returns a plain-fetch Promise (resolves with JSON { success: true }).
+export const updateRentalFlowData = (txId, metadata) => {
+  return window
+    .fetch('/api/rental-protected-data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ txId, metadata }),
+      credentials: 'include',
+    })
+    .then(res => {
+      if (!res.ok) {
+        return res.json().then(err => Promise.reject(new Error(err.error || 'Rental save failed')));
+      }
+      return res.json();
+    });
+};

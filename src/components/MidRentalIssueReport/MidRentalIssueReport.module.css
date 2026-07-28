@@ -1,0 +1,349 @@
+@import '../../styles/customMediaQueries.css';
+
+.root {
+  margin: 16px 24px 0 24px;
+
+  @media (--viewportLarge) {
+    margin: 16px 0 0 0;
+  }
+}
+
+.card {
+  background-color: var(--colorWhite);
+  border: 1px solid var(--colorGrey100);
+  border-radius: 8px;
+  padding: 20px 24px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* Trigger row */
+.triggerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.triggerLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.triggerIcon {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.triggerTitle {
+  font-size: 15px;
+  font-weight: var(--fontWeightBold);
+  color: var(--colorGrey900);
+  margin: 0;
+}
+
+.issueCount {
+  font-size: 12px;
+  color: var(--colorGrey500);
+  margin: 2px 0 0 0;
+}
+
+.triggerBtn {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  border: 2px solid var(--marketplaceColor);
+  border-radius: 6px;
+  background: none;
+  color: var(--marketplaceColor);
+  font-size: 14px;
+  font-weight: var(--fontWeightBold);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: var(--marketplaceColor);
+    color: var(--colorWhite);
+  }
+}
+
+.triggerBtnOpen {
+  background-color: var(--colorGrey100);
+  border-color: var(--colorGrey300);
+  color: var(--colorGrey600);
+
+  &:hover {
+    background-color: var(--colorGrey200);
+    color: var(--colorGrey700);
+  }
+}
+
+/* Existing issues list */
+.existingList {
+  list-style: none;
+  margin: 14px 0 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.existingItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background-color: var(--colorGrey50);
+  border-radius: 6px;
+  border: 1px solid var(--colorGrey100);
+}
+
+.existingIcon {
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.existingType {
+  display: block;
+  font-size: 13px;
+  font-weight: var(--fontWeightBold);
+  color: var(--colorGrey800);
+  margin-bottom: 2px;
+}
+
+.existingDesc {
+  display: block;
+  font-size: 13px;
+  color: var(--colorGrey600);
+  line-height: 1.4;
+}
+
+/* Form */
+.form {
+  margin-top: 20px;
+  border-top: 1px solid var(--colorGrey100);
+  padding-top: 20px;
+}
+
+/* Issue type grid */
+.fieldset {
+  border: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+}
+
+.fieldsetLegend {
+  font-size: 14px;
+  font-weight: var(--fontWeightMedium);
+  color: var(--colorGrey700);
+  margin-bottom: 12px;
+  padding: 0;
+}
+
+.issueTypeGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.issueTypeOption {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 2px solid var(--colorGrey200);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+  background-color: var(--colorWhite);
+
+  &:hover {
+    border-color: var(--marketplaceColor);
+    background-color: #fff5f2;
+  }
+}
+
+.issueTypeSelected {
+  border-color: var(--marketplaceColor);
+  background-color: #fff5f2;
+}
+
+.radioInput {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.issueTypeIcon {
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.issueTypeLabel {
+  font-size: 13px;
+  color: var(--colorGrey700);
+  font-weight: var(--fontWeightMedium);
+  line-height: 1.4;
+}
+
+/* Field group */
+.fieldGroup {
+  margin-bottom: 16px;
+}
+
+.fieldLabel {
+  display: block;
+  font-size: 14px;
+  font-weight: var(--fontWeightMedium);
+  color: var(--colorGrey700);
+  margin-bottom: 8px;
+}
+
+.required {
+  color: var(--colorFail);
+}
+
+.textarea {
+  width: 100%;
+  border: 1px solid var(--colorGrey200);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: var(--colorGrey900);
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.5;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
+
+  &:focus {
+    outline: none;
+    border-color: var(--marketplaceColor);
+  }
+
+  &::placeholder {
+    color: var(--colorGrey400);
+  }
+}
+
+/* Photo upload */
+.photoUploadLabel {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.photoUploadBtnText {
+  display: inline-block;
+  padding: 8px 14px;
+  border: 1px dashed var(--colorGrey300);
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--colorGrey600);
+  background-color: var(--colorGrey50);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+
+  &:hover {
+    border-color: var(--marketplaceColor);
+    background-color: #fff5f2;
+    color: var(--marketplaceColor);
+  }
+}
+
+.photoPreviewWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.photoPreview {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--colorGrey200);
+}
+
+.removePhotoBtn {
+  background: none;
+  border: none;
+  color: var(--colorFail);
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+/* Error */
+.errorMessage {
+  color: var(--colorFail);
+  font-size: 14px;
+  margin: 0 0 12px 0;
+}
+
+/* Submit button */
+.submitBtn {
+  width: 100%;
+  padding: 13px 24px;
+  background-color: var(--marketplaceColor);
+  color: var(--colorWhite);
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: var(--fontWeightBold);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background-color: var(--marketplaceColorDark);
+  }
+}
+
+.submitBtnDisabled {
+  background-color: var(--colorGrey300);
+  cursor: not-allowed;
+
+  &:hover {
+    background-color: var(--colorGrey300);
+  }
+}
+
+/* Success message */
+.successMessage {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  background-color: #f0f9f0;
+  border: 1px solid #c3e6c3;
+  border-radius: 8px;
+}
+
+.successIcon {
+  font-size: 24px;
+  color: #2e7d32;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.successTitle {
+  font-size: 15px;
+  font-weight: var(--fontWeightBold);
+  color: #1b5e20;
+  margin: 0;
+}
+
+.successSubtitle {
+  font-size: 13px;
+  color: #2e7d32;
+  margin: 2px 0 0 0;
+}

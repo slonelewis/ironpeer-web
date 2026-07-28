@@ -846,12 +846,13 @@ export const TransactionPageComponent = props => {
   const bookingStart = booking?.attributes?.start;
   const bookingEnd = booking?.attributes?.end;
   const now = new Date();
-  // TEST BYPASS: ?forceCheckin=1 skips the date gate so we can test check-in before rental start
+  // TEST BYPASSES: URL params to skip date gates for QA testing
   const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
   const forceCheckin = searchParams.get('forceCheckin') === '1';
+  const forceCheckout = searchParams.get('forceCheckout') === '1';
   const rentalHasStarted = forceCheckin || (bookingStart && new Date(bookingStart) <= now);
   const hoursUntilReturn = bookingEnd ? (new Date(bookingEnd) - now) / (1000 * 60 * 60) : null;
-  const withinReturnWindow = hoursUntilReturn !== null && hoursUntilReturn <= 24;
+  const withinReturnWindow = forceCheckout || (hoursUntilReturn !== null && hoursUntilReturn <= 24);
 
   // Pre-fill checkout damage from a mid-rental damage report (if any)
   const midRentalDamageReport = Array.isArray(midRentalIssues)

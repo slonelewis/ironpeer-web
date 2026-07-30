@@ -947,8 +947,8 @@ export const TransactionPageComponent = props => {
           checkOutPhotos={checkOutPhotos}
           checkOutNote={checkOutNote}
           onReleaseDeposit={() => onReleaseDeposit(transaction.id)}
-          onReportDamage={({ description, estimatedCost }) =>
-            onReportDamage(transaction.id, description, estimatedCost)
+          onReportDamage={({ description, estimatedCost, photos, certifiedNotPreExisting }) =>
+            onReportDamage(transaction.id, description, estimatedCost, photos, certifiedNotPreExisting)
           }
           inProgress={rentalFlowInProgress}
           error={rentalFlowError?.message}

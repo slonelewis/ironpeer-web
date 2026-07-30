@@ -48,16 +48,50 @@ const RentalDamageReview = props => {
   const [estimatedCost, setEstimatedCost] = useState('');
   const [damageFormError, setDamageFormError] = useState('');
   const [disputeSubmitted, setDisputeSubmitted] = useState(false);
+  const [damagePhotos, setDamagePhotos] = useState([]);
+  const [certifiedNotPreExisting, setCertifiedNotPreExisting] = useState(false);
+
+  const handleAddDamagePhoto = e => {
+    const files = Array.from(e.target.files || []);
+    const newPhotos = files.map(file => ({
+      file,
+      url: URL.createObjectURL(file),
+      name: file.name,
+    }));
+    setDamagePhotos(prev => [...prev, ...newPhotos]);
+    // reset input so same file can be re-added if removed
+    e.target.value = '';
+  };
+
+  const handleRemoveDamagePhoto = index => {
+    setDamagePhotos(prev => {
+      const updated = [...prev];
+      URL.revokeObjectURL(updated[index].url);
+      updated.splice(index, 1);
+      return updated;
+    });
+  };
 
   const handleReportDamageSubmit = () => {
     if (!damageDescription.trim()) {
       setDamageFormError('Please describe the damage.');
       return;
     }
+    if (damagePhotos.length < 2) {
+      setDamageFormError('Please upload at least 2 damage photos.');
+      return;
+    }
+    if (!certifiedNotPreExisting) {
+      setDamageFormError('You must certify that this damage is not pre-existing.');
+      return;
+    }
     setDamageFormError('');
+    const photoData = damagePhotos.map(p => ({ name: p.name, url: p.url }));
     onReportDamage({
       description: damageDescription.trim(),
       estimatedCost: estimatedCost ? parseFloat(estimatedCost) : null,
+      photos: photoData,
+      certifiedNotPreExisting: true,
     });
     setDisputeSubmitted(true);
   };
@@ -148,15 +182,26 @@ const RentalDamageReview = props => {
           or file a claim if equipment was damaged.
         </p>
 
+        {/* Damage / check-in notes — above the comparison so both columns align */}
+        {(checkOutNote || checkInNote) && (
+          <div className={css.notesAboveComparison}>
+            {checkInNote && (
+              <p className={css.comparisonNote}>
+                <em>Pickup note: {checkInNote}</em>
+              </p>
+            )}
+            {checkOutNote && (
+              <p className={classNames(css.comparisonNote, css.comparisonNoteWarning)}>
+                <em>Renter reported: {checkOutNote}</em>
+              </p>
+            )}
+          </div>
+        )}
+
         {/* Side-by-side photo comparison */}
         <div className={css.comparisonSection}>
           <div className={css.comparisonColumn}>
             <h4 className={css.comparisonHeading}>At Pickup</h4>
-            {checkInNote && (
-              <p className={css.comparisonNote}>
-                <em>Note: {checkInNote}</em>
-              </p>
-            )}
             <div className={css.photoGrid}>
               {PHOTO_SLOTS.map(slot => {
                 const photo = checkInPhotos?.[slot.id];
@@ -191,11 +236,6 @@ const RentalDamageReview = props => {
 
           <div className={css.comparisonColumn}>
             <h4 className={css.comparisonHeading}>At Return</h4>
-            {checkOutNote && (
-              <p className={classNames(css.comparisonNote, css.comparisonNoteWarning)}>
-                <em>Reported: {checkOutNote}</em>
-              </p>
-            )}
             <div className={css.photoGrid}>
               {PHOTO_SLOTS.map(slot => {
                 const photo = checkOutPhotos?.[slot.id];
@@ -267,6 +307,39 @@ const RentalDamageReview = props => {
             </div>
 
             <div className={css.formField}>
+              <label className={css.fieldLabel}>
+                Damage photos <span className={css.required}>*</span>
+                <span className={css.fieldHint}> (min 2 required)</span>
+              </label>
+              <div className={css.damagePhotoGrid}>
+                {damagePhotos.map((photo, idx) => (
+                  <div key={idx} className={css.damagePhotoThumb}>
+                    <img src={photo.url} alt={`Damage ${idx + 1}`} className={css.damagePhotoImg} />
+                    <button
+                      type="button"
+                      className={css.removePhotoBtn}
+                      onClick={() => handleRemoveDamagePhoto(idx)}
+                      aria-label="Remove photo"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+                <label className={css.addPhotoLabel}>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className={css.hiddenFileInput}
+                    onChange={handleAddDamagePhoto}
+                  />
+                  <span className={css.addPhotoIcon}>+</span>
+                  <span className={css.addPhotoText}>Add photo</span>
+                </label>
+              </div>
+            </div>
+
+            <div className={css.formField}>
               <label htmlFor="estimatedCost" className={css.fieldLabel}>
                 Estimated repair cost ($)
               </label>
@@ -282,6 +355,19 @@ const RentalDamageReview = props => {
               />
             </div>
 
+            <div className={css.certifyRow}>
+              <input
+                id="certifyNotPreExisting"
+                type="checkbox"
+                className={css.certifyCheckbox}
+                checked={certifiedNotPreExisting}
+                onChange={e => setCertifiedNotPreExisting(e.target.checked)}
+              />
+              <label htmlFor="certifyNotPreExisting" className={css.certifyLabel}>
+                I certify that this damage was <strong>NOT pre-existing</strong> and occurred during this rental period. I understand that false claims are a violation of IronPeer's Terms of Service.
+              </label>
+            </div>
+
             {damageFormError && (
               <p className={css.errorMessage}>{damageFormError}</p>
             )}
@@ -293,6 +379,8 @@ const RentalDamageReview = props => {
                 onClick={() => {
                   setShowDamageForm(false);
                   setDamageFormError('');
+                  setDamagePhotos([]);
+                  setCertifiedNotPreExisting(false);
                 }}
                 disabled={inProgress}
               >
@@ -302,7 +390,7 @@ const RentalDamageReview = props => {
                 type="button"
                 className={css.submitDisputeButton}
                 onClick={handleReportDamageSubmit}
-                disabled={inProgress || !damageDescription.trim()}
+                disabled={inProgress || !damageDescription.trim() || damagePhotos.length < 2 || !certifiedNotPreExisting}
               >
                 {inProgress ? 'Submitting...' : 'Submit Dispute'}
               </button>

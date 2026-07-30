@@ -1019,7 +1019,7 @@ export const saveReleaseDeposit = txId => dispatch => {
  * @param {string} description
  * @param {number|null} estimatedCost
  */
-export const saveReportDamage = (txId, description, estimatedCost) => dispatch => {
+export const saveReportDamage = (txId, description, estimatedCost, photos, certifiedNotPreExisting) => dispatch => {
   return dispatch(
     saveRentalFlowThunk({
       txId,
@@ -1027,6 +1027,8 @@ export const saveReportDamage = (txId, description, estimatedCost) => dispatch =
         damageDispute: {
           description,
           estimatedCost: estimatedCost != null ? estimatedCost : null,
+          photos: Array.isArray(photos) ? photos : [],
+          certifiedNotPreExisting: certifiedNotPreExisting === true,
           reportedAt: new Date().toISOString(),
         },
       },

@@ -311,6 +311,7 @@ export class SearchPageComponent extends Component {
                 <SearchErrors
                   searchListingsError={searchListingsError}
                   isValidDatesFilter={isValidDatesFilter}
+                  resultCount={listings.length}
                 />
                 <SearchResultsPanel
                   className={css.searchListingsPanel}

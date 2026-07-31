@@ -12,11 +12,12 @@ import css from './SearchPage.module.css';
  * @param {Object} props
  * @param {boolean} [props.searchListingsError] - Truthy when search failed
  * @param {boolean} props.isValidDatesFilter - False when URL dates conflict with selected filter
+ * @param {number} [props.resultCount] - Number of results currently shown; suppress error when > 0
  * @returns {JSX.Element}
  */
-const SearchErrors = ({ searchListingsError, isValidDatesFilter }) => (
+const SearchErrors = ({ searchListingsError, isValidDatesFilter, resultCount = 0 }) => (
   <>
-    {searchListingsError ? (
+    {searchListingsError && resultCount === 0 ? (
       <H3 className={css.error}>
         <FormattedMessage id="SearchPage.searchError" />
       </H3>

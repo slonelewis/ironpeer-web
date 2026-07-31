@@ -335,10 +335,13 @@ const searchListingsPayloadCreator = ({ searchParams, config }, thunkAPI) => {
     })
     .catch(e => {
       const error = storableError(e);
+      // Silently swallow errors for pending-approval / forbidden users — don’t
+      // show "Search failed" UI when the user simply can’t access the data yet.
       if (!(isErrorUserPendingApproval(error) || isForbiddenError(error))) {
         return rejectWithValue(error);
       }
-      return rejectWithValue(error);
+      // Return undefined so the thunk resolves fulfilled with no payload,
+      // leaving any existing results intact and hiding the error banner.
     });
 };
 

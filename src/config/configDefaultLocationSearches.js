@@ -12,40 +12,40 @@ const { LatLng, LatLngBounds } = sdkTypes;
 //       1) help customers to find relevant locations, and
 //       2) reduce the cost of using map providers geocoding API
 const defaultLocations = [
-  // {
-  //   id: 'default-helsinki',
-  //   predictionPlace: {
-  //     address: 'Helsinki, Finland',
-  //     bounds: new LatLngBounds(new LatLng(60.29783, 25.25448), new LatLng(59.92248, 24.78287)),
-  //   },
-  // },
-  // {
-  //   id: 'default-turku',
-  //   predictionPlace: {
-  //     address: 'Turku, Finland',
-  //     bounds: new LatLngBounds(new LatLng(60.53045, 22.38197), new LatLng(60.33361, 22.06644)),
-  //   },
-  // },
-  // {
-  //   id: 'default-tampere',
-  //   predictionPlace: {
-  //     address: 'Tampere, Finland',
-  //     bounds: new LatLngBounds(new LatLng(61.83657, 24.11838), new LatLng(61.42728, 23.5422)),
-  //   },
-  // },
-  // {
-  //   id: 'default-oulu',
-  //   predictionPlace: {
-  //     address: 'Oulu, Finland',
-  //     bounds: new LatLngBounds(new LatLng(65.56434, 26.77069), new LatLng(64.8443, 24.11494)),
-  //   },
-  // },
-  // {
-  //   id: 'default-ruka',
-  //   predictionPlace: {
-  //     address: 'Ruka, Finland',
-  //     bounds: new LatLngBounds(new LatLng(66.16997, 29.16773), new LatLng(66.16095, 29.13572)),
-  //   },
-  // },
+  {
+    id: 'default-ellensburg',
+    predictionPlace: {
+      address: 'Ellensburg, WA',
+      bounds: new LatLngBounds(new LatLng(47.04, -120.44), new LatLng(46.94, -120.60)),
+    },
+  },
+  {
+    id: 'default-yakima',
+    predictionPlace: {
+      address: 'Yakima, WA',
+      bounds: new LatLngBounds(new LatLng(46.65, -120.38), new LatLng(46.54, -120.62)),
+    },
+  },
+  {
+    id: 'default-spokane',
+    predictionPlace: {
+      address: 'Spokane, WA',
+      bounds: new LatLngBounds(new LatLng(47.74, -117.27), new LatLng(47.59, -117.50)),
+    },
+  },
+  {
+    id: 'default-seattle',
+    predictionPlace: {
+      address: 'Seattle, WA',
+      bounds: new LatLngBounds(new LatLng(47.74, -122.22), new LatLng(47.49, -122.46)),
+    },
+  },
+  {
+    id: 'default-washington',
+    predictionPlace: {
+      address: 'Washington State',
+      bounds: new LatLngBounds(new LatLng(49.00, -116.92), new LatLng(45.54, -124.73)),
+    },
+  },
 ];
 export default defaultLocations;

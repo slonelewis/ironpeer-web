@@ -9,7 +9,7 @@
 
 .contentContainer {
   composes: marketplaceModalRootStyles from global;
-  min-height: calc(100vh - 60px);
+  /* No forced min-height on mobile — let form content define height */
   height: auto;
 
   @media (--viewportMedium) {

@@ -471,10 +471,12 @@ class SearchMapWithGoogleMaps extends Component {
     const hasDimensions = offsetHeight > 0 && offsetWidth > 0;
 
     if (hasDimensions) {
-      const { bounds, center = new sdkTypes.LatLng(0, 0), zoom = 11 } = this.props;
+      // Default center: Washington State (PNW focus), zoom 7 shows the whole state
+      const defaultCenter = new sdkTypes.LatLng(47.2, -120.5);
+      const { bounds, center = defaultCenter, zoom = 7 } = this.props;
       const maps = window.google.maps;
       const controlPosition = maps.ControlPosition.LEFT_TOP;
-      const zoomOutToShowEarth = { zoom: 1, center: { lat: 0, lng: 0 } };
+      const zoomOutToShowEarth = { zoom: 7, center: { lat: 47.2, lng: -120.5 } };
       const zoomAndCenter = !bounds && !center ? zoomOutToShowEarth : { zoom, center };
 
       const mapConfig = {

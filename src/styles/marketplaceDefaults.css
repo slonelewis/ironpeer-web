@@ -64,9 +64,9 @@
    * The fill color used by <PrimaryButton>
    * These might be overwritten by values from hosted assets
    */
-  --colorPrimaryButton: #138041;
-  --colorPrimaryButtonDark: #0d542a;
-  --colorPrimaryButtonLight: #1aad57;
+  --colorPrimaryButton: #E8450A; /* Iron Orange — matches brand */
+  --colorPrimaryButtonDark: #C93A08;
+  --colorPrimaryButtonLight: #ff6a35;
 
   /** 
    * The fill color used by <SecondaryButton>

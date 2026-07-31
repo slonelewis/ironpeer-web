@@ -185,6 +185,7 @@
 .releaseButton {
   flex: 1;
   padding: 14px 20px;
+  white-space: nowrap;
   background-color: var(--colorSuccess);
   color: var(--colorWhite);
   border: none;
